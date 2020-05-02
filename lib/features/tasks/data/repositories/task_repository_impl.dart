@@ -23,49 +23,79 @@ class TaskRepositoryImpl implements TaskRepository {
   });
 
   @override
-  Future<Either<Failure, TaskEntity>> completeTask(String taskId) {
-    // TODO: implement completeTask
-    return null;
+  Future<Either<Failure, TaskEntity>> completeTask(String taskId) async {
+    try {
+      // will be returned a task that is marked
+      // completed from the local data source
+      final response = await localDataSource.completeTask(taskId);
+      return Right(response);
+    } on CacheException catch (ex) {
+      return Left(CacheFailure(message: ex.message));
+    } finally {
+      try {
+        final task = await remoteDataSource.readTask(taskId);
+        final syncedTask = markTaskAsSynced(task);
+        final completedTask = markTaskAsCompleted(syncedTask);
+        remoteDataSource.updateTask(completedTask);
+        localDataSource.updateTask(completedTask);
+        return Right(completedTask);
+      } on ServerException catch (ex) {
+        // Do nothing
+        // try or catch block return will execute here
+      } on CacheException catch (ex) {
+        // Do nothing
+        // try or catch block return will execute here
+      }
+    }
   }
 
   @override
   Future<Either<Failure, TaskEntity>> createTask(TaskEntity task) async {
-    if (await networkInfo.isConnected) {
+    try {
+      final response = await localDataSource.createTask(task);
+      return Right(response);
+    } on CacheException catch (ex) {
+      return Left(CacheFailure(message: ex.message));
+    } finally {
+      final syncedTask = markTaskAsSynced(task);
       try {
-        await localDataSource.createTask(task);
-        final syncedTask = markTaskAsSynced(task);
-        try {
-          remoteDataSource.createTask(syncedTask);
-          localDataSource.updateTask(syncedTask);
-          return Right(syncedTask);
-        } on ServerException catch (ex) {
-          return Right(task);
-        }
+        remoteDataSource.createTask(syncedTask);
+        localDataSource.updateTask(syncedTask);
+        return Right(syncedTask);
+      } on ServerException catch (ex) {
+        // Do nothing
+        // try or catch block return will execute here
       } on CacheException catch (ex) {
-        return Left(CacheFailure(message: ex.message));
-      }
-    } else {
-      try {
-        final response = await localDataSource.createTask(task);
-        final syncedTask = markTaskAsSynced(task);
-        try {
-          remoteDataSource.createTask(syncedTask);
-          localDataSource.updateTask(syncedTask);
-          return Right(syncedTask);
-        } on ServerException catch (ex) {
-          return Right(task);
-        }
-      } on CacheException catch (ex) {
-        return Left(CacheFailure(message: ex.message));
+        // Do nothing
+        // try or catch block return will execute here
       }
     }
-    return null;
   }
 
   @override
-  Future<Either<Failure, TaskEntity>> deleteTask(TaskEntity task) {
-    // TODO: implement deleteTask
-    return null;
+  Future<Either<Failure, TaskEntity>> deleteTask(TaskEntity task) async {
+    try {
+      // will be returned a task that is marked
+      // deleted from the local data source
+      final response = await localDataSource.deleteTask(task);
+      return Right(response);
+    } on CacheException catch (ex) {
+      return Left(CacheFailure(message: ex.message));
+    } finally {
+      final deletedTask = markTaskAsDeleted(task);
+      final syncedTask = markTaskAsSynced(deletedTask);
+      try {
+        remoteDataSource.deleteTask(syncedTask);
+        localDataSource.deleteTask(syncedTask);
+        return Right(syncedTask);
+      } on ServerException {
+        // Do nothing
+        // try or catch block return will execute here
+      } on CacheException {
+        // Do nothing
+        // try or catch block return will execute here
+      }
+    }
   }
 
   @override
@@ -123,34 +153,22 @@ class TaskRepositoryImpl implements TaskRepository {
 
   @override
   Future<Either<Failure, TaskEntity>> updateTask(TaskEntity task) async {
-    if (await networkInfo.isConnected) {
+    try {
+      final response = await localDataSource.updateTask(task);
+      return Right(response);
+    } on CacheException catch (ex) {
+      return Left(CacheFailure(message: ex.message));
+    } finally {
       try {
-        final response = await localDataSource.updateTask(task);
-        return Right(response);
+        final syncedTask = markTaskAsSynced(task);
+        remoteDataSource.updateTask(syncedTask);
+        return Right(syncedTask);
+      } on ServerException catch (ex) {
+        // Do nothing
+        // try or catch block return will execute here
       } on CacheException catch (ex) {
-        try {
-          final syncedTask = markTaskAsSynced(task);
-          final response = await remoteDataSource.updateTask(syncedTask);
-          return Right(response);
-        } on ServerException catch (ex) {
-          return Left(ServerFailure(message: ex.message));
-        }
-      }
-    } else {
-      try {
-        final response = await localDataSource.updateTask(task);
-        return Right(response);
-      } on CacheException catch (ex) {
-        return Left(CacheFailure(message: ex.message));
-      } finally {
-        // This call is here because, firebase will
-        // manage if there is no internet connection
-        try {
-          final syncedTask = markTaskAsSynced(task);
-          remoteDataSource.updateTask(syncedTask);
-        } on ServerException {
-          // Do nothing
-        }
+        // Do nothing
+        // try or catch block return will execute here
       }
     }
   }
@@ -158,6 +176,20 @@ class TaskRepositoryImpl implements TaskRepository {
   TaskModel markTaskAsSynced(TaskModel task) {
     Map<String, dynamic> taskMap = task.toJson();
     taskMap.update("isSynced", (value) => true, ifAbsent: () => false);
+    final syncedTask = TaskModel.fromJson(taskMap);
+    return syncedTask;
+  }
+
+  TaskModel markTaskAsCompleted(TaskModel task) {
+    Map<String, dynamic> taskMap = task.toJson();
+    taskMap.update("isCompleted", (value) => true, ifAbsent: () => false);
+    final syncedTask = TaskModel.fromJson(taskMap);
+    return syncedTask;
+  }
+
+  TaskModel markTaskAsDeleted(TaskModel task) {
+    Map<String, dynamic> taskMap = task.toJson();
+    taskMap.update("isDeleted", (value) => true, ifAbsent: () => false);
     final syncedTask = TaskModel.fromJson(taskMap);
     return syncedTask;
   }

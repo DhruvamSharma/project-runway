@@ -232,12 +232,6 @@ void main() {
       "internet is on",
       () {
         isConnected(true);
-        test("checks for internet", () async {
-          // act
-          await repositoryImpl.createTask(tTaskModel);
-          // assert
-          verify(networkInfo.isConnected);
-        });
 
         test("stores the task in local storage", () async {
           // assemble
@@ -298,6 +292,8 @@ void main() {
         test("if there is an exception, return the failure", () async {
           when(localDataSource.createTask(tTaskModel))
               .thenThrow(CacheException());
+          when(remoteDataSource.createTask(tTaskModelSynced))
+              .thenThrow(ServerException());
           // act
           final response = await repositoryImpl.createTask(tTaskModel);
           // assert
@@ -305,10 +301,12 @@ void main() {
         });
 
         test(
-          "if the call to remote data source fails,"
+          "if the call to remote and local data source fails,"
           " don't update the object to local data source",
           () async {
             // assemble
+            when(localDataSource.createTask(tTaskModel))
+                .thenThrow(CacheException());
             when(remoteDataSource.createTask(tTaskModelSynced))
                 .thenThrow(ServerException());
             // act
@@ -317,7 +315,7 @@ void main() {
             verify(localDataSource.createTask(tTaskModel));
             verify(remoteDataSource.createTask(tTaskModelSynced));
             verifyNoMoreInteractions(localDataSource);
-            expect(response, Right(tTaskModel));
+            expect(response, Left(CacheFailure()));
           },
         );
       },
@@ -352,6 +350,8 @@ void main() {
         // assemble
         when(remoteDataSource.createTask(tTaskModelSynced))
             .thenThrow(ServerException());
+        when(localDataSource.createTask(tTaskModel))
+            .thenAnswer((_) async => tTaskModel);
         // act
         final response = await repositoryImpl.createTask(tTaskModel);
         // assert
@@ -362,6 +362,8 @@ void main() {
       test("if there is an exception, return the failure", () async {
         when(localDataSource.createTask(tTaskModel))
             .thenThrow(CacheException());
+        when(remoteDataSource.createTask(tTaskModelSynced))
+            .thenThrow(ServerException());
         // act
         final response = await repositoryImpl.createTask(tTaskModel);
         // assert
@@ -531,12 +533,6 @@ void main() {
 
     group("internet is on", () {
       isConnected(true);
-      test("checks for internet", () async {
-        // act
-        await repositoryImpl.updateTask(tTaskModel);
-        // assert
-        verify(networkInfo.isConnected);
-      });
 
       test("looks for the task in local data source", () async {
         // act
@@ -552,7 +548,7 @@ void main() {
         // act
         final response = await repositoryImpl.updateTask(tTaskModel);
         // assert
-        expect(response, Right(tTaskModel));
+        expect(response, Right(tSyncedTask));
       });
 
       test("if no task is found in local storage, then search in the remote",
@@ -591,7 +587,7 @@ void main() {
         // act
         final response = await repositoryImpl.updateTask(tTaskModel);
         // assert
-        expect(response, Left(ServerFailure()));
+        expect(response, Left(CacheFailure()));
       });
     });
 
@@ -604,10 +600,14 @@ void main() {
         verify(localDataSource.updateTask(tTaskModel));
       });
 
-      test("task should be returned", () async {
+      test(
+          "task should be returned when local call is a success and remote is a failure",
+          () async {
         // assemble
         when(localDataSource.updateTask(tTaskModel))
             .thenAnswer((_) async => tTaskModel);
+        when(remoteDataSource.updateTask(tSyncedTask))
+            .thenThrow(ServerException());
         // act
         final response = await repositoryImpl.updateTask(tTaskModel);
         // assert
@@ -615,7 +615,20 @@ void main() {
       });
 
       test(
-          "if no task is found in local storage, then failure should be returned",
+          "if no task is found in local storage and remote data source produces error, then failure should be returned",
+          () async {
+        // assemble
+        when(localDataSource.updateTask(tTaskModel))
+            .thenThrow(CacheException());
+        when(remoteDataSource.updateTask(tSyncedTask))
+            .thenThrow(ServerException());
+        // act
+        final response = await repositoryImpl.updateTask(tTaskModel);
+        // assert
+        expect(response, Left(CacheFailure()));
+      });
+
+      test("regardless of internet, task should be updated in remote storage",
           () async {
         // assemble
         when(localDataSource.updateTask(tTaskModel))
@@ -623,20 +636,242 @@ void main() {
         // act
         final response = await repositoryImpl.updateTask(tTaskModel);
         // assert
-        expect(response, Left(CacheFailure()));
+        verify(remoteDataSource.updateTask(tSyncedTask));
       });
+    });
+  });
 
-      test(
-          "regardless of internet, task should be updated in remote storage",
-              () async {
-            // assemble
-            when(localDataSource.updateTask(tTaskModel))
-                .thenThrow(CacheException());
-            // act
-            final response = await repositoryImpl.updateTask(tTaskModel);
-            // assert
-            verify(remoteDataSource.updateTask(tSyncedTask));
-          });
+  group("completeTask", () {
+    final tTaskId = "uid";
+    final tTaskModel = TaskModel(
+      userId: "uid",
+      taskId: "tid",
+      taskTitle: "tTitle",
+      description: "tDescription",
+      urgency: 2,
+      tag: "rag",
+      notificationTime: DateTime.parse("2020-05-02 15:24:55.987577"),
+      createdAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+      lastUpdatedAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      isSynced: false,
+      isDeleted: false,
+      isMovable: false,
+      isCompleted: false,
+    );
+    final tSyncedTask = TaskModel(
+      userId: "uid",
+      taskId: "tid",
+      taskTitle: "tTitle",
+      description: "tDescription",
+      urgency: 2,
+      tag: "rag",
+      notificationTime: DateTime.parse("2020-05-02 15:24:55.987577"),
+      createdAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+      lastUpdatedAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      isSynced: true,
+      isDeleted: false,
+      isMovable: false,
+      isCompleted: false,
+    );
+
+    final tCompletedTask = TaskModel(
+      userId: "uid",
+      taskId: "tid",
+      taskTitle: "tTitle",
+      description: "tDescription",
+      urgency: 2,
+      tag: "rag",
+      notificationTime: DateTime.parse("2020-05-02 15:24:55.987577"),
+      createdAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+      lastUpdatedAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      isSynced: false,
+      isDeleted: false,
+      isMovable: false,
+      isCompleted: true,
+    );
+
+    final tSyncedCompletedTask = TaskModel(
+      userId: "uid",
+      taskId: "tid",
+      taskTitle: "tTitle",
+      description: "tDescription",
+      urgency: 2,
+      tag: "rag",
+      notificationTime: DateTime.parse("2020-05-02 15:24:55.987577"),
+      createdAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+      lastUpdatedAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      isSynced: true,
+      isDeleted: false,
+      isMovable: false,
+      isCompleted: true,
+    );
+
+    test("should save the object to local storage", () async {
+      // assemble
+      when(remoteDataSource.readTask(tTaskId))
+          .thenAnswer((_) async => tTaskModel);
+      // act
+      await repositoryImpl.completeTask(tTaskId);
+      // assert
+      verify(localDataSource.completeTask(tTaskId));
+    });
+
+    test(
+        "should return a completed and synced model on"
+        " successful call to remote data source", () async {
+      // assemble
+      when(remoteDataSource.readTask(tTaskId))
+          .thenAnswer((_) async => tTaskModel);
+      // act
+      final response = await repositoryImpl.completeTask(tTaskId);
+      // assert
+      expect(response, Right(tSyncedCompletedTask));
+    });
+
+    test(
+        "should return a completed model on"
+        " unsuccessful call to remote data source", () async {
+      // assemble
+      when(localDataSource.completeTask(any))
+          .thenAnswer((_) async => tCompletedTask);
+      when(remoteDataSource.readTask(tTaskId)).thenThrow(ServerException());
+      // act
+      final response = await repositoryImpl.completeTask(tTaskId);
+      // assert
+      expect(response, Right(tCompletedTask));
+    });
+
+    test(
+        "should return a failure on"
+        " unsuccessful call to remote and local data source", () async {
+      // assemble
+      when(localDataSource.completeTask(any)).thenThrow(CacheException());
+      when(remoteDataSource.readTask(tTaskId)).thenThrow(ServerException());
+      // act
+      final response = await repositoryImpl.completeTask(tTaskId);
+      // assert
+      expect(response, Left(CacheFailure()));
+    });
+  });
+
+
+  group("deleteTask", () {
+    final tTaskModel = TaskModel(
+      userId: "uid",
+      taskId: "tid",
+      taskTitle: "tTitle",
+      description: "tDescription",
+      urgency: 2,
+      tag: "rag",
+      notificationTime: DateTime.parse("2020-05-02 15:24:55.987577"),
+      createdAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+      lastUpdatedAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      isSynced: false,
+      isDeleted: false,
+      isMovable: false,
+      isCompleted: false,
+    );
+    final tSyncedTask = TaskModel(
+      userId: "uid",
+      taskId: "tid",
+      taskTitle: "tTitle",
+      description: "tDescription",
+      urgency: 2,
+      tag: "rag",
+      notificationTime: DateTime.parse("2020-05-02 15:24:55.987577"),
+      createdAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+      lastUpdatedAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      isSynced: true,
+      isDeleted: false,
+      isMovable: false,
+      isCompleted: false,
+    );
+
+    final tDeletedTaskModel = TaskModel(
+      userId: "uid",
+      taskId: "tid",
+      taskTitle: "tTitle",
+      description: "tDescription",
+      urgency: 2,
+      tag: "rag",
+      notificationTime: DateTime.parse("2020-05-02 15:24:55.987577"),
+      createdAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+      lastUpdatedAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      isSynced: false,
+      isDeleted: true,
+      isMovable: false,
+      isCompleted: false,
+    );
+
+    final tSyncedDeletedTask = TaskModel(
+      userId: "uid",
+      taskId: "tid",
+      taskTitle: "tTitle",
+      description: "tDescription",
+      urgency: 2,
+      tag: "rag",
+      notificationTime: DateTime.parse("2020-05-02 15:24:55.987577"),
+      createdAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+      lastUpdatedAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      isSynced: true,
+      isDeleted: true,
+      isMovable: false,
+      isCompleted: false,
+    );
+
+    test("should save the object to local storage", () async {
+      // assemble
+      when(remoteDataSource.deleteTask(tDeletedTaskModel))
+          .thenAnswer((_) async => tDeletedTaskModel);
+      // act
+      await repositoryImpl.deleteTask(tDeletedTaskModel);
+      // assert
+      verify(localDataSource.deleteTask(tDeletedTaskModel));
+    });
+
+    test(
+        "should return a deleted and synced model on"
+            " successful call to remote data source", () async {
+      // assemble
+      when(remoteDataSource.deleteTask(tSyncedDeletedTask))
+          .thenAnswer((_) async => tSyncedDeletedTask);
+      // act
+      final response = await repositoryImpl.deleteTask(tDeletedTaskModel);
+      // assert
+      expect(response, Right(tSyncedDeletedTask));
+    });
+
+    test(
+        "should return a deleted model on"
+            " unsuccessful call to remote data source", () async {
+      // assemble
+      when(localDataSource.deleteTask(any))
+          .thenAnswer((_) async => tDeletedTaskModel);
+      when(remoteDataSource.deleteTask(any)).thenThrow(ServerException());
+      // act
+      final response = await repositoryImpl.deleteTask(tDeletedTaskModel);
+      // assert
+      expect(response, Right(tDeletedTaskModel));
+    });
+
+    test(
+        "should return a failure on"
+            " unsuccessful call to remote and local data source", () async {
+      // assemble
+      when(localDataSource.deleteTask(any)).thenThrow(CacheException());
+      when(remoteDataSource.deleteTask(any)).thenThrow(ServerException());
+      // act
+      final response = await repositoryImpl.deleteTask(tDeletedTaskModel);
+      // assert
+      expect(response, Left(CacheFailure()));
     });
   });
 }

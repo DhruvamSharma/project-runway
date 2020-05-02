@@ -7,5 +7,5 @@ abstract class TaskLocalDataSource {
   Future<TaskModel> updateTask(TaskModel taskModel);
   Future<TaskModel> deleteTask(TaskModel taskModel);
   Future<TaskModel> readTask(String taskId);
-  Future<TaskModel> completeTask(TaskModel taskModel);
+  Future<TaskModel> completeTask(String taskId);
 }
