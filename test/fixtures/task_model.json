@@ -1,0 +1,16 @@
+{
+  "userId": "uid",
+  "taskId": "tid",
+  "taskTitle": "tTitle",
+  "description": "tDescription",
+  "urgency": 2,
+  "tag": "rag",
+  "notificationTime": "2020-05-02 15:24:55.987577",
+  "createdAt": "2020-05-02 15:24:55.987577",
+  "runningDate": "2020-05-02 15:24:55.987577",
+  "lastUpdatedAt": "2020-05-02 15:24:55.987577",
+  "isSynced": false,
+  "isDeleted": false,
+  "isMovable": false,
+  "isCompleted": false
+}

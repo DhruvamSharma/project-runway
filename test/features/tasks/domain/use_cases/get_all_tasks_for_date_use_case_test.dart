@@ -43,7 +43,7 @@ void main() {
   final tTaskListEntity = TaskListEntity(
     isSuccess: true,
     taskList: [tTaskEntity],
-    dateTime: DateTime(2020),
+    runningDate: DateTime(2020),
   );
 
   test("GetAllTasksForDateUseCase should extend the abstract class usecase",

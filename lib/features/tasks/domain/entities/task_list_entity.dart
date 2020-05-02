@@ -6,12 +6,12 @@ class TaskListEntity extends Equatable {
   final bool isSuccess;
   final List<TaskEntity> taskList;
   // Running Date
-  final DateTime dateTime;
+  final DateTime runningDate;
 
   TaskListEntity({
     @required this.isSuccess,
     @required this.taskList,
-    @required this.dateTime,
+    @required this.runningDate,
   });
 
   @override
@@ -19,7 +19,7 @@ class TaskListEntity extends Equatable {
   List<Object> get props => [
         isSuccess,
         taskList,
-        dateTime,
+        runningDate,
       ];
 
   @override
