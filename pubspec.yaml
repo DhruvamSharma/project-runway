@@ -26,6 +26,9 @@ dependencies:
   equatable: ^1.1.1
   mockito: ^4.1.1
   dartz: ^0.9.0
+  shared_preferences: ^0.5.7
+  # to check for internet availability
+  data_connection_checker: ^0.3.4
 
 dev_dependencies:
   flutter_test:

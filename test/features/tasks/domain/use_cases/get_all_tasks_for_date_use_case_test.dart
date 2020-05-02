@@ -41,7 +41,7 @@ void main() {
   );
 
   final tTaskListEntity = TaskListEntity(
-    isSuccess: true,
+    isSynced: true,
     taskList: [tTaskEntity],
     runningDate: DateTime(2020),
   );

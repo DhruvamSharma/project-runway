@@ -26,7 +26,7 @@ void main() {
   );
 
   final tTaskListModel = TaskListModel(
-    isSuccess: true,
+    isSynced: true,
     taskList: [tTaskModel],
     runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
   );

@@ -5,11 +5,11 @@ import 'package:project_runway/features/tasks/domain/entities/task_list_entity.d
 
 class TaskListModel extends TaskListEntity {
   TaskListModel({
-    @required bool isSuccess,
+    @required bool isSynced,
     @required List<TaskModel> taskList,
     @required DateTime runningDate,
   }) : super(
-          isSuccess: isSuccess,
+          isSynced: isSynced,
           taskList: taskList,
           runningDate: runningDate,
         );
@@ -22,7 +22,7 @@ class TaskListModel extends TaskListEntity {
       taskList.add(taskResponse);
     }
     return TaskListModel(
-      isSuccess: map["isSuccess"],
+      isSynced: map["isSuccess"],
       taskList: taskList,
       runningDate: dateParser(map["runningDate"]),
     );
@@ -35,7 +35,7 @@ class TaskListModel extends TaskListEntity {
       mapList.add(taskResponse);
     }
     return {
-      "isSuccess": isSuccess,
+      "isSuccess": isSynced,
       "taskList": mapList,
       "runningDate": dateToStringParser(runningDate),
     };
