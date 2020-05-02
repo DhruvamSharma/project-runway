@@ -29,6 +29,8 @@ dependencies:
   shared_preferences: ^0.5.7
   # to check for internet availability
   data_connection_checker: ^0.3.4
+  # firebase database
+  cloud_firestore: ^0.13.5
 
 dev_dependencies:
   flutter_test:
