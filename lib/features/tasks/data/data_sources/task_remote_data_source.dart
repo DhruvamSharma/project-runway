@@ -94,8 +94,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       }
       final documentList = await firestore
           .collection(taskCollection)
-          .where("runningDate", isEqualTo: dateToStringParser(runningDate))
           .where("userId", isEqualTo: sharedPreferences.getString(USER_KEY))
+          .where("runningDate", isEqualTo: dateToStringParser(runningDate))
           .getDocuments();
       List<TaskModel> taskList = List();
       // collecting all the documents
@@ -148,9 +148,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           .collection(taskCollection)
           .document(syncedTask.taskId)
           .updateData(syncedTask.toJson());
-      // update the model with isDeleted = true
-      final response = _updateIsDeleted(syncedTask);
-      return response;
+      return syncedTask;
     } on Exception catch (ex) {
       throw ServerException(message: "Error occurred during task transaction");
     }

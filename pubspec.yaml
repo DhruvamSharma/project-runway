@@ -31,6 +31,8 @@ dependencies:
   data_connection_checker: ^0.3.4
   # firebase database
   cloud_firestore: ^0.13.5
+  # Bloc for state management
+  flutter_bloc: ^0.21.0
 
 dev_dependencies:
   flutter_test:
