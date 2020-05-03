@@ -61,7 +61,8 @@ class TaskRepositoryImpl implements TaskRepository {
       final syncedTask = markTaskAsSynced(task);
       try {
         remoteDataSource.createTask(syncedTask);
-        localDataSource.createTask(syncedTask);
+        // update because the task is already created
+        localDataSource.updateTask(syncedTask);
         return Right(syncedTask);
       } on ServerException catch (ex) {
         // Do nothing

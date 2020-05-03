@@ -394,20 +394,15 @@ void main() {
 
     group("internet is on", () {
       isConnected(true);
-      test("checks for internet", () async {
-        // act
-        await repositoryImpl.readTask(tTaskId);
-        // assert
-        verify(networkInfo.isConnected);
-      });
 
+      // Not valid now because of firebase caching
       test("looks for the task in local data source", () async {
         // act
         await repositoryImpl.readTask(tTaskId);
         // assert
         verify(localDataSource.readTask(tTaskId));
-      });
-
+      }, skip: true);
+      // Not valid now because of firebase caching
       test("task should be returned", () async {
         // assemble
         when(localDataSource.readTask(tTaskId))
@@ -416,7 +411,7 @@ void main() {
         final response = await repositoryImpl.readTask(tTaskId);
         // assert
         expect(response, Right(tTaskModel));
-      });
+      }, skip: true);
 
       test("if no task is found in local storage, then search in the remote",
           () async {
@@ -456,13 +451,14 @@ void main() {
 
     group("internet is off", () {
       isConnected(false);
+      // Not valid now because of firebase caching
       test("looks for the task in local data source", () async {
         // act
         await repositoryImpl.readTask(tTaskId);
         // assert
         verify(localDataSource.readTask(tTaskId));
-      });
-
+      }, skip: true);
+      // Not valid now because of firebase caching
       test("task should be returned", () async {
         // assemble
         when(localDataSource.readTask(tTaskId))
@@ -471,8 +467,8 @@ void main() {
         final response = await repositoryImpl.readTask(tTaskId);
         // assert
         expect(response, Right(tTaskModel));
-      });
-
+      },skip: true);
+      // Not valid now because of firebase caching
       test("task should be returned", () async {
         // assemble
         when(localDataSource.readTask(tTaskId))
@@ -481,8 +477,8 @@ void main() {
         final response = await repositoryImpl.readTask(tTaskId);
         // assert
         expect(response, Right(tTaskModel));
-      });
-
+      }, skip: true);
+      // Not valid now because of firebase caching
       test(
           "if no task is found in local storage, then failure should be returned",
           () async {
@@ -492,7 +488,7 @@ void main() {
         final response = await repositoryImpl.readTask(tTaskId);
         // assert
         expect(response, Left(CacheFailure()));
-      });
+      }, skip: true);
     });
   });
 

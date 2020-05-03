@@ -152,7 +152,7 @@ void main() {
     );
 
     final tInitialTaskListModel = TaskListModel(
-      isSynced: true,
+      isSynced: false,
       taskList: [],
       runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
     );
@@ -270,6 +270,90 @@ void main() {
           .thenThrow(Exception());
       // act
       final responseCall = localDataSourceImpl.createTask;
+      // assert
+      expect(() => responseCall(tTaskModel2),
+          throwsA(TypeMatcher<CacheException>()));
+    });
+  });
+
+  group("updateTask", () {
+    final tTaskModel = TaskModel(
+      userId: "uid",
+      taskId: "tid",
+      taskTitle: "tTitle",
+      description: "tDescription",
+      urgency: 2,
+      tag: "rag",
+      notificationTime: DateTime.parse("2020-05-02 15:24:55.987577"),
+      createdAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+      lastUpdatedAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      isSynced: false,
+      isDeleted: false,
+      isMovable: false,
+      isCompleted: false,
+    );
+
+    final tTaskModel2 = TaskModel(
+      userId: "Dhruvam",
+      taskId: null,
+      taskTitle: "tTitle_2",
+      description: "tDescription",
+      urgency: 2,
+      tag: "rag",
+      notificationTime: DateTime.parse("2020-05-02 15:24:55.987577"),
+      createdAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+      lastUpdatedAt: DateTime.parse("2020-05-02 15:24:55.987577"),
+      isSynced: false,
+      isDeleted: false,
+      isMovable: false,
+      isCompleted: false,
+    );
+
+    final tTaskListModel = TaskListModel(
+      isSynced: true,
+      taskList: [tTaskModel,],
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+    );
+
+    final tInitialTaskListModel = TaskListModel(
+      isSynced: true,
+      taskList: [tTaskModel2],
+      runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
+    );
+
+    test("shared preferences should be called with proper arguments", () {
+      // assemble
+      when(sharedPreferences.getString(any))
+          .thenReturn(fixture("task_list_model.json"));
+      final stringToStore = json.encode(tInitialTaskListModel.toJson());
+      // act
+      localDataSourceImpl.updateTask(tTaskModel2);
+      // assert
+      verify(sharedPreferences.setString(
+        "2020-05-02 15:24:55.987577",
+        stringToStore,
+      ));
+    });
+
+    test("if no item is found, throw exception", () {
+      // assemble
+      when(sharedPreferences.getString("2020-05-02 15:24:55.987577"))
+          .thenReturn(null);
+      // act
+      final responseCall = localDataSourceImpl.updateTask;
+      // assert
+      expect(() => responseCall(tTaskModel2),
+          throwsA(TypeMatcher<CacheException>()));
+    });
+
+    test("if there is an error, throw cache exception", () {
+      // assemble
+      when(sharedPreferences.getString("2020-05-02 15:24:55.987577"))
+          .thenThrow(Exception());
+      // act
+      final responseCall = localDataSourceImpl.updateTask;
       // assert
       expect(() => responseCall(tTaskModel2),
           throwsA(TypeMatcher<CacheException>()));
