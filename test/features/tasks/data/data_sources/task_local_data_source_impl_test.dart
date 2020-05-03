@@ -109,7 +109,6 @@ void main() {
     });
   });
 
-
   group("deleteTask", () {
     final tTaskModel = TaskModel(
       userId: "uid",
@@ -249,7 +248,8 @@ void main() {
           .thenReturn(fixture("task_list_model.json"));
       final stringToStore = json.encode(tTaskListModel.toJson());
       // act
-      final response = await localDataSourceImpl.getAllTasksForTheDate(tRunningDate);
+      final response =
+          await localDataSourceImpl.getAllTasksForTheDate(tRunningDate);
       // assert
       expect(response, tTaskListModel);
     });
@@ -259,7 +259,8 @@ void main() {
       when(sharedPreferences.getString("2020-05-02 15:24:55.987577"))
           .thenReturn(null);
       // act
-      final response = await localDataSourceImpl.getAllTasksForTheDate(tRunningDate);
+      final response =
+          await localDataSourceImpl.getAllTasksForTheDate(tRunningDate);
       // assert
       expect(response, tInitialTaskListModel);
     });
@@ -313,7 +314,9 @@ void main() {
 
     final tTaskListModel = TaskListModel(
       isSynced: true,
-      taskList: [tTaskModel,],
+      taskList: [
+        tTaskModel,
+      ],
       runningDate: DateTime.parse("2020-05-02 15:24:55.987577"),
     );
 
