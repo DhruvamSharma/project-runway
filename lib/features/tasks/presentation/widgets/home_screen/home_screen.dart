@@ -19,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   PageController _controller;
-
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     _controller = PageController(
@@ -31,26 +31,46 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: CommonColors.appBarColor,
       ),
       body: GestureDetector(
         onDoubleTap: () {
-          navigateToNewActivity();
+          if (_controller.page.toInt() == 0) {
+            _scaffoldKey.currentState.removeCurrentSnackBar();
+            _scaffoldKey.currentState.showSnackBar(
+              SnackBar(
+                elevation: 10,
+                behavior: SnackBarBehavior.floating,
+                content: Text("Sorry, you can only create task for today, ie,"
+                    " ${beautifyDate(buildRunningDate(
+                  DateTime.now(),
+                  _controller.initialPage,
+                ))}."),
+              ),
+            );
+          } else {
+            try {
+              navigateToNewActivity(_controller.page.toInt());
+            } on Exception catch (ex) {
+              // Report error
+            }
+          }
         },
         onLongPress: () {
           print("heello long");
         },
         child: Stack(
           children: <Widget>[
-              Align(
-                alignment: Alignment.topCenter,
-                child: Text(
-                  APP_NAME.toUpperCase(),
-                  style: CommonTextStyles.headerTextStyle(),
-                  textAlign: TextAlign.center,
-                ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: Text(
+                APP_NAME.toUpperCase(),
+                style: CommonTextStyles.headerTextStyle(),
+                textAlign: TextAlign.center,
               ),
+            ),
             Align(
               alignment: Alignment.center,
               child: RotatedBox(
@@ -86,9 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  navigateToNewActivity() {
+  navigateToNewActivity(int pageNumber) {
     Navigator.pushNamed(context, CreateTaskPage.routeName,
         arguments: CreateTaskScreenArguments(
-            runningDate: buildRunningDate(DateTime.now(), 1)));
+            runningDate: buildRunningDate(DateTime.now(), pageNumber)));
   }
 }

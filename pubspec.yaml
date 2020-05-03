@@ -39,6 +39,8 @@ dependencies:
   smooth_page_indicator: ^0.1.5
   # service locator
   get_it: ^4.0.2
+  # provider
+  provider: ^3.0.0
 
 dev_dependencies:
   flutter_test:
