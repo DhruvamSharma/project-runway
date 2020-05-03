@@ -33,6 +33,10 @@ dependencies:
   cloud_firestore: ^0.13.5
   # Bloc for state management
   flutter_bloc: ^0.21.0
+  #Fonts Package
+  google_fonts: ^1.0.0
+  # page indicator
+  smooth_page_indicator: ^0.1.5
 
 dev_dependencies:
   flutter_test:
