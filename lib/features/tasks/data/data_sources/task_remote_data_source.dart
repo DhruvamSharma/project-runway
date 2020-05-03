@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/errors/exceptions.dart';
 import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/features/tasks/data/common_task_method.dart';
 import 'package:project_runway/features/tasks/data/models/task_list_model.dart';
 import 'package:project_runway/features/tasks/data/models/task_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_list_entity.dart';
@@ -38,9 +39,10 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       }
       // add user id from the shared preferences
       final task = _addUserId(taskModel);
+      final syncedTask = markTaskAsSynced(task);
       // create the document
       final uploadedDocument =
-          await firestore.collection(taskCollection).add(task.toJson());
+          await firestore.collection(taskCollection).add(syncedTask.toJson());
       // Do not wait for this to finish
       // Update the task id into the database
       firestore
@@ -61,13 +63,14 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       initialChecks(taskModel);
       // add user id from the shared preferences
       final task = _addUserId(taskModel);
+      final syncedTask = markTaskAsSynced(task);
       // update the document for isDeleted = true
       firestore
           .collection(taskCollection)
-          .document(task.taskId)
+          .document(syncedTask.taskId)
           .updateData({"isDeleted": true});
       // update the model with isDeleted = true
-      final response = _updateIsDeleted(task);
+      final response = _updateIsDeleted(syncedTask);
       return response;
     } on Exception {
       throw ServerException(message: "Error occurred during task transaction");
@@ -100,6 +103,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         final response = TaskModel.fromJson(documentList.documents[i].data);
         taskList.add(response);
       }
+      // mark the list in shared preferences as synced
+
       final response = TaskListEntity(
         isSynced: true,
         taskList: taskList,
@@ -137,13 +142,14 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       initialChecks(taskModel);
       // add user id from the shared preferences
       final task = _addUserId(taskModel);
+      final syncedTask = markTaskAsSynced(task);
       // update the document for isDeleted = true
       firestore
           .collection(taskCollection)
-          .document(task.taskId)
-          .updateData(taskModel.toJson());
+          .document(syncedTask.taskId)
+          .updateData(syncedTask.toJson());
       // update the model with isDeleted = true
-      final response = _updateIsDeleted(task);
+      final response = _updateIsDeleted(syncedTask);
       return response;
     } on Exception catch (ex) {
       throw ServerException(message: "Error occurred during task transaction");

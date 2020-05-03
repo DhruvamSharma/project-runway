@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:project_runway/core/errors/exceptions.dart';
 import 'package:project_runway/core/errors/failures.dart';
 import 'package:project_runway/core/network/network_info.dart';
+import 'package:project_runway/features/tasks/data/common_task_method.dart';
 import 'package:project_runway/features/tasks/data/data_sources/task_local_data_source.dart';
 import 'package:project_runway/features/tasks/data/data_sources/task_remote_data_source.dart';
 import 'package:project_runway/features/tasks/data/models/task_list_model.dart';
@@ -60,7 +61,7 @@ class TaskRepositoryImpl implements TaskRepository {
       final syncedTask = markTaskAsSynced(task);
       try {
         remoteDataSource.createTask(syncedTask);
-        localDataSource.updateTask(syncedTask);
+        localDataSource.createTask(syncedTask);
         return Right(syncedTask);
       } on ServerException catch (ex) {
         // Do nothing
@@ -124,30 +125,15 @@ class TaskRepositoryImpl implements TaskRepository {
         return Left(ServerFailure(message: ex.message));
       }
     }
-    return null;
   }
 
   @override
   Future<Either<Failure, TaskEntity>> readTask(String taskId) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final response = await localDataSource.readTask(taskId);
-        return Right(response);
-      } on CacheException {
-        try {
-          final response = await remoteDataSource.readTask(taskId);
-          return Right(response);
-        } on ServerException catch (ex) {
-          return Left(ServerFailure(message: ex.message));
-        }
-      }
-    } else {
-      try {
-        final response = await localDataSource.readTask(taskId);
-        return Right(response);
-      } on CacheException catch (ex) {
-        return Left(CacheFailure(message: ex.message));
-      }
+    try {
+      final response = await remoteDataSource.readTask(taskId);
+      return Right(response);
+    } on ServerException catch (ex) {
+      return Left(ServerFailure(message: ex.message));
     }
   }
 
@@ -162,6 +148,7 @@ class TaskRepositoryImpl implements TaskRepository {
       try {
         final syncedTask = markTaskAsSynced(task);
         remoteDataSource.updateTask(syncedTask);
+        localDataSource.updateTask(syncedTask);
         return Right(syncedTask);
       } on ServerException catch (ex) {
         // Do nothing
@@ -171,26 +158,5 @@ class TaskRepositoryImpl implements TaskRepository {
         // try or catch block return will execute here
       }
     }
-  }
-
-  TaskModel markTaskAsSynced(TaskModel task) {
-    Map<String, dynamic> taskMap = task.toJson();
-    taskMap.update("isSynced", (value) => true, ifAbsent: () => false);
-    final syncedTask = TaskModel.fromJson(taskMap);
-    return syncedTask;
-  }
-
-  TaskModel markTaskAsCompleted(TaskModel task) {
-    Map<String, dynamic> taskMap = task.toJson();
-    taskMap.update("isCompleted", (value) => true, ifAbsent: () => false);
-    final syncedTask = TaskModel.fromJson(taskMap);
-    return syncedTask;
-  }
-
-  TaskModel markTaskAsDeleted(TaskModel task) {
-    Map<String, dynamic> taskMap = task.toJson();
-    taskMap.update("isDeleted", (value) => true, ifAbsent: () => false);
-    final syncedTask = TaskModel.fromJson(taskMap);
-    return syncedTask;
   }
 }

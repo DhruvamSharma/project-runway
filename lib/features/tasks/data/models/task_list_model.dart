@@ -22,7 +22,7 @@ class TaskListModel extends TaskListEntity {
       taskList.add(taskResponse);
     }
     return TaskListModel(
-      isSynced: map["isSuccess"],
+      isSynced: map["isSynced"],
       taskList: taskList,
       runningDate: dateParser(map["runningDate"]),
     );
@@ -35,7 +35,7 @@ class TaskListModel extends TaskListEntity {
       mapList.add(taskResponse);
     }
     return {
-      "isSuccess": isSynced,
+      "isSynced": isSynced,
       "taskList": mapList,
       "runningDate": dateToStringParser(runningDate),
     };
