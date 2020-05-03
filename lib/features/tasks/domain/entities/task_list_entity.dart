@@ -3,23 +3,23 @@ import 'package:flutter/widgets.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 
 class TaskListEntity extends Equatable {
-  final bool isSuccess;
+  final bool isSynced;
   final List<TaskEntity> taskList;
   // Running Date
-  final DateTime dateTime;
+  final DateTime runningDate;
 
   TaskListEntity({
-    @required this.isSuccess,
+    @required this.isSynced,
     @required this.taskList,
-    @required this.dateTime,
+    @required this.runningDate,
   });
 
   @override
   // TODO: implement props
   List<Object> get props => [
-        isSuccess,
+        isSynced,
         taskList,
-        dateTime,
+        runningDate,
       ];
 
   @override

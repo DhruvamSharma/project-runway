@@ -5,9 +5,9 @@ class UserEntity extends Equatable {
   final String userId;
   final String userName;
   final String phoneNumber;
-  final String age;
+  final int age;
   final String gender;
-  final String createdAt;
+  final DateTime createdAt;
   final double score;
   final bool isVerified;
   final bool isDeleted;

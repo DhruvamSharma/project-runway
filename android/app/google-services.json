@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "879231330672",
+    "firebase_url": "https://project-runway-8c477.firebaseio.com",
+    "project_id": "project-runway-8c477",
+    "storage_bucket": "project-runway-8c477.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:879231330672:android:fd13bafb595f3f4dfd87b5",
+        "android_client_info": {
+          "package_name": "io.dhruvam.project_runway"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "879231330672-s2tg75kvpb7ujqhepma3h40rm1vlp441.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.dhruvam.project_runway",
+            "certificate_hash": "8a4c1f10e2de741ca55630885c1d45c8a0c3c77b"
+          }
+        },
+        {
+          "client_id": "879231330672-k62jn7s5keo3akupksljvu2pgkkorpp4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZKppXbVYikNu7yyOZQ-DMorNk6RSBfc4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "879231330672-k62jn7s5keo3akupksljvu2pgkkorpp4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
