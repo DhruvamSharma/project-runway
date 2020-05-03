@@ -6,6 +6,7 @@ import 'package:project_runway/core/errors/exceptions.dart';
 import 'package:project_runway/features/tasks/data/common_task_method.dart';
 import 'package:project_runway/features/tasks/data/models/task_list_model.dart';
 import 'package:project_runway/features/tasks/data/models/task_model.dart';
+import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class TaskLocalDataSource {
@@ -34,6 +35,7 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
   Future<TaskModel> createTask(TaskModel taskModel) {
     try {
       final taskListKey = dateToStringParser(taskModel.runningDate);
+      print(taskListKey);
       final taskListString = sharedPreferences.getString(taskListKey);
       TaskListModel taskListModel;
       if (taskListString == null) {
@@ -118,10 +120,15 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
       TaskListModel taskListModel;
       // check if the shared preferences contains a list
       if (taskListString == null || taskListString.isEmpty) {
-        throw CacheException(message: "Failed: No data found to update");
+        taskListModel = TaskListModel(
+          isSynced: false,
+          taskList: [],
+          runningDate: taskModel.runningDate,
+        );
       } else {
         final Map<String, dynamic> taskMap = json.decode(taskListString);
         taskListModel = TaskListModel.fromJson(taskMap);
+        print(taskListModel.taskList.contains(taskModel));
         for (int i = 0; i < taskListModel.taskList.length; i++) {
           if (taskListModel.taskList[i].taskId == taskModel.taskId) {
             taskListModel.taskList.removeAt(i);

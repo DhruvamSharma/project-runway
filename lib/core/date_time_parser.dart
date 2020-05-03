@@ -18,6 +18,21 @@ String dateToStringParser(DateTime dateTime) {
   return formattedString;
 }
 
+DateTime buildRunningDate(DateTime currentDate, int pageNumber) {
+  DateTime runningDate;
+  if (pageNumber == 0) {
+    final dateTime = currentDate.subtract(Duration(days: 1));
+    runningDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+  } else if (pageNumber == 1) {
+    runningDate =
+        DateTime(currentDate.year, currentDate.month, currentDate.day);
+  } else if (pageNumber == 2) {
+    final dateTime = currentDate.add(Duration(days: 1));
+    runningDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+  }
+  return runningDate;
+}
+
 String beautifyDate(DateTime runningDate) {
   String beautifiedDate;
   beautifiedDate = "${runningDate.day} ${_monthTranslator(runningDate.month)} ${runningDate.year}";

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:project_runway/core/common_colors.dart';
 
 class CommonTextStyles {
-  static final TextStyle _googleFontStyle = GoogleFonts.aBeeZee();
+  static final TextStyle _googleFontStyle = GoogleFonts.baumans();
 
   static TextStyle headerTextStyle() {
     return _googleFontStyle.copyWith(
@@ -47,7 +47,16 @@ class CommonTextStyles {
       height: 1.5,
       color: CommonColors.taskTextColor,
       fontSize: 20,
-      letterSpacing: 10,
+      letterSpacing: 5,
+    );
+  }
+
+  static TextStyle disabledTaskTextStyle() {
+    return _googleFontStyle.copyWith(
+      height: 1.5,
+      color: CommonColors.disabledTaskTextColor,
+      fontSize: 20,
+      letterSpacing: 5,
     );
   }
 }

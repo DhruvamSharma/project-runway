@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/date_time_parser.dart';
@@ -9,6 +10,7 @@ import 'package:project_runway/features/tasks/data/models/task_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_list_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CurrentTaskPage extends StatefulWidget {
   final int pageNumber;
@@ -27,14 +29,13 @@ class _CurrentTaskPageState extends State<CurrentTaskPage> {
   @override
   void initState() {
     final currentDate = DateTime.now();
-    runningDate = buildDate(currentDate);
+    runningDate = buildRunningDate(currentDate, widget.pageNumber);
     taskList = TaskListEntity(
       isSynced: false,
       taskList: [],
       runningDate: runningDate,
     );
-    BlocProvider.of<HomeScreenTaskBloc>(context)
-        .dispatch(ReadAllTaskEvent(runningDate: runningDate));
+    getAllTasks();
     super.initState();
   }
 
@@ -42,14 +43,18 @@ class _CurrentTaskPageState extends State<CurrentTaskPage> {
   Widget build(BuildContext context) {
     return BlocListener<HomeScreenTaskBloc, TaskBlocState>(
       listener: (_, state) {
-        print(state);
         if (state is LoadedHomeScreenAllTasksState) {
           taskList = state.taskListEntity;
         }
         if (state is LoadedHomeScreenCompleteTaskState) {
-          final task = state.taskEntity;
-          print("in all task state");
-          print(taskList.taskList.indexOf(task));
+          for (int i = 0; i < taskList.taskList.length; i++) {
+            if (taskList.taskList[i].taskId == state.taskEntity.taskId) {
+              taskList.taskList[i].isCompleted =
+                  !taskList.taskList[i].isCompleted;
+              break;
+            }
+          }
+          setState(() {});
         }
         if (state is ErrorHomeScreenCompleteTaskState) {
           Scaffold.of(context).removeCurrentSnackBar();
@@ -73,7 +78,20 @@ class _CurrentTaskPageState extends State<CurrentTaskPage> {
             ),
             itemCount: taskList.taskList.length,
             itemBuilder: (_, i) {
-              return TaskWidget(task: taskList.taskList[i]);
+              return GestureDetector(
+                onTap: () {
+                  print("hello, task clicked");
+                },
+                child: Container(
+                  padding: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_40,
+                    left: CommonDimens.MARGIN_20,
+                    right: CommonDimens.MARGIN_20,
+                  ),
+                  color: Colors.transparent,
+                  child: TaskWidget(task: taskList.taskList[i]),
+                ),
+              );
             },
           )),
         ],
@@ -81,18 +99,8 @@ class _CurrentTaskPageState extends State<CurrentTaskPage> {
     );
   }
 
-  DateTime buildDate(DateTime currentDate) {
-    DateTime runningDate;
-    if (widget.pageNumber == 0) {
-      final dateTime = currentDate.subtract(Duration(days: 1));
-      runningDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
-    } else if (widget.pageNumber == 1) {
-      runningDate =
-          DateTime(currentDate.year, currentDate.month, currentDate.day);
-    } else if (widget.pageNumber == 2) {
-      final dateTime = currentDate.add(Duration(days: 1));
-      runningDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
-    }
-    return runningDate;
+  void getAllTasks() {
+    BlocProvider.of<HomeScreenTaskBloc>(context)
+        .dispatch(ReadAllTaskEvent(runningDate: runningDate));
   }
 }

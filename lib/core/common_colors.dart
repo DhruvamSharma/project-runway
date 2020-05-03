@@ -11,6 +11,7 @@ class CommonColors {
   // Text Colors
   static final Color headerTextColor = _getColor(0xffFFFFFF);
   static final Color taskTextColor = _getColor(0xffFFFFFF);
+  static final Color disabledTaskTextColor = _getColor(0xff707070);
   static final Color dateTextColor = _getColor(0xff3C3B3B);
   static final Color rotatedDesignTextColor = _getColor(0xff171616);
   static final Color taskBadgeTextColor = scaffoldColor;

@@ -24,6 +24,19 @@ class CompleteTaskEvent extends TaskBlocEvent {
       ];
 }
 
+class CreateTaskEvent extends TaskBlocEvent {
+  final TaskEntity task;
+
+  CreateTaskEvent({
+    @required this.task,
+  });
+
+  @override
+  List<Object> get props => [
+    task,
+  ];
+}
+
 class ReadAllTaskEvent extends TaskBlocEvent {
   final DateTime runningDate;
 

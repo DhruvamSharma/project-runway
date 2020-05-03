@@ -3,8 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
+import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
+import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,21 +30,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(_controller.page);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: CommonColors.appBarColor,
       ),
       body: GestureDetector(
         onDoubleTap: () {
-          print("heello");
+          navigateToNewActivity();
         },
         onLongPress: () {
           print("heello long");
         },
         child: Stack(
           children: <Widget>[
-            if (_controller.page == 1.0)
               Align(
                 alignment: Alignment.topCenter,
                 child: Text(
@@ -86,6 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   navigateToNewActivity() {
-
+    Navigator.pushNamed(context, CreateTaskPage.routeName,
+        arguments: CreateTaskScreenArguments(
+            runningDate: buildRunningDate(DateTime.now(), 1)));
   }
 }

@@ -2,26 +2,26 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 
 class TaskEntity extends Equatable {
-  final String userId;
-  final String taskId;
-  final String taskTitle;
-  final String description;
+  String userId;
+  String taskId;
+  String taskTitle;
+  String description;
   // defines a score to task
-  final int urgency;
+  int urgency;
   // defines a type to task
-  final String tag;
+  String tag;
   // when to update about the task
-  final DateTime notificationTime;
-  final DateTime createdAt;
+  DateTime notificationTime;
+  DateTime createdAt;
   // will be same as createdAt when created
   // If the object is moved to the next day
   // the running date will be changed
-  final DateTime runningDate;
-  final DateTime lastUpdatedAt;
-  final bool isSynced;
-  final bool isDeleted;
-  final bool isMovable;
-  final bool isCompleted;
+  DateTime runningDate;
+  DateTime lastUpdatedAt;
+  bool isSynced;
+  bool isDeleted;
+  bool isMovable;
+  bool isCompleted;
 
   TaskEntity({
     @required this.userId,
