@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 
 abstract class TaskBlocEvent extends Equatable {
   final List customProps = const <dynamic>[];
@@ -11,15 +12,15 @@ abstract class TaskBlocEvent extends Equatable {
 }
 
 class CompleteTaskEvent extends TaskBlocEvent {
-  final String taskId;
+  final TaskEntity task;
 
   CompleteTaskEvent({
-    @required this.taskId,
+    @required this.task,
   });
 
   @override
   List<Object> get props => [
-        taskId,
+        task,
       ];
 }
 

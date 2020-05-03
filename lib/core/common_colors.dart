@@ -4,12 +4,17 @@ class CommonColors {
 
   // Theme colors
   static final Color primarySwatch = Colors.amber;
+  static final Color accentColor = _getColor(0xffFFFFFF);
   static final Color scaffoldColor = _getColor(0xff080808);
+  static final Color toggleableActiveColor = Colors.transparent;
 
   // Text Colors
   static final Color headerTextColor = _getColor(0xffFFFFFF);
+  static final Color taskTextColor = _getColor(0xffFFFFFF);
   static final Color dateTextColor = _getColor(0xff3C3B3B);
   static final Color rotatedDesignTextColor = _getColor(0xff171616);
+  static final Color taskBadgeTextColor = scaffoldColor;
+  static final Color taskBadgeColor = accentColor;
 
   // App bar colors
   static final Color appBarColor = Colors.transparent;

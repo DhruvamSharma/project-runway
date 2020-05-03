@@ -14,7 +14,7 @@ description: A clean TODO application
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -37,6 +37,8 @@ dependencies:
   google_fonts: ^1.0.0
   # page indicator
   smooth_page_indicator: ^0.1.5
+  # service locator
+  get_it: ^4.0.2
 
 dev_dependencies:
   flutter_test:

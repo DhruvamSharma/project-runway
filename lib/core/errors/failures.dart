@@ -57,11 +57,14 @@ String mapFailureToMessage(Failure failure) {
   // Instead of a regular 'if (failure is ServerFailure)...'
   switch (failure.runtimeType) {
     case ServerFailure:
-      return SERVER_FAILURE_MESSAGE;
+      String message = (failure as ServerFailure).message;
+      return message ?? SERVER_FAILURE_MESSAGE;
     case CacheFailure:
-      return CACHE_FAILURE_MESSAGE;
+      String message = (failure as CacheFailure).message;
+      return message ?? CACHE_FAILURE_MESSAGE;
     case PlatformFailure:
-      return PLATFORM_FAILURE_MESSAGE;
+      String message = (failure as PlatformFailure).message;
+      return message ?? PLATFORM_FAILURE_MESSAGE;
     default:
       return 'Unexpected Error';
   }

@@ -14,7 +14,7 @@ abstract class TaskLocalDataSource {
   Future<TaskModel> updateTask(TaskModel taskModel);
   Future<TaskModel> deleteTask(TaskModel taskModel);
   Future<TaskModel> readTask(String taskId);
-  Future<TaskModel> completeTask(String taskId);
+  Future<TaskModel> completeTask(TaskModel taskModel);
 }
 
 class TaskLocalDataSourceImpl implements TaskLocalDataSource {
@@ -25,7 +25,7 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
   });
 
   @override
-  Future<TaskModel> completeTask(String taskId) async {
+  Future<TaskModel> completeTask(TaskModel taskModel) async {
     // only for firebase based solution
     throw CacheException(message: "only for firebase based solution");
   }
@@ -57,7 +57,6 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
 
   @override
   Future<TaskModel> deleteTask(TaskModel taskModel) {
-
     if (taskModel.isDeleted) {
       return Future.value(taskModel);
     }
@@ -117,13 +116,14 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
       final taskListKey = dateToStringParser(taskModel.runningDate);
       final taskListString = sharedPreferences.getString(taskListKey);
       TaskListModel taskListModel;
+      // check if the shared preferences contains a list
       if (taskListString == null || taskListString.isEmpty) {
         throw CacheException(message: "Failed: No data found to update");
       } else {
         final Map<String, dynamic> taskMap = json.decode(taskListString);
         taskListModel = TaskListModel.fromJson(taskMap);
-        for (int i = 0; i < taskListModel.taskList.length; i ++) {
-          if(taskListModel.taskList[i].taskId == taskModel.taskId) {
+        for (int i = 0; i < taskListModel.taskList.length; i++) {
+          if (taskListModel.taskList[i].taskId == taskModel.taskId) {
             taskListModel.taskList.removeAt(i);
             taskListModel.taskList.add(taskModel);
             break;
@@ -134,7 +134,7 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
       }
       return Future.value(taskModel);
     } on Exception {
-      throw CacheException(message: "Failed: Deleting a task failed");
+      throw CacheException(message: "Failed: Updating a task failed");
     }
   }
 }

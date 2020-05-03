@@ -79,6 +79,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
 
   @override
   Future<TaskListModel> getAllTasksForTheDate(DateTime runningDate) async {
+//    print("here in remote");
+    sharedPreferences.setString(USER_KEY, "Dhruvam");
     try {
       // checking for the nullability of running date
       if (runningDate == null) {
@@ -104,8 +106,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         taskList.add(response);
       }
       // mark the list in shared preferences as synced
-
-      final response = TaskListEntity(
+      final response = TaskListModel(
         isSynced: true,
         taskList: taskList,
         runningDate: runningDate,
@@ -138,6 +139,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
 
   @override
   Future<TaskModel> updateTask(TaskModel taskModel) async {
+    print(taskModel.taskId);
     try {
       initialChecks(taskModel);
       // add user id from the shared preferences

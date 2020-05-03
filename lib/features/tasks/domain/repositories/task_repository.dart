@@ -13,7 +13,7 @@ abstract class TaskRepository {
 
   Future<Either<Failure, TaskEntity>> readTask(String taskId);
 
-  Future<Either<Failure, TaskEntity>> completeTask(String taskId);
+  Future<Either<Failure, TaskEntity>> completeTask(TaskEntity task);
 
   Future<Either<Failure, TaskEntity>> updateTask(TaskEntity task);
 }

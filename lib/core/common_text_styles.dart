@@ -24,12 +24,30 @@ class CommonTextStyles {
     );
   }
 
+  static TextStyle badgeTextStyle() {
+    return _googleFontStyle.copyWith(
+      height: 1.5,
+      color: CommonColors.taskBadgeTextColor,
+      fontSize: 10,
+      letterSpacing: 4,
+    );
+  }
+
   static TextStyle rotatedDesignTextStyle() {
     return _googleFontStyle.copyWith(
       height: 1.5,
       color: CommonColors.rotatedDesignTextColor,
       fontSize: 40,
       letterSpacing: 30,
+    );
+  }
+
+  static TextStyle taskTextStyle() {
+    return _googleFontStyle.copyWith(
+      height: 1.5,
+      color: CommonColors.taskTextColor,
+      fontSize: 20,
+      letterSpacing: 10,
     );
   }
 }

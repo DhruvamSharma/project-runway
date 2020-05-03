@@ -56,11 +56,11 @@ void main() {
         when(taskRepository.completeTask(any))
             .thenAnswer((_) async => Right(tTaskEntity));
         // act
-        await useCase(StringParam(
-          taskId: tTaskId,
+        await useCase(TaskParam(
+          taskEntity: tTaskEntity,
         ));
         // assert
-        verify(taskRepository.completeTask(tTaskId));
+        verify(taskRepository.completeTask(tTaskEntity));
       });
 
   test(
@@ -70,12 +70,12 @@ void main() {
         when(taskRepository.completeTask(any))
             .thenAnswer((_) async => Right(tTaskEntity));
         // act
-        final response = await useCase(StringParam(
-          taskId: tTaskId,
+        final response = await useCase(TaskParam(
+          taskEntity: tTaskEntity,
         ));
         // assert
         expect(response, Right(tTaskEntity));
-        verify(taskRepository.completeTask(tTaskId));
+        verify(taskRepository.completeTask(tTaskEntity));
       });
 
   test(
@@ -85,11 +85,11 @@ void main() {
         when(taskRepository.completeTask(any))
             .thenAnswer((_) async => Left(ServerFailure()));
         // act
-        final response = await useCase(StringParam(
-          taskId: tTaskId,
+        final response = await useCase(TaskParam(
+          taskEntity: tTaskEntity,
         ));
         // assert
         expect(response, Left(ServerFailure()));
-        verify(taskRepository.completeTask(tTaskId));
+        verify(taskRepository.completeTask(tTaskEntity));
       });
 }

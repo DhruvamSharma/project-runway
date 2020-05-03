@@ -5,7 +5,7 @@ import 'package:project_runway/core/use_case.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/domain/repositories/task_repository.dart';
 
-class GetCompleteTaskUseCase extends UseCase<TaskEntity, StringParam> {
+class GetCompleteTaskUseCase extends UseCase<TaskEntity, TaskParam> {
   TaskRepository repository;
 
   GetCompleteTaskUseCase({
@@ -13,8 +13,8 @@ class GetCompleteTaskUseCase extends UseCase<TaskEntity, StringParam> {
   });
 
   @override
-  Future<Either<Failure, TaskEntity>> call(StringParam params) {
-    final response = repository.completeTask(params.taskId);
+  Future<Either<Failure, TaskEntity>> call(TaskParam params) {
+    final response = repository.completeTask(params.taskEntity);
     return response;
   }
 }

@@ -13,8 +13,8 @@ class GetAllTasksForDateUseCase extends UseCase<TaskListEntity, DateParam> {
   });
 
   @override
-  Future<Either<Failure, TaskListEntity>> call(DateParam params) {
-    final response = repository.getAllTasksForTheDate(params.runningDate);
+  Future<Either<Failure, TaskListEntity>> call(DateParam params) async {
+    final response = await repository.getAllTasksForTheDate(params.runningDate);
     return response;
   }
 }

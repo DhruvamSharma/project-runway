@@ -711,9 +711,9 @@ void main() {
       when(remoteDataSource.readTask(tTaskId))
           .thenAnswer((_) async => tTaskModel);
       // act
-      await repositoryImpl.completeTask(tTaskId);
+      await repositoryImpl.completeTask(tTaskModel);
       // assert
-      verify(localDataSource.completeTask(tTaskId));
+      verify(localDataSource.completeTask(tCompletedTask));
     });
 
     test(
@@ -723,7 +723,7 @@ void main() {
       when(remoteDataSource.readTask(tTaskId))
           .thenAnswer((_) async => tTaskModel);
       // act
-      final response = await repositoryImpl.completeTask(tTaskId);
+      final response = await repositoryImpl.completeTask(tTaskModel);
       // assert
       expect(response, Right(tSyncedCompletedTask));
     });
@@ -736,7 +736,7 @@ void main() {
           .thenAnswer((_) async => tCompletedTask);
       when(remoteDataSource.readTask(tTaskId)).thenThrow(ServerException());
       // act
-      final response = await repositoryImpl.completeTask(tTaskId);
+      final response = await repositoryImpl.completeTask(tTaskModel);
       // assert
       expect(response, Right(tCompletedTask));
     });
@@ -748,7 +748,7 @@ void main() {
       when(localDataSource.completeTask(any)).thenThrow(CacheException());
       when(remoteDataSource.readTask(tTaskId)).thenThrow(ServerException());
       // act
-      final response = await repositoryImpl.completeTask(tTaskId);
+      final response = await repositoryImpl.completeTask(tCompletedTask);
       // assert
       expect(response, Left(CacheFailure()));
     });

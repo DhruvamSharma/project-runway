@@ -26,7 +26,7 @@ class HomeScreenTaskBloc extends Bloc<TaskBlocEvent, TaskBlocState> {
     if (event is CompleteTaskEvent) {
       yield LoadingHomeScreenState();
       final response =
-          await completeTaskUseCase(StringParam(taskId: event.taskId));
+          await completeTaskUseCase(TaskParam(taskEntity: event.task));
       yield response.fold(
         (failure) => ErrorHomeScreenCompleteTaskState(
             message: mapFailureToMessage(failure)),
