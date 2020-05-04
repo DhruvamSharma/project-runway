@@ -15,15 +15,17 @@ class TaskPage extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<HomeScreenTaskBloc>(
-      builder: (_) => sl<HomeScreenTaskBloc>(),
-      child: BlocBuilder<HomeScreenTaskBloc, TaskBlocState>(
-        builder: (_, state) {
-          return ChangeNotifierProvider<PageHolderProviderModel>(
-            create: (_) => PageHolderProviderModel(pageNumber: pageNumber),
-            child: CurrentTaskPage(),
-          );
-        },
+    return ChangeNotifierProvider<PageHolderProviderModel>(
+      create: (_) {
+        return PageHolderProviderModel(pageNumber: pageNumber);
+      },
+      child: BlocProvider<HomeScreenTaskBloc>(
+        builder: (_) => sl<HomeScreenTaskBloc>(),
+        child: BlocBuilder<HomeScreenTaskBloc, TaskBlocState>(
+          builder: (_, state) {
+            return CurrentTaskPage();
+          },
+        ),
       ),
     );
   }

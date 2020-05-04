@@ -20,7 +20,8 @@ class CurrentTaskPage extends StatefulWidget {
   _CurrentTaskPageState createState() => _CurrentTaskPageState();
 }
 
-class _CurrentTaskPageState extends State<CurrentTaskPage> {
+class _CurrentTaskPageState extends State<CurrentTaskPage>
+    with AutomaticKeepAliveClientMixin<CurrentTaskPage> {
   TaskListEntity taskList;
   DateTime runningDate;
   @override
@@ -30,15 +31,11 @@ class _CurrentTaskPageState extends State<CurrentTaskPage> {
 
   @override
   void didChangeDependencies() {
+    print("in change dependencies");
     final currentDate = DateTime.now();
     runningDate = buildRunningDate(
       currentDate,
       Provider.of<PageHolderProviderModel>(context).pageNumber,
-    );
-    taskList = TaskListEntity(
-      isSynced: false,
-      taskList: [],
-      runningDate: runningDate,
     );
     getAllTasks();
     super.didChangeDependencies();
@@ -46,10 +43,13 @@ class _CurrentTaskPageState extends State<CurrentTaskPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    if (taskList != null) print(taskList.taskList.length);
     return BlocListener<HomeScreenTaskBloc, TaskBlocState>(
       listener: (_, state) {
         if (state is LoadedHomeScreenAllTasksState) {
           taskList = state.taskListEntity;
+          setState(() {});
         }
         if (state is LoadedHomeScreenCompleteTaskState) {
           for (int i = 0; i < taskList.taskList.length; i++) {
@@ -82,43 +82,48 @@ class _CurrentTaskPageState extends State<CurrentTaskPage> {
               style: CommonTextStyles.dateTextStyle(),
             ),
           ),
-          Expanded(
-              child: ListView.builder(
-            padding: const EdgeInsets.only(
-              top: CommonDimens.MARGIN_40,
-              bottom: CommonDimens.MARGIN_20,
-            ),
-            itemCount: taskList.taskList.length,
-            itemBuilder: (_, i) {
-              return GestureDetector(
-                onTap: () {
-                  print("hello, task clicked");
-                },
-                child: Container(
-                  padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_40,
-                    left: CommonDimens.MARGIN_20,
-                    right: CommonDimens.MARGIN_20,
+          if (taskList != null)
+            Expanded(
+                child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(
+                top: CommonDimens.MARGIN_40,
+                bottom: CommonDimens.MARGIN_20,
+              ),
+              itemCount: taskList.taskList.length,
+              itemBuilder: (_, i) {
+                return GestureDetector(
+                  onTap: () {
+                    print("hello, task clicked");
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_40,
+                      left: CommonDimens.MARGIN_20,
+                      right: CommonDimens.MARGIN_20,
+                    ),
+                    color: Colors.transparent,
+                    child: ChangeNotifierProvider<TaskHolderProviderModel>(
+                      create: (_) => TaskHolderProviderModel(
+                          taskEntity: taskList.taskList[i]),
+                      child: TaskWidget(),
+                    ),
                   ),
-                  color: Colors.transparent,
-                  child: ChangeNotifierProvider<TaskHolderProviderModel>(
-                    create: (_) => TaskHolderProviderModel(taskEntity: taskList.taskList[i]),
-                    child: TaskWidget(),
-                  ),
-                ),
-              );
-            },
-          )),
+                );
+              },
+            )),
         ],
       ),
     );
   }
 
   void getAllTasks() {
-    print("getting all tasks");
     BlocProvider.of<HomeScreenTaskBloc>(context)
         .dispatch(ReadAllTaskEvent(runningDate: runningDate));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class TaskHolderProviderModel extends ChangeNotifier {
