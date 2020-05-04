@@ -84,7 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 textAlign: TextAlign.center,
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Align(
@@ -102,7 +101,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 80.0, bottom: CommonDimens.MARGIN_20,),
+              padding: const EdgeInsets.only(
+                top: 80.0,
+                bottom: CommonDimens.MARGIN_20,
+              ),
               child: PageView(
                 controller: _controller,
                 physics: BouncingScrollPhysics(),
