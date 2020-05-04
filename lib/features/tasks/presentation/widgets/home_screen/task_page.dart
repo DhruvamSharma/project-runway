@@ -5,6 +5,7 @@ import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/current_task_page.dart';
+import 'package:provider/provider.dart';
 
 class TaskPage extends StatelessWidget {
   final int pageNumber;
@@ -18,11 +19,22 @@ class TaskPage extends StatelessWidget {
       builder: (_) => sl<HomeScreenTaskBloc>(),
       child: BlocBuilder<HomeScreenTaskBloc, TaskBlocState>(
         builder: (_, state) {
-          return CurrentTaskPage(
-            pageNumber: pageNumber,
+          return ChangeNotifierProvider<PageHolderProviderModel>(
+            create: (_) => PageHolderProviderModel(pageNumber: pageNumber),
+            child: CurrentTaskPage(),
           );
         },
       ),
     );
+  }
+}
+
+class PageHolderProviderModel extends ChangeNotifier {
+  int pageNumber;
+  PageHolderProviderModel({
+    @required this.pageNumber,
+  });
+  void assignPageNumber(int newPageNumber) {
+    pageNumber = newPageNumber;
   }
 }

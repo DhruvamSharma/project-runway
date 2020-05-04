@@ -39,6 +39,28 @@ class LoadedHomeScreenCompleteTaskState extends TaskBlocState {
   List<Object> get props => [taskEntity];
 }
 
+class LoadedCreateScreenCreateTaskState extends TaskBlocState {
+  final TaskEntity taskEntity;
+
+  LoadedCreateScreenCreateTaskState({
+    @required this.taskEntity,
+  });
+
+  @override
+  List<Object> get props => [taskEntity];
+}
+
+class ErrorCreateScreenCreateTaskState extends TaskBlocState {
+  final String message;
+
+  ErrorCreateScreenCreateTaskState({
+    @required this.message,
+  });
+
+  @override
+  List<Object> get props => [message];
+}
+
 class ErrorHomeScreenAllTasksState extends TaskBlocState {
   final String message;
 

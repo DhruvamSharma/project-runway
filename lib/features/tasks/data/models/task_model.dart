@@ -56,12 +56,12 @@ class TaskModel extends TaskEntity {
 
   Map<String, dynamic> toJson() {
     return {
-      "userId": "uid",
-      "taskId": "tid",
-      "taskTitle": "tTitle",
-      "description": "tDescription",
-      "urgency": 2,
-      "tag": "rag",
+      "userId": userId,
+      "taskId": taskId,
+      "taskTitle": taskTitle,
+      "description": description,
+      "urgency": urgency,
+      "tag": tag,
       "notificationTime": dateToStringParser(notificationTime),
       "createdAt": dateToStringParser(createdAt),
       "runningDate": dateToStringParser(runningDate),

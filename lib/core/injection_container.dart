@@ -36,6 +36,7 @@ void taskInjection() {
   sl.registerFactory(() => HomeScreenTaskBloc(
         allTasksForDateUseCase: sl(),
         completeTaskUseCase: sl(),
+        createTaskUseCase: sl(),
       ));
   // usecase
   sl.registerLazySingleton(() => GetAllTasksForDateUseCase(repository: sl()));

@@ -139,18 +139,24 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
 
   @override
   Future<TaskModel> updateTask(TaskModel taskModel) async {
-    print(taskModel.taskId);
     try {
       initialChecks(taskModel);
       // add user id from the shared preferences
       final task = _addUserId(taskModel);
       final syncedTask = markTaskAsSynced(task);
-      // update the document for isDeleted = true
+
+      final firestoreDocument = await firestore
+          .collection(taskCollection)
+          .document(taskModel.taskId)
+          .get();
+      final firestoreTask = TaskModel.fromJson(firestoreDocument.data);
+      final response =
+          markTaskAsCompleted(firestoreTask, !firestoreTask.isCompleted);
       firestore
           .collection(taskCollection)
-          .document(syncedTask.taskId)
-          .updateData(syncedTask.toJson());
-      return syncedTask;
+          .document(response.taskId)
+          .updateData(response.toJson());
+      return response;
     } on Exception catch (ex) {
       throw ServerException(message: "Error occurred during task transaction");
     }

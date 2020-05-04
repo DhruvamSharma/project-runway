@@ -53,13 +53,15 @@ class TaskRepositoryImpl implements TaskRepository {
 
   @override
   Future<Either<Failure, TaskEntity>> createTask(TaskEntity task) async {
+    final taskModel = convertEntityToModel(task);
+    print(taskModel);
     try {
-      final response = await localDataSource.createTask(task);
+      final response = await localDataSource.createTask(taskModel);
       return Right(response);
     } on CacheException catch (ex) {
       return Left(CacheFailure(message: ex.message));
     } finally {
-      final syncedTask = markTaskAsSynced(task);
+      final syncedTask = markTaskAsSynced(taskModel);
       try {
         remoteDataSource.createTask(syncedTask);
         // update because the task is already created
@@ -150,5 +152,25 @@ class TaskRepositoryImpl implements TaskRepository {
         // try or catch block return will execute here
       }
     }
+  }
+
+  TaskModel convertEntityToModel(TaskEntity task) {
+    final taskModel = TaskModel(
+      userId: task.userId,
+      taskId: task.taskId,
+      taskTitle: task.taskTitle,
+      description: task.description,
+      urgency: task.urgency,
+      tag: task.tag,
+      notificationTime: task.notificationTime,
+      createdAt: task.createdAt,
+      runningDate: task.runningDate,
+      lastUpdatedAt: task.lastUpdatedAt,
+      isSynced: task.isSynced,
+      isDeleted: task.isDeleted,
+      isMovable: task.isMovable,
+      isCompleted: task.isCompleted,
+    );
+    return taskModel;
   }
 }

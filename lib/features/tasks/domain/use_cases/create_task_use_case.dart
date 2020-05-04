@@ -13,8 +13,8 @@ class GetCreateTaskUseCase extends UseCase<TaskEntity, TaskParam> {
   });
 
   @override
-  Future<Either<Failure, TaskEntity>> call(TaskParam params) {
-    final response = repository.createTask(params.taskEntity);
+  Future<Either<Failure, TaskEntity>> call(TaskParam params) async {
+    final response = await repository.createTask(params.taskEntity);
     return response;
   }
 }
