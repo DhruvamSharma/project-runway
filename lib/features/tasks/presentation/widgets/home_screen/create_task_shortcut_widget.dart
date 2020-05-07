@@ -8,10 +8,17 @@ import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
+import 'package:project_runway/features/tasks/presentation/widgets/home_screen/current_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:provider/provider.dart';
 
 class CreateTaskShortcutWidget extends StatelessWidget {
+  final int totalTaskNumber;
+
+  CreateTaskShortcutWidget({
+    @required this.totalTaskNumber,
+  });
+
   @override
   Widget build(BuildContext parentContext) {
     return ChangeNotifierProvider<InitialTaskTitleProviderModel>(
@@ -25,26 +32,18 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                 left: CommonDimens.MARGIN_20,
                 right: CommonDimens.MARGIN_20,
               ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Expanded(
-                    child: CustomTextField(
-                      null,
-                      null,
-                      enabled: Provider.of<PageHolderProviderModel>(context)
-                              .pageNumber !=
-                          0,
-                      onValueChange: (text) {
-                        Provider.of<InitialTaskTitleProviderModel>(context)
-                            .assignTaskTitle(text);
-                      },
-                      label: "Task Title",
-                      isRequired: true,
-                      errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
-                    ),
-                  ),
-                ],
+              child: CustomTextField(
+                null,
+                null,
+                enabled:
+                    Provider.of<PageHolderProviderModel>(context).pageNumber !=
+                        0,
+                onValueChange: (text) {
+                  Provider.of<InitialTaskTitleProviderModel>(context)
+                      .assignTaskTitle(text);
+                },
+                label: "Task Title",
+                isRequired: false,
               ),
             ),
             if (Provider.of<PageHolderProviderModel>(context).pageNumber != 0)
@@ -59,8 +58,8 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       OutlineButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
+                        onPressed: () async {
+                          final data = await Navigator.pushNamed(
                             context,
                             CreateTaskPage.routeName,
                             arguments: CreateTaskScreenArguments(
@@ -71,8 +70,13 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                                   Provider.of<InitialTaskTitleProviderModel>(
                                           context)
                                       .taskTitle,
+                              totalTasksCreated: totalTaskNumber,
                             ),
                           );
+                          if (data != null && data is TaskEntity) {
+                            Provider.of<TaskListHolderProvider>(context)
+                                .insertTaskToList(data);
+                          }
                         },
                         child: Text("More Details"),
                       ),
@@ -82,23 +86,38 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                         child: InkWell(
                           borderRadius: BorderRadius.all(Radius.circular(50)),
                           onTap: () {
-                            String initialTitle =
-                                Provider.of<InitialTaskTitleProviderModel>(
-                                        context)
-                                    .taskTitle;
-                            if (initialTitle != null &&
-                                initialTitle.isNotEmpty) {
-                              final task = createTaskArgs(context);
-                              BlocProvider.of<HomeScreenTaskBloc>(context)
-                                  .dispatch(CreateTaskEvent(task: task));
+                            // check if the user can create the task or not.
+                            if (totalTaskNumber <= TOTAL_TASK_CREATION_LIMIT) {
+                              String initialTitle =
+                                  Provider.of<InitialTaskTitleProviderModel>(
+                                          context)
+                                      .taskTitle;
+                              // check if the task is entered in the field or not
+                              if (initialTitle != null &&
+                                  initialTitle.isNotEmpty) {
+                                final task = createTaskArgs(context);
+                                BlocProvider.of<HomeScreenTaskBloc>(context)
+                                    .dispatch(CreateTaskEvent(task: task));
+                              } else {
+                                Scaffold.of(context).showSnackBar(
+                                  SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    content: Text(
+                                        "Please enter title for your amazing task"),
+                                  ),
+                                );
+                              }
                             } else {
                               Scaffold.of(context).showSnackBar(
                                 SnackBar(
+                                  behavior: SnackBarBehavior.floating,
                                   content: Text(
-                                      "Please enter title for the amazing task"),
+                                      "Sorry, you cannot create more any more tasks"),
                                 ),
                               );
                             }
+                            Provider.of<InitialTaskTitleProviderModel>(context)
+                                .assignTaskTitle(null);
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 32.0),

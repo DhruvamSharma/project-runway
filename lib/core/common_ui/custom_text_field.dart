@@ -98,8 +98,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         final val = TextSelection.collapsed(offset: offset);
         _controller.selection = val;
       } else {
-        final val =
-            TextSelection.collapsed(offset: _controller.text.runes.length);
+        final val = TextSelection.collapsed(
+            offset: _controller.text.runes.length);
         _controller.selection = val;
       }
     }
@@ -167,6 +167,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
           child: widget.trailingWidget,
         ),
         errorStyle: widget.errorTextStyle,
+        helperText: widget.helperText,
+        helperStyle: widget.helperTextStyle,
+        helperMaxLines: 2,
         errorBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: CommonColors.errorTextColor),
         ),

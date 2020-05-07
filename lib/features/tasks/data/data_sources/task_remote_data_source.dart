@@ -45,7 +45,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           await firestore.collection(taskCollection).add(syncedTask.toJson());
       // Do not wait for this to finish
       // Update the task id into the database
-      firestore
+      await firestore
           .collection(taskCollection)
           .document(uploadedDocument.documentID)
           .updateData({"taskId": uploadedDocument.documentID});
@@ -105,6 +105,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         final response = TaskModel.fromJson(documentList.documents[i].data);
         taskList.add(response);
       }
+      print("in remote ${taskList.length}");
       // mark the list in shared preferences as synced
       final response = TaskListModel(
         isSynced: true,

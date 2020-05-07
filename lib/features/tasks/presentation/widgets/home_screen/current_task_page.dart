@@ -27,17 +27,13 @@ class CurrentTaskPage extends StatefulWidget {
 
 class _CurrentTaskPageState extends State<CurrentTaskPage>
     with AutomaticKeepAliveClientMixin<CurrentTaskPage> {
-  TaskListEntity taskList;
   String initialTaskText;
-  @override
-  void initState() {
-    super.initState();
-  }
+  GlobalKey<AnimatedListState> animatedListStateKey =
+      GlobalKey();
 
   @override
   void didChangeDependencies() {
-    print("in change dependencies");
-    final currentDate = DateTime.now();
+    print("fetching tasks");
     getAllTasks();
     super.didChangeDependencies();
   }
@@ -45,96 +41,130 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    if (taskList != null) print(taskList.taskList.length);
-    return BlocListener<HomeScreenTaskBloc, TaskBlocState>(
-      listener: (_, state) {
-        if (state is LoadedHomeScreenAllTasksState) {
-          taskList = state.taskListEntity;
-          setState(() {});
-        }
-        if (state is LoadedCreateScreenCreateTaskState) {
-          taskList.taskList.add(state.taskEntity);
-          setState(() {});
-        }
-        if (state is LoadedHomeScreenCompleteTaskState) {
-          for (int i = 0; i < taskList.taskList.length; i++) {
-            // make the mutable list task complete or incomplete as requested
-            if (taskList.taskList[i].taskId == state.taskEntity.taskId) {
-              taskList.taskList[i].isCompleted =
-                  !taskList.taskList[i].isCompleted;
-              break;
-            }
-          }
-          setState(() {});
-        }
-        if (state is ErrorHomeScreenCompleteTaskState) {
-          Scaffold.of(context).removeCurrentSnackBar();
-          Scaffold.of(context).showSnackBar(SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text(state.message ??
-                "Sorry, could not update the task. Please check your internet connection"),
-          ));
-        }
-      },
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: CommonDimens.MARGIN_20,
-            ),
-            child: Text(
-              beautifyDate(
-                  Provider.of<PageHolderProviderModel>(context).runningDate ??
-                      ""),
-              style: CommonTextStyles.dateTextStyle(),
-            ),
-          ),
-          if (taskList != null)
-            Expanded(
-              child: SingleChildScrollView(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height*2,
-                  child: Column(
-                    children: <Widget>[
-                      CreateTaskShortcutWidget(),
-                      Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
-                            bottom: CommonDimens.MARGIN_20,
-                          ),
-                          itemCount: taskList.taskList.length,
-                          itemBuilder: (_, i) {
-                            return GestureDetector(
-                              onTap: () {
-                                print("hello, task clicked");
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.only(
-                                  top: CommonDimens.MARGIN_40,
-                                  left: CommonDimens.MARGIN_20,
-                                  right: CommonDimens.MARGIN_20,
-                                ),
-                                color: Colors.transparent,
-                                child: ChangeNotifierProvider<
-                                    TaskHolderProviderModel>(
-                                  create: (_) => TaskHolderProviderModel(
-                                      taskEntity: taskList.taskList[i]),
-                                  child: TaskWidget(),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+    return ChangeNotifierProvider<TaskListHolderProvider>(
+      create: (_) => TaskListHolderProvider(
+        listState: animatedListStateKey
+      ),
+      child: Builder(
+        builder: (providerContext) {
+          return BlocListener<HomeScreenTaskBloc, TaskBlocState>(
+            listener: (_, state) {
+              if (state is LoadedHomeScreenAllTasksState) {
+                Provider.of<TaskListHolderProvider>(providerContext)
+                    .assignTaskList(state.taskListEntity.taskList);
+              }
+
+              if (state is LoadedCreateScreenCreateTaskState) {
+                Provider.of<TaskListHolderProvider>(providerContext)
+                    .insertTaskToList(state.taskEntity);
+              }
+
+              if (state is LoadedHomeScreenCompleteTaskState) {
+                for (int i = 0;
+                    i <
+                        Provider.of<TaskListHolderProvider>(providerContext)
+                            .taskList
+                            .length;
+                    i++) {
+                  // make the mutable list task complete or incomplete as requested
+                  if (Provider.of<TaskListHolderProvider>(providerContext)
+                          .taskList[i]
+                          .taskId ==
+                      state.taskEntity.taskId) {
+                    Provider.of<TaskListHolderProvider>(providerContext)
+                            .taskList[i]
+                            .isCompleted =
+                        !Provider.of<TaskListHolderProvider>(providerContext)
+                            .taskList[i]
+                            .isCompleted;
+                    break;
+                  }
+                }
+              }
+              if (state is ErrorHomeScreenCompleteTaskState) {
+                Scaffold.of(context).removeCurrentSnackBar();
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text(state.message ??
+                      "Sorry, could not update the task. Please check your internet connection"),
+                ));
+              }
+            },
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: CommonDimens.MARGIN_20,
+                  ),
+                  child: Text(
+                    beautifyDate(Provider.of<PageHolderProviderModel>(context)
+                            .runningDate ??
+                        ""),
+                    style: CommonTextStyles.dateTextStyle(),
                   ),
                 ),
-              ),
+                if (Provider.of<TaskListHolderProvider>(providerContext)
+                        .taskList !=
+                    null)
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 2,
+                        child: Column(
+                          children: <Widget>[
+                            CreateTaskShortcutWidget(
+                              totalTaskNumber:
+                                  Provider.of<TaskListHolderProvider>(
+                                          providerContext)
+                                      .taskList
+                                      .length,
+                            ),
+                            Expanded(
+                              child: AnimatedList(
+                                key: animatedListStateKey,
+                                physics: NeverScrollableScrollPhysics(),
+                                initialItemCount: Provider.of<TaskListHolderProvider>(
+                                    providerContext)
+                                    .taskList.length,
+                                itemBuilder: (_,i, animation) {
+                                  return SizeTransition(
+                                    sizeFactor: animation,
+                                    child: Container(
+                                      padding: const EdgeInsets.only(
+                                        top: CommonDimens.MARGIN_40,
+                                        left: CommonDimens.MARGIN_20,
+                                        right: CommonDimens.MARGIN_20,
+                                      ),
+                                      color: Colors.transparent,
+                                      child: ChangeNotifierProvider<
+                                          TaskHolderProviderModel>(
+                                        key: ValueKey(
+                                            Provider.of<TaskListHolderProvider>(
+                                                    providerContext)
+                                                .taskList[i]
+                                                .taskId),
+                                        create: (context) =>
+                                            TaskHolderProviderModel(
+                                                taskEntity: Provider.of<
+                                                            TaskListHolderProvider>(
+                                                        providerContext)
+                                                    .taskList[i]),
+                                        child: TaskWidget(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -155,4 +185,28 @@ class TaskHolderProviderModel extends ChangeNotifier {
   TaskHolderProviderModel({
     @required this.taskEntity,
   });
+}
+
+class TaskListHolderProvider extends ChangeNotifier {
+  List<TaskEntity> taskList;
+  final GlobalKey<AnimatedListState> listState;
+
+  TaskListHolderProvider({@required this.listState,});
+
+  void assignTaskList(List<TaskEntity> taskEntityList) {
+    this.taskList = taskEntityList;
+    notifyListeners();
+  }
+
+  void insertTaskToList(TaskEntity taskEntity) {
+    this.taskList.insert(0, taskEntity);
+    listState.currentState.insertItem(0);
+    notifyListeners();
+  }
+
+  void addTaskToList(TaskEntity taskEntity) {
+    this.taskList.add(taskEntity);
+    listState.currentState.insertItem(0);
+    notifyListeners();
+  }
 }

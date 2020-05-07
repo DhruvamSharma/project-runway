@@ -37,92 +37,65 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: CommonColors.appBarColor,
       ),
-      body: GestureDetector(
-        onDoubleTap: () {
-          if (_controller.page.toInt() == 0) {
-            _scaffoldKey.currentState.removeCurrentSnackBar();
-            _scaffoldKey.currentState.showSnackBar(
-              SnackBar(
-                elevation: 10,
-                behavior: SnackBarBehavior.floating,
-                content: Text("Sorry, you can only create task for today, ie,"
-                    " ${beautifyDate(buildRunningDate(
-                  DateTime.now(),
-                  _controller.initialPage,
-                ))}."),
-              ),
-            );
-          } else {
-            try {
-              navigateToNewActivity(_controller.page.toInt());
-            } on Exception catch (ex) {
-              // Report error
-            }
-          }
-        },
-        onLongPress: () {
-          print("heello long");
-        },
-        child: Stack(
-          children: <Widget>[
-            Align(
-              alignment: Alignment.center,
-              child: RotatedBox(
-                quarterTurns: 3,
-                child: Text(
-                  APP_NAME.toUpperCase(),
-                  style: CommonTextStyles.rotatedDesignTextStyle(),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
+      body: Stack(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.center,
+            child: RotatedBox(
+              quarterTurns: 3,
               child: Text(
                 APP_NAME.toUpperCase(),
-                style: CommonTextStyles.headerTextStyle(),
+                style: CommonTextStyles.rotatedDesignTextStyle(),
                 textAlign: TextAlign.center,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: SmoothPageIndicator(
-                  controller: _controller,
-                  count: 3,
-                  effect: ExpandingDotsEffect(
-                    radius: 10,
-                    dotHeight: 7,
-                    dotWidth: 7,
-                    activeDotColor: CommonColors.accentColor,
-                  ),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Text(
+              APP_NAME.toUpperCase(),
+              style: CommonTextStyles.headerTextStyle(),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: SmoothPageIndicator(
+                controller: _controller,
+                count: 3,
+                effect: ExpandingDotsEffect(
+                  radius: 10,
+                  dotHeight: 7,
+                  dotWidth: 7,
+                  activeDotColor: CommonColors.accentColor,
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 80.0,
-                bottom: CommonDimens.MARGIN_20,
-              ),
-              child: PageView(
-                controller: _controller,
-                physics: BouncingScrollPhysics(),
-                children: <Widget>[
-                  TaskPage(
-                    pageNumber: 0,
-                  ),
-                  TaskPage(
-                    pageNumber: 1,
-                  ),
-                  TaskPage(
-                    pageNumber: 2,
-                  ),
-                ],
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 80.0,
+              bottom: CommonDimens.MARGIN_20,
             ),
-          ],
-        ),
+            child: PageView(
+              controller: _controller,
+              physics: BouncingScrollPhysics(),
+              children: <Widget>[
+                TaskPage(
+                  pageNumber: 0,
+                ),
+                TaskPage(
+                  pageNumber: 1,
+                ),
+                TaskPage(
+                  pageNumber: 2,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

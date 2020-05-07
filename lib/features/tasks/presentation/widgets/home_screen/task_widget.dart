@@ -40,6 +40,7 @@ class _TaskWidgetState extends State<TaskWidget> {
           ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Expanded(
               child: Text(

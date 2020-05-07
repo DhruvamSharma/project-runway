@@ -45,4 +45,8 @@ class PageHolderProviderModel extends ChangeNotifier {
   void assignPageNumber(int newPageNumber) {
     pageNumber = newPageNumber;
   }
+
+  void updateWidgetTree() {
+    notifyListeners();
+  }
 }
