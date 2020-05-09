@@ -259,6 +259,9 @@ class TaskDetailProviderModel extends ChangeNotifier {
 
   TaskDetailProviderModel({
     this.taskTitle,
+    this.urgency,
+    this.tag,
+    this.description,
   });
 
   assignTaskTitle(String title) {

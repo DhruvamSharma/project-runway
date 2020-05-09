@@ -32,8 +32,21 @@ class CreateTaskEvent extends TaskBlocEvent {
 
   @override
   List<Object> get props => [
-    task,
-  ];
+        task,
+      ];
+}
+
+class UpdateTaskEvent extends TaskBlocEvent {
+  final TaskEntity task;
+
+  UpdateTaskEvent({
+    @required this.task,
+  });
+
+  @override
+  List<Object> get props => [
+        task,
+      ];
 }
 
 class ReadAllTaskEvent extends TaskBlocEvent {
