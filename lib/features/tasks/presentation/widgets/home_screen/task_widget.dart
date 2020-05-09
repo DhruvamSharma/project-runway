@@ -84,7 +84,6 @@ class _TaskWidgetState extends State<TaskWidget> {
           );
           if (taskEntity != null && taskEntity is TaskEntity) {
             taskEntity.isCompleted = isCompleted;
-            print(taskEntity);
             BlocProvider.of<HomeScreenTaskBloc>(context).dispatch(UpdateTaskEvent(task: taskEntity));
           }
         },

@@ -77,6 +77,12 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                     break;
                   }
                 }
+
+                setState(() {
+                  Provider.of<TaskListHolderProvider>(providerContext)
+                      .taskList
+                      .sort((a, b) => compareListItems(a, b));
+                });
               }
               if (state is ErrorHomeScreenCompleteTaskState) {
                 Scaffold.of(context).removeCurrentSnackBar();
@@ -118,7 +124,9 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                             ),
                             Expanded(
                               child: AnimatedList(
-                                padding: const EdgeInsets.symmetric(vertical: CommonDimens.MARGIN_20,),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: CommonDimens.MARGIN_20,
+                                ),
                                 key: animatedListStateKey,
                                 physics: NeverScrollableScrollPhysics(),
                                 initialItemCount:
@@ -189,6 +197,7 @@ class TaskListHolderProvider extends ChangeNotifier {
 
   void assignTaskList(List<TaskEntity> taskEntityList) {
     this.taskList = taskEntityList;
+    taskList.sort((a, b) => compareListItems(a, b));
     notifyListeners();
   }
 
@@ -203,4 +212,26 @@ class TaskListHolderProvider extends ChangeNotifier {
     listState.currentState.insertItem(0);
     notifyListeners();
   }
+}
+
+int compareListItems(TaskEntity a, TaskEntity b) {
+  int positiveOrNegativeIndex = 0;
+  if (a.isCompleted && !b.isCompleted) {
+    positiveOrNegativeIndex = 1;
+  }
+
+  if (!a.isCompleted && b.isCompleted) {
+    positiveOrNegativeIndex = -1;
+  }
+
+  if (a.isCompleted && b.isCompleted) {
+    if (a.urgency > b.urgency) {
+      positiveOrNegativeIndex = 1;
+    } else if (a.urgency < b.urgency) {
+      positiveOrNegativeIndex = -1;
+    } else {
+      positiveOrNegativeIndex = 0;
+    }
+  }
+  return positiveOrNegativeIndex;
 }
