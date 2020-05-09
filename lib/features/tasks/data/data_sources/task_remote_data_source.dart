@@ -45,7 +45,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           await firestore.collection(taskCollection).add(syncedTask.toJson());
       // Do not wait for this to finish
       // Update the task id into the database
-      firestore
+      await firestore
           .collection(taskCollection)
           .document(uploadedDocument.documentID)
           .updateData({"taskId": uploadedDocument.documentID});
@@ -79,6 +79,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
 
   @override
   Future<TaskListModel> getAllTasksForTheDate(DateTime runningDate) async {
+//    print("here in remote");
+    sharedPreferences.setString(USER_KEY, "Dhruvam");
     try {
       // checking for the nullability of running date
       if (runningDate == null) {
@@ -103,9 +105,9 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         final response = TaskModel.fromJson(documentList.documents[i].data);
         taskList.add(response);
       }
+      print("in remote ${taskList.length}");
       // mark the list in shared preferences as synced
-
-      final response = TaskListEntity(
+      final response = TaskListModel(
         isSynced: true,
         taskList: taskList,
         runningDate: runningDate,
@@ -143,12 +145,19 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       // add user id from the shared preferences
       final task = _addUserId(taskModel);
       final syncedTask = markTaskAsSynced(task);
-      // update the document for isDeleted = true
+
+      final firestoreDocument = await firestore
+          .collection(taskCollection)
+          .document(taskModel.taskId)
+          .get();
+      final firestoreTask = TaskModel.fromJson(firestoreDocument.data);
+      final response =
+          markTaskAsCompleted(firestoreTask, !firestoreTask.isCompleted);
       firestore
           .collection(taskCollection)
-          .document(syncedTask.taskId)
-          .updateData(syncedTask.toJson());
-      return syncedTask;
+          .document(response.taskId)
+          .updateData(response.toJson());
+      return response;
     } on Exception catch (ex) {
       throw ServerException(message: "Error occurred during task transaction");
     }

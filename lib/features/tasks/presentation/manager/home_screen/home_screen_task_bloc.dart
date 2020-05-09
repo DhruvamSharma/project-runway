@@ -4,16 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:project_runway/core/errors/failures.dart';
 import 'package:project_runway/core/use_case.dart';
 import 'package:project_runway/features/tasks/domain/use_cases/complete_task_use_case.dart';
+import 'package:project_runway/features/tasks/domain/use_cases/create_task_use_case.dart';
 import 'package:project_runway/features/tasks/domain/use_cases/get_all_tasks_for_date_use_case.dart';
 import '../bloc.dart';
 
 class HomeScreenTaskBloc extends Bloc<TaskBlocEvent, TaskBlocState> {
   final GetCompleteTaskUseCase completeTaskUseCase;
   final GetAllTasksForDateUseCase allTasksForDateUseCase;
+  final GetCreateTaskUseCase createTaskUseCase;
 
   HomeScreenTaskBloc({
     @required this.completeTaskUseCase,
     @required this.allTasksForDateUseCase,
+    @required this.createTaskUseCase,
   });
 
   @override
@@ -26,7 +29,7 @@ class HomeScreenTaskBloc extends Bloc<TaskBlocEvent, TaskBlocState> {
     if (event is CompleteTaskEvent) {
       yield LoadingHomeScreenState();
       final response =
-          await completeTaskUseCase(StringParam(taskId: event.taskId));
+          await completeTaskUseCase(TaskParam(taskEntity: event.task));
       yield response.fold(
         (failure) => ErrorHomeScreenCompleteTaskState(
             message: mapFailureToMessage(failure)),
@@ -37,9 +40,18 @@ class HomeScreenTaskBloc extends Bloc<TaskBlocEvent, TaskBlocState> {
       final response = await allTasksForDateUseCase(
           DateParam(runningDate: event.runningDate));
       yield response.fold(
-        (failure) => ErrorHomeScreenAllTasksState(
-            message: mapFailureToMessage(failure)),
+        (failure) =>
+            ErrorHomeScreenAllTasksState(message: mapFailureToMessage(failure)),
         (taskList) => LoadedHomeScreenAllTasksState(taskListEntity: taskList),
+      );
+    } else if (event is CreateTaskEvent) {
+      yield LoadingHomeScreenState();
+      final response =
+          await createTaskUseCase(TaskParam(taskEntity: event.task));
+      yield response.fold(
+        (failure) => ErrorCreateScreenCreateTaskState(
+            message: mapFailureToMessage(failure)),
+        (task) => LoadedCreateScreenCreateTaskState(taskEntity: task),
       );
     }
   }

@@ -1,26 +1,39 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 
 abstract class TaskBlocEvent extends Equatable {
   final List customProps = const <dynamic>[];
   const TaskBlocEvent();
 
   @override
-  // TODO: implement props
   List<Object> get props => customProps;
 }
 
 class CompleteTaskEvent extends TaskBlocEvent {
-  final String taskId;
+  final TaskEntity task;
 
   CompleteTaskEvent({
-    @required this.taskId,
+    @required this.task,
   });
 
   @override
   List<Object> get props => [
-        taskId,
+        task,
       ];
+}
+
+class CreateTaskEvent extends TaskBlocEvent {
+  final TaskEntity task;
+
+  CreateTaskEvent({
+    @required this.task,
+  });
+
+  @override
+  List<Object> get props => [
+    task,
+  ];
 }
 
 class ReadAllTaskEvent extends TaskBlocEvent {

@@ -6,6 +6,7 @@ import 'package:project_runway/core/errors/exceptions.dart';
 import 'package:project_runway/features/tasks/data/common_task_method.dart';
 import 'package:project_runway/features/tasks/data/models/task_list_model.dart';
 import 'package:project_runway/features/tasks/data/models/task_model.dart';
+import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class TaskLocalDataSource {
@@ -14,7 +15,7 @@ abstract class TaskLocalDataSource {
   Future<TaskModel> updateTask(TaskModel taskModel);
   Future<TaskModel> deleteTask(TaskModel taskModel);
   Future<TaskModel> readTask(String taskId);
-  Future<TaskModel> completeTask(String taskId);
+  Future<TaskModel> completeTask(TaskModel taskModel);
 }
 
 class TaskLocalDataSourceImpl implements TaskLocalDataSource {
@@ -25,7 +26,7 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
   });
 
   @override
-  Future<TaskModel> completeTask(String taskId) async {
+  Future<TaskModel> completeTask(TaskModel taskModel) async {
     // only for firebase based solution
     throw CacheException(message: "only for firebase based solution");
   }
@@ -34,6 +35,7 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
   Future<TaskModel> createTask(TaskModel taskModel) {
     try {
       final taskListKey = dateToStringParser(taskModel.runningDate);
+      print(taskListKey);
       final taskListString = sharedPreferences.getString(taskListKey);
       TaskListModel taskListModel;
       if (taskListString == null) {
@@ -57,7 +59,6 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
 
   @override
   Future<TaskModel> deleteTask(TaskModel taskModel) {
-
     if (taskModel.isDeleted) {
       return Future.value(taskModel);
     }
@@ -117,13 +118,19 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
       final taskListKey = dateToStringParser(taskModel.runningDate);
       final taskListString = sharedPreferences.getString(taskListKey);
       TaskListModel taskListModel;
+      // check if the shared preferences contains a list
       if (taskListString == null || taskListString.isEmpty) {
-        throw CacheException(message: "Failed: No data found to update");
+        taskListModel = TaskListModel(
+          isSynced: false,
+          taskList: [],
+          runningDate: taskModel.runningDate,
+        );
       } else {
         final Map<String, dynamic> taskMap = json.decode(taskListString);
         taskListModel = TaskListModel.fromJson(taskMap);
-        for (int i = 0; i < taskListModel.taskList.length; i ++) {
-          if(taskListModel.taskList[i].taskId == taskModel.taskId) {
+        print(taskListModel.taskList.contains(taskModel));
+        for (int i = 0; i < taskListModel.taskList.length; i++) {
+          if (taskListModel.taskList[i].taskId == taskModel.taskId) {
             taskListModel.taskList.removeAt(i);
             taskListModel.taskList.add(taskModel);
             break;
@@ -134,7 +141,7 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
       }
       return Future.value(taskModel);
     } on Exception {
-      throw CacheException(message: "Failed: Deleting a task failed");
+      throw CacheException(message: "Failed: Updating a task failed");
     }
   }
 }

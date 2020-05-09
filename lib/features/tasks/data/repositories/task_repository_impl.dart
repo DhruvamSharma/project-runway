@@ -24,26 +24,27 @@ class TaskRepositoryImpl implements TaskRepository {
   });
 
   @override
-  Future<Either<Failure, TaskEntity>> completeTask(String taskId) async {
+  Future<Either<Failure, TaskEntity>> completeTask(TaskEntity task) async {
     try {
       // will be returned a task that is marked
       // completed from the local data source
-      final response = await localDataSource.completeTask(taskId);
+      final response = await localDataSource.completeTask(task);
       return Right(response);
     } on CacheException catch (ex) {
       return Left(CacheFailure(message: ex.message));
     } finally {
       try {
-        final task = await remoteDataSource.readTask(taskId);
         final syncedTask = markTaskAsSynced(task);
         final completedTask = markTaskAsCompleted(syncedTask);
         remoteDataSource.updateTask(completedTask);
         localDataSource.updateTask(completedTask);
         return Right(completedTask);
       } on ServerException catch (ex) {
+        print(ex.message);
         // Do nothing
         // try or catch block return will execute here
       } on CacheException catch (ex) {
+        print(ex.message);
         // Do nothing
         // try or catch block return will execute here
       }
@@ -52,18 +53,20 @@ class TaskRepositoryImpl implements TaskRepository {
 
   @override
   Future<Either<Failure, TaskEntity>> createTask(TaskEntity task) async {
+    final taskModel = convertEntityToModel(task);
+    print(taskModel.taskId);
     try {
-      final response = await localDataSource.createTask(task);
+      final response = await localDataSource.createTask(taskModel);
       return Right(response);
     } on CacheException catch (ex) {
       return Left(CacheFailure(message: ex.message));
     } finally {
-      final syncedTask = markTaskAsSynced(task);
+      final syncedTask = markTaskAsSynced(taskModel);
       try {
-        remoteDataSource.createTask(syncedTask);
+        final response = await remoteDataSource.createTask(syncedTask);
         // update because the task is already created
         localDataSource.updateTask(syncedTask);
-        return Right(syncedTask);
+        return Right(response);
       } on ServerException catch (ex) {
         // Do nothing
         // try or catch block return will execute here
@@ -103,28 +106,18 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   Future<Either<Failure, TaskListEntity>> getAllTasksForTheDate(
       DateTime runningDate) async {
-    if (await networkInfo.isConnected) {
+    try {
+      final TaskListModel response =
+          await localDataSource.getAllTasksForTheDate(runningDate);
+      return Right(response);
+    } on CacheException catch (ex) {
+      return Left(ServerFailure(message: ex.message));
+    } finally {
       try {
-        final TaskListModel response =
-            await localDataSource.getAllTasksForTheDate(runningDate);
+        final response =
+            await remoteDataSource.getAllTasksForTheDate(runningDate);
         return Right(response);
-      } on CacheException catch (ex) {
-        try {
-          final response =
-              await remoteDataSource.getAllTasksForTheDate(runningDate);
-          return Right(response);
-        } on ServerException catch (ex) {
-          return Left(ServerFailure(message: ex.message));
-        }
-      }
-    } else {
-      try {
-        final TaskListModel response =
-            await localDataSource.getAllTasksForTheDate(runningDate);
-        return Right(response);
-      } on CacheException catch (ex) {
-        return Left(ServerFailure(message: ex.message));
-      }
+      } on ServerException {} on CacheException {}
     }
   }
 
@@ -159,5 +152,25 @@ class TaskRepositoryImpl implements TaskRepository {
         // try or catch block return will execute here
       }
     }
+  }
+
+  TaskModel convertEntityToModel(TaskEntity task) {
+    final taskModel = TaskModel(
+      userId: task.userId,
+      taskId: task.taskId,
+      taskTitle: task.taskTitle,
+      description: task.description,
+      urgency: task.urgency,
+      tag: task.tag,
+      notificationTime: task.notificationTime,
+      createdAt: task.createdAt,
+      runningDate: task.runningDate,
+      lastUpdatedAt: task.lastUpdatedAt,
+      isSynced: task.isSynced,
+      isDeleted: task.isDeleted,
+      isMovable: task.isMovable,
+      isCompleted: task.isCompleted,
+    );
+    return taskModel;
   }
 }

@@ -59,15 +59,15 @@ void main() {
 //      when(completeTaskUseCase(StringParam(taskId: any)))
 //          .thenAnswer((_) async => Right(tTaskEntity));
       // act
-      homeScreenTaskBloc.dispatch(CompleteTaskEvent(taskId: tTaskId));
-      await untilCalled(completeTaskUseCase(StringParam(taskId: tTaskId)));
+      homeScreenTaskBloc.dispatch(CompleteTaskEvent(task: tTaskEntity));
+      await untilCalled(completeTaskUseCase(TaskParam(taskEntity: tTaskEntity)));
       // assert
-      verify(completeTaskUseCase(StringParam(taskId: tTaskId)));
+      verify(completeTaskUseCase(TaskParam(taskEntity: tTaskEntity)));
     });
 
     test("bloc should yeild [LOADING, LOADED] states, when the data is successfully fetched", () async {
       // assemble
-      when(completeTaskUseCase(StringParam(taskId: tTaskId)))
+      when(completeTaskUseCase(TaskParam(taskEntity: tTaskEntity)))
           .thenAnswer((_) async => Right(tTaskEntity));
       final tStates = [
         InitialTaskBlocState(),
@@ -75,7 +75,7 @@ void main() {
         LoadedHomeScreenCompleteTaskState(taskEntity: tTaskEntity),
       ];
       // act
-      homeScreenTaskBloc.dispatch(CompleteTaskEvent(taskId: tTaskId));
+      homeScreenTaskBloc.dispatch(CompleteTaskEvent(task: tTaskEntity));
       // assert
       expectLater(homeScreenTaskBloc.state, emitsInOrder(tStates));
     });
@@ -83,7 +83,7 @@ void main() {
 
     test("bloc should yeild [LOADING, ERROR] states, when the data is successfully fetched", () async {
       // assemble
-      when(completeTaskUseCase(StringParam(taskId: tTaskId)))
+      when(completeTaskUseCase(TaskParam(taskEntity: tTaskEntity)))
           .thenAnswer((_) async => Left(ServerFailure()));
       final tStates = [
         InitialTaskBlocState(),
@@ -91,7 +91,7 @@ void main() {
         ErrorHomeScreenCompleteTaskState(message: SERVER_FAILURE_MESSAGE),
       ];
       // act
-      homeScreenTaskBloc.dispatch(CompleteTaskEvent(taskId: tTaskId));
+      homeScreenTaskBloc.dispatch(CompleteTaskEvent(task: tTaskEntity));
       // assert
       expectLater(homeScreenTaskBloc.state, emitsInOrder(tStates));
     });
