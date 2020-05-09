@@ -50,6 +50,28 @@ class LoadedCreateScreenCreateTaskState extends TaskBlocState {
   List<Object> get props => [taskEntity];
 }
 
+class LoadedEditScreenState extends TaskBlocState {
+  final TaskEntity taskEntity;
+
+  LoadedEditScreenState({
+    @required this.taskEntity,
+  });
+
+  @override
+  List<Object> get props => [taskEntity];
+}
+
+class ErrorEditScreenState extends TaskBlocState {
+  final String message;
+
+  ErrorEditScreenState({
+    @required this.message,
+  });
+
+  @override
+  List<Object> get props => [message];
+}
+
 class ErrorCreateScreenCreateTaskState extends TaskBlocState {
   final String message;
 

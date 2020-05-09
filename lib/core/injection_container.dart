@@ -34,6 +34,7 @@ Future<void> serviceLocatorInit() async {
 void taskInjection() {
   // bloc
   sl.registerFactory(() => HomeScreenTaskBloc(
+        updateTaskUseCase: sl(),
         allTasksForDateUseCase: sl(),
         completeTaskUseCase: sl(),
         createTaskUseCase: sl(),
