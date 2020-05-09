@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:project_runway/core/common_colors.dart';
-import 'package:project_runway/core/common_text_styles.dart';
+
+import '../common_colors.dart';
+import '../common_text_styles.dart';
 
 class CustomTextField extends StatefulWidget {
   final String label;
@@ -27,34 +28,34 @@ class CustomTextField extends StatefulWidget {
   final EdgeInsets labelPadding;
   final Widget trailingWidget;
   final String textFieldValue;
-  final Function onTapForFirstTime;
   final bool enabled;
+  final Function onTapForFirstTime;
   final List<TextInputFormatter> textInputFormatter;
   CustomTextField(this.minNumberRequired, this.maxNumberRequired,
       {this.label = "ID NUMBER",
-      this.isRequired = true,
-      this.leadingIcon,
-      this.initialText,
-      this.onSubmitted,
-      this.errorText,
-      this.errorTextStyle,
-      this.onValueChange,
-      this.labelTextStyle,
-      this.textStyle,
-      this.hintStyle,
-      this.trailingWidget,
-      this.helperText,
-      this.helperTextStyle,
-      this.minAmount,
-      this.hint,
-      this.enabled = true,
-      this.textInputFormatter,
-      this.labelPadding,
-      this.prefixText,
-      this.prefixTextStyle,
-      this.textFieldValue,
-      this.onTapForFirstTime,
-      this.type});
+        this.isRequired = true,
+        this.leadingIcon,
+        this.initialText,
+        this.onSubmitted,
+        this.errorText,
+        this.errorTextStyle,
+        this.onValueChange,
+        this.labelTextStyle,
+        this.textStyle,
+        this.hintStyle,
+        this.trailingWidget,
+        this.helperText,
+        this.helperTextStyle,
+        this.minAmount,
+        this.hint,
+        this.textInputFormatter,
+        this.labelPadding,
+        this.prefixText,
+        this.prefixTextStyle,
+        this.textFieldValue,
+        this.onTapForFirstTime,
+        this.enabled = true,
+        this.type});
 
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
@@ -63,7 +64,7 @@ class CustomTextField extends StatefulWidget {
 class _CustomTextFieldState extends State<CustomTextField> {
   TextEditingController _controller;
   String errorText;
-  Color borderColor = CommonColors.disabledTaskTextColor;
+  Color borderColor = CommonColors.accentColor;
   FocusNode _focusNode = FocusNode();
 
   int tapCounter = 0;
@@ -88,20 +89,16 @@ class _CustomTextFieldState extends State<CustomTextField> {
   void didUpdateWidget(CustomTextField oldWidget) {
     // Assign new value to controller
     if (widget.textFieldValue != null) {
-      final offset = _controller.selection.extentOffset;
-      _controller.text = widget.textFieldValue;
+      _controller.value = TextEditingValue(
+        text: widget.textFieldValue,
+        selection: TextSelection.fromPosition(
+          TextPosition(
+            offset: widget.textFieldValue.length,
+          ),
+        ),
+      );
       // Set the border color
       checkForBorderColor(_controller.text);
-      // If the cursor is mid word, then stay there
-      // For Cursor to move to last letter
-      if (offset < _controller.text.length) {
-        final val = TextSelection.collapsed(offset: offset);
-        _controller.selection = val;
-      } else {
-        final val = TextSelection.collapsed(
-            offset: _controller.text.runes.length);
-        _controller.selection = val;
-      }
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -115,12 +112,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
           widget.onTapForFirstTime();
         }
       },
-      enabled: widget.enabled,
       controller: _controller,
       focusNode: _focusNode,
-      cursorColor: CommonColors.cursorColor,
+      cursorColor: borderColor,
       textAlign: TextAlign.left,
+      enabled: widget.enabled,
       textInputAction: TextInputAction.done,
+      enableSuggestions: true,
       keyboardType: widget.type,
       inputFormatters: widget.textInputFormatter,
       onChanged: (text) {
@@ -131,9 +129,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         widget.onValueChange(text);
       },
       style: widget.textStyle ??
-          CommonTextStyles.taskTextStyle().copyWith(
-            decoration: TextDecoration.none,
-          ),
+          buildTextStyle(),
       onFieldSubmitted: (text) {
         widget.onSubmitted(text);
       },
@@ -144,41 +140,33 @@ class _CustomTextFieldState extends State<CustomTextField> {
         return buildErrorText(newString);
       },
       decoration: InputDecoration(
+        isDense: true,
         contentPadding: widget.labelPadding,
         alignLabelWithHint: true,
         errorText: errorText,
-        prefixText: widget.prefixText,
-        prefixStyle: widget.prefixTextStyle,
-        prefixIcon: widget.leadingIcon == null
-            ? null
-            : Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: SizedBox(
-                  width: 0,
-                  height: 48,
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: widget.leadingIcon,
-                  ),
-                ),
-              ),
+        prefixText: buildPrefixText(),
+        prefixStyle: buildPrefixStyle(),
         suffixIcon: Padding(
           padding: const EdgeInsets.all(8.0),
           child: widget.trailingWidget,
         ),
-        errorStyle: widget.errorTextStyle,
+        errorStyle: widget.errorTextStyle ??
+            CommonTextStyles.errorFieldTextStyle(),
         helperText: widget.helperText,
-        helperStyle: widget.helperTextStyle,
-        helperMaxLines: 2,
+        helperMaxLines: 3,
+        helperStyle: widget.helperTextStyle ??
+            CommonTextStyles.badgeTextStyle(),
         errorBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: CommonColors.errorTextColor),
         ),
         labelStyle: widget.labelTextStyle ??
-            CommonTextStyles.taskTextStyle()
-                .copyWith(fontSize: 16, color: buildLabelAndHintColor()),
+            CommonTextStyles.taskTextStyle().copyWith(
+              color: buildLabelAndHintColor()
+            ),
         hintStyle: widget.hintStyle ??
-            CommonTextStyles.taskTextStyle()
-                .copyWith(fontSize: 16, color: buildLabelAndHintColor()),
+            CommonTextStyles.taskTextStyle().copyWith(
+              color: buildLabelAndHintColor(),
+            ),
         labelText: widget.label,
         border: UnderlineInputBorder(
           borderSide: BorderSide(color: borderColor),
@@ -193,12 +181,40 @@ class _CustomTextFieldState extends State<CustomTextField> {
     );
   }
 
+  TextStyle buildTextStyle() {
+    TextStyle textStyle = CommonTextStyles.taskTextStyle();
+    if (widget.enabled != null && !widget.enabled) {
+      textStyle = textStyle.copyWith(
+        color: Colors.grey,
+      );
+    }
+    return textStyle;
+  }
+
+  TextStyle buildPrefixStyle() {
+    TextStyle prefixTextStyle = widget.prefixTextStyle;
+    if (widget.leadingIcon != null && widget.leadingIcon is Text) {
+      Text text = (widget.leadingIcon as Text);
+      prefixTextStyle = text.style;
+    }
+    return prefixTextStyle;
+  }
+
+  String buildPrefixText() {
+    String prefixText = widget.prefixText;
+    if (widget.leadingIcon != null && widget.leadingIcon is Text) {
+      Text text = (widget.leadingIcon as Text);
+      prefixText = text.data;
+    }
+    return prefixText;
+  }
+
   Color buildLabelAndHintColor() {
     Color hintAndLabelColor;
-    if (_focusNode.hasFocus || _controller.text.isNotEmpty) {
-      hintAndLabelColor = Colors.grey;
+    if (widget.enabled != null && !widget.enabled) {
+      hintAndLabelColor = CommonColors.disabledTaskTextColor ;
     } else {
-      hintAndLabelColor = CommonColors.disabledTaskTextColor;
+      hintAndLabelColor = CommonColors.taskTextColor;
     }
     return hintAndLabelColor;
   }
@@ -209,7 +225,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             widget.maxNumberRequired != null)) {
       if (newText.length < widget.minNumberRequired) {
         errorText =
-            "${widget.label} length should be bigger than ${widget.minNumberRequired}";
+        "${widget.label} should be bigger than ${widget.minNumberRequired}";
       } else {
         errorText = null;
       }
@@ -217,13 +233,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
       if (widget.maxNumberRequired != null &&
           newText.length > widget.maxNumberRequired) {
         errorText =
-            "${widget.label} length should be less than ${widget.maxNumberRequired}";
+        "${widget.label} should be less than ${widget.maxNumberRequired}";
       }
 
       if (widget.minAmount != null) {
         if (int.parse(_controller.text) < widget.minAmount)
           errorText =
-              "${widget.label} length should not be less than ${widget.minAmount}";
+          "${widget.label} should not be less than ${widget.minAmount}";
         else
           errorText = null;
       }
@@ -233,14 +249,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
           (newText.length < widget.minNumberRequired ||
               newText.length > widget.minNumberRequired)) {
         errorText =
-            "${widget.label} should be exactly ${widget.minNumberRequired} digits";
+        "${widget.label} should be exactly ${widget.minNumberRequired} digits";
       }
     }
     return errorText;
   }
 
   String checkForEmptyString(String newString) {
-    if (newString == null || newString.length == 0) {
+    if (newString == null || newString.isEmpty) {
       if (widget.errorText == null || widget.errorText.isEmpty)
         errorText = "${widget.label} should not be empty";
       else
@@ -265,7 +281,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     if (errorCheckString == null &&
         _controller.text != null &&
         _controller.text.isNotEmpty) {
-      borderColor = CommonColors.accentColor;
+      borderColor = borderColor;
     }
   }
 

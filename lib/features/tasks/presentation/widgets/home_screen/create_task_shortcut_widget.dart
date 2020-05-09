@@ -42,6 +42,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                   Provider.of<InitialTaskTitleProviderModel>(context)
                       .assignTaskTitle(text);
                 },
+                textFieldValue: Provider.of<InitialTaskTitleProviderModel>(context).taskTitle,
                 label: "Task Title",
                 isRequired: false,
               ),
@@ -117,7 +118,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                               );
                             }
                             Provider.of<InitialTaskTitleProviderModel>(context)
-                                .assignTaskTitle(null);
+                                .assignTaskTitle("");
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 32.0),

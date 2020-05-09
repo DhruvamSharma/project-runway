@@ -27,7 +27,7 @@ class CreateTaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<TaskDetailProviderModel>(
-      create: (_) => TaskDetailProviderModel(),
+      create: (_) => TaskDetailProviderModel(taskTitle: initialTaskTitle),
       child: BlocProvider<HomeScreenTaskBloc>(
         builder: (_) => sl<HomeScreenTaskBloc>(),
         child: BlocBuilder<HomeScreenTaskBloc, TaskBlocState>(
@@ -256,6 +256,11 @@ class TaskDetailProviderModel extends ChangeNotifier {
   String urgency;
   String description;
   String tag;
+
+  TaskDetailProviderModel({
+    this.taskTitle,
+  });
+
   assignTaskTitle(String title) {
     taskTitle = title;
     notifyListeners();
