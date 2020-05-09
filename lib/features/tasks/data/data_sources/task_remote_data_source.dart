@@ -14,7 +14,9 @@ abstract class TaskRemoteDataSource {
   Future<TaskModel> createTask(TaskModel taskModel);
   Future<TaskModel> updateTask(TaskModel taskModel);
   Future<TaskModel> deleteTask(TaskModel taskModel);
+  Future<TaskModel> completeTask(TaskModel taskModel);
   Future<TaskModel> readTask(String taskId);
+
 }
 
 class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
@@ -146,13 +148,32 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       final task = _addUserId(taskModel);
       final syncedTask = markTaskAsSynced(task);
 
+      firestore
+          .collection(taskCollection)
+          .document(syncedTask.taskId)
+          .updateData(syncedTask.toJson());
+      return syncedTask;
+    } on Exception catch (ex) {
+      throw ServerException(message: "Error occurred during task transaction");
+    }
+  }
+
+  @override
+  Future<TaskModel> completeTask(TaskModel taskModel) async {
+    try {
+      initialChecks(taskModel);
+      // add user id from the shared preferences
+      final task = _addUserId(taskModel);
+      final syncedTask = markTaskAsSynced(task);
+
       final firestoreDocument = await firestore
           .collection(taskCollection)
           .document(taskModel.taskId)
           .get();
       final firestoreTask = TaskModel.fromJson(firestoreDocument.data);
       final response =
-          markTaskAsCompleted(firestoreTask, !firestoreTask.isCompleted);
+      markTaskAsCompleted(firestoreTask, !firestoreTask.isCompleted);
+      print(response);
       firestore
           .collection(taskCollection)
           .document(response.taskId)

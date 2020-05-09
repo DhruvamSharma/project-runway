@@ -34,11 +34,9 @@ class TaskRepositoryImpl implements TaskRepository {
       return Left(CacheFailure(message: ex.message));
     } finally {
       try {
-        final syncedTask = markTaskAsSynced(task);
-        final completedTask = markTaskAsCompleted(syncedTask);
-        remoteDataSource.updateTask(completedTask);
-        localDataSource.updateTask(completedTask);
-        return Right(completedTask);
+        final response = await remoteDataSource.completeTask(task);
+        localDataSource.updateTask(response);
+        return Right(response);
       } on ServerException catch (ex) {
         print(ex.message);
         // Do nothing
@@ -133,6 +131,7 @@ class TaskRepositoryImpl implements TaskRepository {
 
   @override
   Future<Either<Failure, TaskEntity>> updateTask(TaskEntity task) async {
+    print("in repos");
     try {
       final response = await localDataSource.updateTask(task);
       return Right(response);
@@ -140,10 +139,11 @@ class TaskRepositoryImpl implements TaskRepository {
       return Left(CacheFailure(message: ex.message));
     } finally {
       try {
+        print("in finally");
         final syncedTask = markTaskAsSynced(task);
-        remoteDataSource.updateTask(syncedTask);
+        final response = await remoteDataSource.updateTask(syncedTask);
         localDataSource.updateTask(syncedTask);
-        return Right(syncedTask);
+        return Right(response);
       } on ServerException catch (ex) {
         // Do nothing
         // try or catch block return will execute here

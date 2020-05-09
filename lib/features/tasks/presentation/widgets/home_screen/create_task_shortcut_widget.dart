@@ -60,6 +60,10 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                     children: <Widget>[
                       OutlineButton(
                         onPressed: () async {
+                          String taskTitle = Provider.of<InitialTaskTitleProviderModel>(context)
+                              .taskTitle;
+                          Provider.of<InitialTaskTitleProviderModel>(context)
+                              .assignTaskTitle("");
                           final data = await Navigator.pushNamed(
                             context,
                             CreateTaskPage.routeName,
@@ -67,10 +71,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                               runningDate:
                                   Provider.of<PageHolderProviderModel>(context)
                                       .runningDate,
-                              initialTaskTitle:
-                                  Provider.of<InitialTaskTitleProviderModel>(
-                                          context)
-                                      .taskTitle,
+                              initialTaskTitle: taskTitle,
                               totalTasksCreated: totalTaskNumber,
                             ),
                           );

@@ -28,8 +28,7 @@ class CurrentTaskPage extends StatefulWidget {
 class _CurrentTaskPageState extends State<CurrentTaskPage>
     with AutomaticKeepAliveClientMixin<CurrentTaskPage> {
   String initialTaskText;
-  GlobalKey<AnimatedListState> animatedListStateKey =
-      GlobalKey();
+  GlobalKey<AnimatedListState> animatedListStateKey = GlobalKey();
 
   @override
   void didChangeDependencies() {
@@ -42,9 +41,7 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
   Widget build(BuildContext context) {
     super.build(context);
     return ChangeNotifierProvider<TaskListHolderProvider>(
-      create: (_) => TaskListHolderProvider(
-        listState: animatedListStateKey
-      ),
+      create: (_) => TaskListHolderProvider(listState: animatedListStateKey),
       child: Builder(
         builder: (providerContext) {
           return BlocListener<HomeScreenTaskBloc, TaskBlocState>(
@@ -80,6 +77,12 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                     break;
                   }
                 }
+
+                setState(() {
+                  Provider.of<TaskListHolderProvider>(providerContext)
+                      .taskList
+                      .sort((a, b) => compareListItems(a, b));
+                });
               }
               if (state is ErrorHomeScreenCompleteTaskState) {
                 Scaffold.of(context).removeCurrentSnackBar();
@@ -121,36 +124,33 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                             ),
                             Expanded(
                               child: AnimatedList(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: CommonDimens.MARGIN_20,
+                                ),
                                 key: animatedListStateKey,
                                 physics: NeverScrollableScrollPhysics(),
-                                initialItemCount: Provider.of<TaskListHolderProvider>(
-                                    providerContext)
-                                    .taskList.length,
-                                itemBuilder: (_,i, animation) {
+                                initialItemCount:
+                                    Provider.of<TaskListHolderProvider>(
+                                            providerContext)
+                                        .taskList
+                                        .length,
+                                itemBuilder: (_, i, animation) {
                                   return SizeTransition(
                                     sizeFactor: animation,
-                                    child: Container(
-                                      padding: const EdgeInsets.only(
-                                        top: CommonDimens.MARGIN_40,
-                                        left: CommonDimens.MARGIN_20,
-                                        right: CommonDimens.MARGIN_20,
-                                      ),
-                                      color: Colors.transparent,
-                                      child: ChangeNotifierProvider<
-                                          TaskHolderProviderModel>(
-                                        key: ValueKey(
-                                            Provider.of<TaskListHolderProvider>(
-                                                    providerContext)
-                                                .taskList[i]
-                                                .taskId),
-                                        create: (context) =>
-                                            TaskHolderProviderModel(
-                                                taskEntity: Provider.of<
-                                                            TaskListHolderProvider>(
-                                                        providerContext)
-                                                    .taskList[i]),
-                                        child: TaskWidget(),
-                                      ),
+                                    child: ChangeNotifierProvider<
+                                        TaskHolderProviderModel>(
+                                      key: ValueKey(
+                                          Provider.of<TaskListHolderProvider>(
+                                                  providerContext)
+                                              .taskList[i]
+                                              .taskId),
+                                      create: (context) =>
+                                          TaskHolderProviderModel(
+                                              taskEntity: Provider.of<
+                                                          TaskListHolderProvider>(
+                                                      providerContext)
+                                                  .taskList[i]),
+                                      child: TaskWidget(),
                                     ),
                                   );
                                 },
@@ -191,10 +191,13 @@ class TaskListHolderProvider extends ChangeNotifier {
   List<TaskEntity> taskList;
   final GlobalKey<AnimatedListState> listState;
 
-  TaskListHolderProvider({@required this.listState,});
+  TaskListHolderProvider({
+    @required this.listState,
+  });
 
   void assignTaskList(List<TaskEntity> taskEntityList) {
     this.taskList = taskEntityList;
+    taskList.sort((a, b) => compareListItems(a, b));
     notifyListeners();
   }
 
@@ -209,4 +212,26 @@ class TaskListHolderProvider extends ChangeNotifier {
     listState.currentState.insertItem(0);
     notifyListeners();
   }
+}
+
+int compareListItems(TaskEntity a, TaskEntity b) {
+  int positiveOrNegativeIndex = 0;
+  if (a.isCompleted && !b.isCompleted) {
+    positiveOrNegativeIndex = 1;
+  }
+
+  if (!a.isCompleted && b.isCompleted) {
+    positiveOrNegativeIndex = -1;
+  }
+
+  if (a.isCompleted && b.isCompleted) {
+    if (a.urgency > b.urgency) {
+      positiveOrNegativeIndex = 1;
+    } else if (a.urgency < b.urgency) {
+      positiveOrNegativeIndex = -1;
+    } else {
+      positiveOrNegativeIndex = 0;
+    }
+  }
+  return positiveOrNegativeIndex;
 }

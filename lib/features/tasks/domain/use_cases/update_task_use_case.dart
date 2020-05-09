@@ -14,6 +14,7 @@ class GetUpdateTaskUseCase extends UseCase<TaskEntity, TaskParam> {
 
   @override
   Future<Either<Failure, TaskEntity>> call(TaskParam params) {
+    print("in usecase");
     final response = repository.updateTask(params.taskEntity);
     return response;
   }
