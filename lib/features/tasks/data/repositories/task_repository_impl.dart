@@ -54,7 +54,7 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   Future<Either<Failure, TaskEntity>> createTask(TaskEntity task) async {
     final taskModel = convertEntityToModel(task);
-    print(taskModel);
+    print(taskModel.taskId);
     try {
       final response = await localDataSource.createTask(taskModel);
       return Right(response);
@@ -63,10 +63,10 @@ class TaskRepositoryImpl implements TaskRepository {
     } finally {
       final syncedTask = markTaskAsSynced(taskModel);
       try {
-        remoteDataSource.createTask(syncedTask);
+        final response = await remoteDataSource.createTask(syncedTask);
         // update because the task is already created
         localDataSource.updateTask(syncedTask);
-        return Right(syncedTask);
+        return Right(response);
       } on ServerException catch (ex) {
         // Do nothing
         // try or catch block return will execute here

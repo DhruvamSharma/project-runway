@@ -59,4 +59,14 @@ class CommonTextStyles {
       letterSpacing: 5,
     );
   }
+
+
+  static TextStyle errorFieldTextStyle() {
+    return _googleFontStyle.copyWith(
+      height: 1.5,
+      color: CommonColors.errorTextColor,
+      fontSize: 12,
+      letterSpacing: 2,
+    );
+  }
 }

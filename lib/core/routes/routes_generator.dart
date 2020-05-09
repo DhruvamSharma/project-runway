@@ -14,6 +14,8 @@ class RouteGenerator {
         final CreateTaskScreenArguments args = settings.arguments;
         return _transitionRoute(CreateTaskPage(
           runningDate: args.runningDate,
+          initialTaskTitle: args.initialTaskTitle,
+          totalTasksCreated: args.totalTasksCreated,
         ));
       default:
         // If there is no such named route in the switch statement, e.g. /third

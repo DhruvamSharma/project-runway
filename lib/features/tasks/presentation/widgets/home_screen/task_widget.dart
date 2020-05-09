@@ -29,11 +29,18 @@ class _TaskWidgetState extends State<TaskWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        TaskBadge(
-          isCompleted: isCompleted,
-        ),
+        if (Provider.of<TaskHolderProviderModel>(context).taskEntity.tag !=
+                null &&
+            Provider.of<TaskHolderProviderModel>(context)
+                .taskEntity
+                .tag
+                .isNotEmpty)
+          TaskBadge(
+            isCompleted: isCompleted,
+          ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Expanded(
               child: Text(

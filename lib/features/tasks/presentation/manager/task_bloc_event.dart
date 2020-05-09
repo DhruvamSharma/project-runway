@@ -7,7 +7,6 @@ abstract class TaskBlocEvent extends Equatable {
   const TaskBlocEvent();
 
   @override
-  // TODO: implement props
   List<Object> get props => customProps;
 }
 
