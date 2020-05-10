@@ -226,9 +226,9 @@ int compareListItems(TaskEntity a, TaskEntity b) {
 
   if (a.isCompleted && b.isCompleted) {
     if (a.urgency > b.urgency) {
-      positiveOrNegativeIndex = 1;
-    } else if (a.urgency < b.urgency) {
       positiveOrNegativeIndex = -1;
+    } else if (a.urgency < b.urgency) {
+      positiveOrNegativeIndex = 1;
     } else {
       positiveOrNegativeIndex = 0;
     }

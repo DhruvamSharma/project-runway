@@ -99,10 +99,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  navigateToNewActivity(int pageNumber) {
-    Navigator.pushNamed(context, CreateTaskPage.routeName,
-        arguments: CreateTaskScreenArguments(
-            runningDate: buildRunningDate(DateTime.now(), pageNumber)));
-  }
 }

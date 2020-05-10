@@ -82,7 +82,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   @override
   Future<TaskListModel> getAllTasksForTheDate(DateTime runningDate) async {
 //    print("here in remote");
-    sharedPreferences.setString(USER_KEY, "Dhruvam");
+//    sharedPreferences.setString(USER_KEY, "Dhruvam");
     try {
       // checking for the nullability of running date
       if (runningDate == null) {

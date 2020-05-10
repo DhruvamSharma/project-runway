@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:project_runway/features/tasks/domain/entities/user_entity.dart';
+import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
   UserModel({

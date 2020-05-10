@@ -15,6 +15,15 @@ class CommonTextStyles {
     );
   }
 
+  static TextStyle loginTextStyle() {
+    return _googleFontStyle.copyWith(
+      height: 1.5,
+      color: CommonColors.taskTextColor,
+      fontSize: 28,
+      letterSpacing: 5,
+    );
+  }
+
   static TextStyle dateTextStyle() {
     return _googleFontStyle.copyWith(
       height: 1.5,

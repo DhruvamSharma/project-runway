@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/home_screen.dart';
@@ -6,8 +9,14 @@ import 'package:project_runway/features/tasks/presentation/widgets/home_screen/h
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case "/":
-        return _transitionRoute(Scaffold());
+      case UserEntryRoute.routeName:
+        String user = sharedPreferences.getString(USER_KEY);
+        if (user == null) {
+          return _transitionRoute(UserEntryRoute());
+        } else {
+          return _transitionRoute(HomeScreen());
+        }
+        break;
       case HomeScreen.routeName:
         return _transitionRoute(HomeScreen());
       case CreateTaskPage.routeName:

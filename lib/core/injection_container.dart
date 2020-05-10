@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'network/network_info.dart';
 
 final sl = GetIt.instance;
+SharedPreferences sharedPreferences;
 
 Future<void> serviceLocatorInit() async {
   taskInjection();
@@ -25,7 +26,7 @@ Future<void> serviceLocatorInit() async {
       () => NetworkInfoImpl(connectionChecker: sl()));
 
   // External Dependencies
-  final sharedPreferences = await SharedPreferences.getInstance();
+  sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
   sl.registerLazySingleton(() => DataConnectionChecker());
   sl.registerLazySingleton(() => Firestore.instance);
