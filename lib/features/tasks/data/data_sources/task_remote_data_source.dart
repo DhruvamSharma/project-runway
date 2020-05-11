@@ -171,6 +171,8 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       final firestoreTask = TaskModel.fromJson(firestoreDocument.data);
       final response =
       markTaskAsCompleted(firestoreTask, !firestoreTask.isCompleted);
+      // update last Updated time
+      response.lastUpdatedAt = taskModel.lastUpdatedAt;
       firestore
           .collection(taskCollection)
           .document(response.taskId)
