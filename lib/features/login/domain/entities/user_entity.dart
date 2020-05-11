@@ -3,11 +3,14 @@ import 'package:flutter/widgets.dart';
 
 class UserEntity extends Equatable {
   final String userId;
+  final String googleId;
   final String userName;
   final String phoneNumber;
+  final String emailId;
   final int age;
   final String gender;
   final DateTime createdAt;
+  final String userPhotoUrl;
   final double score;
   final bool isVerified;
   final bool isDeleted;
@@ -15,20 +18,24 @@ class UserEntity extends Equatable {
 
   UserEntity({
     @required this.userId,
+    @required this.googleId,
     @required this.userName,
     @required this.phoneNumber,
     @required this.age,
     @required this.gender,
+    @required this.userPhotoUrl,
     @required this.createdAt,
     @required this.score,
     @required this.isVerified,
     @required this.isDeleted,
     @required this.isLoggedIn,
+    @required this.emailId,
   });
 
   @override
   List<Object> get props => [
         userId,
+        googleId,
         userName,
         phoneNumber,
         age,
@@ -38,6 +45,8 @@ class UserEntity extends Equatable {
         isVerified,
         isDeleted,
         isLoggedIn,
+        emailId,
+        userPhotoUrl,
       ];
 
   @override

@@ -84,7 +84,8 @@ class _TaskWidgetState extends State<TaskWidget> {
           );
           if (taskEntity != null && taskEntity is TaskEntity) {
             taskEntity.isCompleted = isCompleted;
-            BlocProvider.of<HomeScreenTaskBloc>(context).dispatch(UpdateTaskEvent(task: taskEntity));
+            BlocProvider.of<HomeScreenTaskBloc>(context)
+                .dispatch(UpdateTaskEvent(task: taskEntity));
           }
         },
         child: Container(
@@ -145,7 +146,11 @@ class _TaskWidgetState extends State<TaskWidget> {
       return null;
     } else {
       return (completeStatus) {
+        // update the status
         isCompleted = completeStatus;
+        // update the update time
+        Provider.of<TaskHolderProviderModel>(context).taskEntity.lastUpdatedAt =
+            DateTime.now();
         BlocProvider.of<HomeScreenTaskBloc>(context).dispatch(CompleteTaskEvent(
             task: Provider.of<TaskHolderProviderModel>(context).taskEntity));
       };
