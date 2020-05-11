@@ -3,6 +3,7 @@ import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/routes/routes_generator.dart';
+import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/home_screen.dart';
 
 void main() async {
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
           accentColor: CommonColors.accentColor,
           toggleableActiveColor: CommonColors.toggleableActiveColor,
           brightness: Brightness.dark),
-      initialRoute: HomeScreen.routeName,
+      initialRoute: UserEntryRoute.routeName,
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
