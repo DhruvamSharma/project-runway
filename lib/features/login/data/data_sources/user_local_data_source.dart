@@ -21,7 +21,7 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
 
   @override
   Future<UserModel> readUser() {
-    final userJson = sharedPreferences.getString(USER_KEY);
+    final userJson = sharedPreferences.getString(USER_MODEL_KEY);
     if (userJson != null) {
       final userMap = json.decode(userJson);
       final response = UserModel.fromJson(userMap);
@@ -34,7 +34,7 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
   @override
   Future<UserModel> updateUser(UserModel user) {
     try {
-      sharedPreferences.setString(USER_KEY, json.encode(user.toJson()));
+      sharedPreferences.setString(USER_MODEL_KEY, json.encode(user.toJson()));
       return Future.value(user);
     } catch (ex) {
       throw CacheException(message: SAVING_ERROR);

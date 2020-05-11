@@ -62,7 +62,7 @@ class UserEntryRoute extends StatelessWidget {
                                 .userPhotoUrl = null;
                             Provider.of<UserEntryProviderHolder>(
                                     providerContext)
-                                .userId = null;
+                                .googleId = null;
                             Provider.of<UserEntryProviderHolder>(
                                     providerContext)
                                 .isVerified = false;
@@ -86,43 +86,45 @@ class UserEntryRoute extends StatelessWidget {
                           alignment: Alignment.bottomRight,
                           child: FloatingActionButton(
                             onPressed: () {
-                              if (_pageController.page.toInt() != 1) {
-                                _pageController.animateToPage(
-                                  buildPageNumber(providerContext),
-                                  duration: Duration(milliseconds: 400),
-                                  curve: Curves.easeOutCubic,
-                                );
-                              }
+                              if (!Provider.of<UserEntryProviderHolder>(providerContext).isForwardButtonDisabled) {
+                                if (_pageController.page.toInt() != 1) {
+                                  _pageController.animateToPage(
+                                    buildPageNumber(providerContext),
+                                    duration: Duration(milliseconds: 400),
+                                    curve: Curves.easeOutCubic,
+                                  );
+                                }
 
-                              if (_pageController.page.toInt() == 1 &&
-                                  Provider.of<UserEntryProviderHolder>(
-                                              providerContext)
-                                          .userName !=
-                                      null &&
-                                  Provider.of<UserEntryProviderHolder>(
-                                          providerContext)
-                                      .userName
-                                      .isNotEmpty) {
-                                _pageController.animateToPage(
-                                  buildPageNumber(providerContext),
-                                  duration: Duration(milliseconds: 400),
-                                  curve: Curves.easeOutCubic,
-                                );
-                              }
+                                if (_pageController.page.toInt() == 1 &&
+                                    Provider.of<UserEntryProviderHolder>(
+                                        providerContext)
+                                        .userName !=
+                                        null &&
+                                    Provider.of<UserEntryProviderHolder>(
+                                        providerContext)
+                                        .userName
+                                        .isNotEmpty) {
+                                  _pageController.animateToPage(
+                                    buildPageNumber(providerContext),
+                                    duration: Duration(milliseconds: 400),
+                                    curve: Curves.easeOutCubic,
+                                  );
+                                }
 
-                              if (_pageController.page.toInt() == 1 &&
-                                  (Provider.of<UserEntryProviderHolder>(
-                                                  providerContext)
-                                              .userName ==
-                                          null ||
-                                      Provider.of<UserEntryProviderHolder>(
-                                              providerContext)
-                                          .userName
-                                          .isEmpty)) {
-                                _scaffoldKey.currentState.showSnackBar(SnackBar(
-                                  content: Text("Please enter your name"),
-                                  behavior: SnackBarBehavior.floating,
-                                ));
+                                if (_pageController.page.toInt() == 1 &&
+                                    (Provider.of<UserEntryProviderHolder>(
+                                        providerContext)
+                                        .userName ==
+                                        null ||
+                                        Provider.of<UserEntryProviderHolder>(
+                                            providerContext)
+                                            .userName
+                                            .isEmpty)) {
+                                  _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                    content: Text("Please enter your name"),
+                                    behavior: SnackBarBehavior.floating,
+                                  ));
+                                }
                               }
                             },
                             mini: true,
@@ -158,12 +160,14 @@ class UserEntryRoute extends StatelessWidget {
 
 class UserEntryProviderHolder extends ChangeNotifier {
   String userName;
-  String userId;
+  String googleId;
   String userPhotoUrl;
   String emailId;
   bool isVerified = false;
   int pageNumber = 0;
   bool showSkipButton = true;
+  bool isForwardButtonDisabled = false;
+  bool isNewUser = true;
   void assignUserName(String userName) {
     this.userName = userName;
     notifyListeners();
@@ -171,6 +175,11 @@ class UserEntryProviderHolder extends ChangeNotifier {
 
   void assignPageNumber(int pageNumber) {
     this.pageNumber = pageNumber;
+    notifyListeners();
+  }
+
+  void disableForwardButton(bool isDisabled) {
+    isForwardButtonDisabled = isDisabled;
     notifyListeners();
   }
 

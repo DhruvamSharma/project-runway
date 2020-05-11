@@ -24,10 +24,13 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<Either<Failure, UserEntity>> createUser(UserEntity user) async {
-    UserModel userModel;
+    UserEntity userModel = user;
     try {
-      final userId = uuid.v1();
-      userModel = addUserId(user, userId);
+      if (user.userId == null) {
+        final userId = uuid.v1();
+        userModel = addUserId(user, userId);
+      }
+      print(userModel.emailId);
       final response = await remoteDataSource.createUser(userModel);
       return Right(response);
     } on ServerException catch (ex) {
@@ -64,6 +67,7 @@ class UserRepositoryImpl implements UserRepository {
     if (await networkInfo.isConnected) {
       try {
         final response = await remoteDataSource.readUser(googleId);
+        localDataSource.updateUser(response);
         return Right(response);
       } on ServerException catch (ex) {
         return Left(ServerFailure(message: ex.message));
@@ -94,7 +98,9 @@ class UserRepositoryImpl implements UserRepository {
     }
   }
 
-  UserModel addUserId(UserModel userModel, String userId) {
+  UserModel addUserId(UserEntity userEntity, String userId) {
+    print("adding user id");
+    final userModel = convertEntityToModel(userEntity);
     final userMap = userModel.toJson();
     userMap.update(
       "userId",
@@ -110,5 +116,23 @@ class UserRepositoryImpl implements UserRepository {
       (value) => isDeleted,
     );
     return UserModel.fromJson(userMap);
+  }
+
+  UserModel convertEntityToModel(UserEntity userEntity) {
+    return UserModel(
+      userId: userEntity.userId,
+      userName: userEntity.userName,
+      phoneNumber: userEntity.phoneNumber,
+      age: userEntity.age,
+      gender: userEntity.gender,
+      createdAt: userEntity.createdAt,
+      score: userEntity.score,
+      isVerified: userEntity.isVerified,
+      isDeleted: userEntity.isDeleted,
+      isLoggedIn: userEntity.isLoggedIn,
+      googleId: userEntity.googleId,
+      userPhotoUrl: userEntity.userPhotoUrl,
+      emailId: userEntity.emailId,
+    );
   }
 }
