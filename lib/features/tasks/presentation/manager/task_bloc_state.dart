@@ -61,6 +61,17 @@ class LoadedEditScreenState extends TaskBlocState {
   List<Object> get props => [taskEntity];
 }
 
+class LoadedDeleteTaskState extends TaskBlocState {
+  final TaskEntity taskEntity;
+
+  LoadedDeleteTaskState({
+    @required this.taskEntity,
+  });
+
+  @override
+  List<Object> get props => [taskEntity];
+}
+
 class ErrorEditScreenState extends TaskBlocState {
   final String message;
 
@@ -98,6 +109,17 @@ class ErrorHomeScreenCompleteTaskState extends TaskBlocState {
   final String message;
 
   ErrorHomeScreenCompleteTaskState({
+    @required this.message,
+  });
+
+  @override
+  List<Object> get props => [message];
+}
+
+class ErrorDeleteTaskState extends TaskBlocState {
+  final String message;
+
+  ErrorDeleteTaskState({
     @required this.message,
   });
 

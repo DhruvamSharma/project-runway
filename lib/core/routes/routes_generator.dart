@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
+import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/home_screen.dart';
@@ -26,6 +27,8 @@ class RouteGenerator {
           initialTaskTitle: args.initialTaskTitle,
           totalTasksCreated: args.totalTasksCreated,
         ));
+      case StatsScreen.routeName:
+        return _transitionRoute(StatsScreen());
       default:
         // If there is no such named route in the switch statement, e.g. /third
         return _errorRoute();

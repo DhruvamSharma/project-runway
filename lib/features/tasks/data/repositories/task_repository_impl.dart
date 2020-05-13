@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:project_runway/core/errors/exceptions.dart';
 import 'package:project_runway/core/errors/failures.dart';
 import 'package:project_runway/core/network/network_info.dart';
+import 'package:project_runway/features/stats/data/data_sources/stats_remote_data_source.dart';
 import 'package:project_runway/features/tasks/data/common_task_method.dart';
 import 'package:project_runway/features/tasks/data/data_sources/task_local_data_source.dart';
 import 'package:project_runway/features/tasks/data/data_sources/task_remote_data_source.dart';
@@ -15,12 +16,14 @@ import 'package:project_runway/features/tasks/domain/repositories/task_repositor
 class TaskRepositoryImpl implements TaskRepository {
   final TaskRemoteDataSource remoteDataSource;
   final TaskLocalDataSource localDataSource;
+  final StatsRemoteDataSource statsRemoteDataSource;
   final NetworkInfo networkInfo;
 
   TaskRepositoryImpl({
     @required this.remoteDataSource,
     @required this.localDataSource,
     @required this.networkInfo,
+    @required this.statsRemoteDataSource,
   });
 
   @override
@@ -35,6 +38,12 @@ class TaskRepositoryImpl implements TaskRepository {
     } finally {
       try {
         final response = await remoteDataSource.completeTask(task);
+        // add stats to the document
+        statsRemoteDataSource.completeTaskAndUpdateScore(
+          response.runningDate,
+          response.isCompleted,
+          task.urgency,
+        );
         localDataSource.updateTask(response);
         return Right(response);
       } on ServerException catch (ex) {
@@ -62,6 +71,11 @@ class TaskRepositoryImpl implements TaskRepository {
       final syncedTask = markTaskAsSynced(taskModel);
       try {
         final response = await remoteDataSource.createTask(syncedTask);
+        // add stats to the document
+        statsRemoteDataSource.addTaskAndIncrementScore(
+          response.runningDate,
+          response.urgency,
+        );
         // update because the task is already created
         localDataSource.updateTask(syncedTask);
         return Right(response);
@@ -88,7 +102,12 @@ class TaskRepositoryImpl implements TaskRepository {
       final deletedTask = markTaskAsDeleted(task);
       final syncedTask = markTaskAsSynced(deletedTask);
       try {
-        remoteDataSource.deleteTask(syncedTask);
+        final response = await remoteDataSource.deleteTask(syncedTask);
+        // add stats to the document
+        statsRemoteDataSource.deleteTaskAndDecrementScore(
+          response.runningDate,
+          response.urgency,
+        );
         localDataSource.deleteTask(syncedTask);
         return Right(syncedTask);
       } on ServerException {

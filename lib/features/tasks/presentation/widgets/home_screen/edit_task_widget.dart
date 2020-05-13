@@ -41,133 +41,193 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
         padding: const EdgeInsets.all(
           CommonDimens.MARGIN_20,
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_60,
-                ),
-                child: CustomTextField(
-                  null,
-                  null,
-                  enabled: isEnabled,
-                  initialText: widget.task.taskTitle,
-                  onValueChange: (text) {
-                    Provider.of<TaskDetailProviderModel>(newContext)
-                        .assignTaskTitle(text);
-                  },
-                  label: "Task Title",
-                  isRequired: false,
-                  onSubmitted: (text) {},
-                  errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_20,
-                ),
-                child: CustomTextField(
-                  null,
-                  null,
-                  initialText: widget.task.description,
-                  onValueChange: (description) {
-                    Provider.of<TaskDetailProviderModel>(newContext)
-                        .assignTaskDescription(description);
-                  },
-                  label: "Task Description",
-                  enabled: isEnabled,
-                  isRequired: false,
-                  onSubmitted: (text) {},
-                  errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_20,
-                ),
-                child: CustomTextField(
-                  null,
-                  null,
-                  initialText: widget.task.tag,
-                  onValueChange: (tag) {
-                    Provider.of<TaskDetailProviderModel>(newContext)
-                        .assignTaskTag(tag);
-                  },
-                  label: "Tag",
-                  enabled: isEnabled,
-                  isRequired: false,
-                  onSubmitted: (text) {},
-                  errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_20,
-                ),
-                child: CustomTextField(
-                  1,
-                  1,
-                  initialText: widget.task.urgency.toString(),
-                  onValueChange: (urgency) {
-                    Provider.of<TaskDetailProviderModel>(newContext)
-                        .assignTaskUrgency(urgency);
-                  },
-                  label: "Urgency",
-                  enabled: isEnabled,
-                  labelPadding: const EdgeInsets.only(
-                      bottom: CommonDimens.MARGIN_20 / 2),
-                  isRequired: false,
-                  helperText:
-                      "Urgency is a number from 0-9 that tells how urgent the task is.",
-                  helperTextStyle: CommonTextStyles.badgeTextStyle().copyWith(
-                    color: CommonColors.accentColor,
-                  ),
-                  onSubmitted: (text) {},
-                  textFieldValue:
-                      Provider.of<TaskDetailProviderModel>(newContext)
-                          .urgency,
-                  type: TextInputType.phone,
-                  textInputFormatter: [
-                    LengthLimitingTextInputFormatter(1),
-                    WhitelistingTextInputFormatter.digitsOnly,
-                  ],
-                  errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
-                ),
-              ),
-              Container(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_80,
-                    bottom: CommonDimens.MARGIN_20,
-                  ),
-                  child: OutlineButton(
-                    onPressed: () {
-                      taskEntity.description =
-                          Provider.of<TaskDetailProviderModel>(newContext)
-                              .description;
-                      taskEntity.urgency = buildUrgency(
-                          Provider.of<TaskDetailProviderModel>(context)
-                              .urgency);
-                      taskEntity.taskTitle =
-                          Provider.of<TaskDetailProviderModel>(newContext)
-                              .taskTitle;
-                      taskEntity.tag =
-                          Provider.of<TaskDetailProviderModel>(context).tag;
-                      taskEntity.lastUpdatedAt = DateTime.now();
-                      Navigator.pop(context, taskEntity,);
-                    },
-                    child: Text(
-                      isEnabled ? "Update" : "Go Back",
-                      style: CommonTextStyles.taskTextStyle(),
+        child: Stack(
+          children: <Widget>[
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_60,
+                    ),
+                    child: CustomTextField(
+                      null,
+                      null,
+                      enabled: isEnabled,
+                      initialText: widget.task.taskTitle,
+                      onValueChange: (text) {
+                        Provider.of<TaskDetailProviderModel>(newContext)
+                            .assignTaskTitle(text);
+                      },
+                      label: "Task Title",
+                      isRequired: false,
+                      onSubmitted: (text) {},
+                      errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
                     ),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_20,
+                    ),
+                    child: CustomTextField(
+                      null,
+                      null,
+                      initialText: widget.task.description,
+                      onValueChange: (description) {
+                        Provider.of<TaskDetailProviderModel>(newContext)
+                            .assignTaskDescription(description);
+                      },
+                      label: "Task Description",
+                      enabled: isEnabled,
+                      isRequired: false,
+                      onSubmitted: (text) {},
+                      errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_20,
+                    ),
+                    child: CustomTextField(
+                      null,
+                      null,
+                      initialText: widget.task.tag,
+                      onValueChange: (tag) {
+                        Provider.of<TaskDetailProviderModel>(newContext)
+                            .assignTaskTag(tag);
+                      },
+                      label: "Tag",
+                      enabled: isEnabled,
+                      isRequired: false,
+                      onSubmitted: (text) {},
+                      errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_20,
+                    ),
+                    child: CustomTextField(
+                      1,
+                      1,
+                      initialText: widget.task.urgency.toString(),
+                      onValueChange: (urgency) {
+                        Provider.of<TaskDetailProviderModel>(newContext)
+                            .assignTaskUrgency(urgency);
+                      },
+                      label: "Urgency",
+                      enabled: isEnabled,
+                      labelPadding: const EdgeInsets.only(
+                          bottom: CommonDimens.MARGIN_20 / 2),
+                      isRequired: false,
+                      helperText:
+                          "Urgency is a number from 0-9 that tells how urgent the task is.",
+                      helperTextStyle:
+                          CommonTextStyles.badgeTextStyle().copyWith(
+                        color: CommonColors.accentColor,
+                      ),
+                      onSubmitted: (text) {},
+                      textFieldValue:
+                          Provider.of<TaskDetailProviderModel>(newContext)
+                              .urgency,
+                      type: TextInputType.phone,
+                      textInputFormatter: [
+                        LengthLimitingTextInputFormatter(1),
+                        WhitelistingTextInputFormatter.digitsOnly,
+                      ],
+                      errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
+                    ),
+                  ),
+                  if (isEnabled)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: CommonDimens.MARGIN_20,
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.only(
+                                top: CommonDimens.MARGIN_80,
+                                bottom: CommonDimens.MARGIN_20,
+                              ),
+                              alignment: Alignment.center,
+                              child: IconButton(
+                                  icon: Icon(
+                                    Icons.delete_forever,
+                                    color: CommonColors.accentColor,
+                                  ),
+                                  onPressed: () {
+                                    taskEntity.isDeleted = true;
+                                    Navigator.pop(context, taskEntity);
+                                  }),
+                            ),
+                          ),
+                        ),
+                        Spacer(),
+                        Container(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: CommonDimens.MARGIN_80,
+                              bottom: CommonDimens.MARGIN_20,
+                            ),
+                            child: OutlineButton(
+                              onPressed: () {
+                                taskEntity.description =
+                                    Provider.of<TaskDetailProviderModel>(
+                                            newContext)
+                                        .description;
+                                taskEntity.urgency = buildUrgency(
+                                    Provider.of<TaskDetailProviderModel>(
+                                            context)
+                                        .urgency);
+                                taskEntity.taskTitle =
+                                    Provider.of<TaskDetailProviderModel>(
+                                            newContext)
+                                        .taskTitle;
+                                taskEntity.tag =
+                                    Provider.of<TaskDetailProviderModel>(
+                                            context)
+                                        .tag;
+                                taskEntity.lastUpdatedAt = DateTime.now();
+                                Navigator.pop(context, taskEntity);
+                              },
+                              child: Text(
+                                isEnabled ? "Update" : "Go Back",
+                                style: CommonTextStyles.taskTextStyle(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (!isEnabled)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_60,
+                        ),
+                        child: OutlineButton(
+                          onPressed: () {
+                            Navigator.pop(
+                              context,
+                            );
+                          },
+                          child: Text(
+                            "Go Back",
+                            style: CommonTextStyles.taskTextStyle(),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

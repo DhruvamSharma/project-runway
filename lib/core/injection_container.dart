@@ -8,6 +8,12 @@ import 'package:project_runway/features/login/domain/repositories/user_repositor
 import 'package:project_runway/features/login/domain/use_cases/create_user_use_case.dart';
 import 'package:project_runway/features/login/domain/use_cases/read_user_use_case.dart';
 import 'package:project_runway/features/login/presentation/manager/bloc.dart';
+import 'package:project_runway/features/stats/data/data_sources/stats_remote_data_source.dart';
+import 'package:project_runway/features/stats/data/repositories/stats_repository_impl.dart';
+import 'package:project_runway/features/stats/domain/repositories/stats_repository.dart';
+import 'package:project_runway/features/stats/domain/use_cases/add_score_use_case.dart';
+import 'package:project_runway/features/stats/domain/use_cases/get_stats_table_use_case.dart';
+import 'package:project_runway/features/stats/presentation/manager/stats_bloc.dart';
 import 'package:project_runway/features/tasks/data/data_sources/task_local_data_source.dart';
 import 'package:project_runway/features/tasks/data/data_sources/task_remote_data_source.dart';
 import 'package:project_runway/features/tasks/data/repositories/task_repository_impl.dart';
@@ -32,6 +38,8 @@ Future<void> serviceLocatorInit() async {
 
   loginInjection();
 
+  statsInjection();
+
   sl.registerLazySingleton<NetworkInfo>(
       () => NetworkInfoImpl(connectionChecker: sl()));
 
@@ -41,6 +49,28 @@ Future<void> serviceLocatorInit() async {
   sl.registerLazySingleton(() => DataConnectionChecker());
   sl.registerLazySingleton(() => Firestore.instance);
   sl.registerLazySingleton(() => Uuid());
+}
+
+void statsInjection() {
+  // bloc
+  sl.registerFactory(() => StatsBloc(
+        statsTableUseCase: sl(),
+        addScoreUseCase: sl(),
+      ));
+  // use case
+  sl.registerLazySingleton(() => GetStatsTableUseCase(repository: sl()));
+  sl.registerLazySingleton(() => AddScoreUseCase(repository: sl()));
+  // repository
+  sl.registerLazySingleton<StatsRepository>(() => StatsRepositoryImpl(
+        networkInfo: sl(),
+        remoteDataSource: sl(),
+      ));
+  // data sources
+  sl.registerLazySingleton<StatsRemoteDataSource>(
+      () => StatsRemoteDataSourceImpl(
+            sharedPreferences: sl(),
+            firestore: sl(),
+          ));
 }
 
 void loginInjection() {
@@ -76,6 +106,7 @@ void taskInjection() {
         allTasksForDateUseCase: sl(),
         completeTaskUseCase: sl(),
         createTaskUseCase: sl(),
+        deleteTaskUseCase: sl(),
       ));
   // use case
   sl.registerLazySingleton(() => GetAllTasksForDateUseCase(repository: sl()));
@@ -89,6 +120,7 @@ void taskInjection() {
         remoteDataSource: sl(),
         localDataSource: sl(),
         networkInfo: sl(),
+        statsRemoteDataSource: sl(),
       ));
   // data sources
   sl.registerLazySingleton<TaskRemoteDataSource>(() => TaskRemoteDataSourceImpl(

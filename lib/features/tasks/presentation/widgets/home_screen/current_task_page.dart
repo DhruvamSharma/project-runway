@@ -207,10 +207,31 @@ class TaskListHolderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteTaskItemFromList(TaskEntity taskEntity) {
+    int indexToRemove = this.taskList.indexOf(taskEntity);
+    listState.currentState.removeItem(indexToRemove,
+        (context, animation) => _buildItem(context, 0, animation));
+    this.taskList.removeAt(indexToRemove);
+    notifyListeners();
+  }
+
   void addTaskToList(TaskEntity taskEntity) {
     this.taskList.add(taskEntity);
     listState.currentState.insertItem(0);
     notifyListeners();
+  }
+
+  _buildItem(BuildContext context, int index, Animation<double> animation) {
+    return SizeTransition(
+      key: ValueKey<int>(index),
+      axis: Axis.vertical,
+      sizeFactor: animation,
+      child: SizedBox(
+        child: ListTile(
+          title: Text('${taskList[index].taskTitle}'),
+        ),
+      ),
+    );
   }
 }
 
