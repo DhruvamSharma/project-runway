@@ -48,4 +48,10 @@ class _ScoreWidgetState extends State<ScoreWidget>
   String get timeLeftStringToShowToUser {
     return "${(widget.weeklyScore * _controller.value).floor()}";
   }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 }

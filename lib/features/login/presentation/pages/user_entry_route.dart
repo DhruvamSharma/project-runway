@@ -86,7 +86,9 @@ class UserEntryRoute extends StatelessWidget {
                           alignment: Alignment.bottomRight,
                           child: FloatingActionButton(
                             onPressed: () {
-                              if (!Provider.of<UserEntryProviderHolder>(providerContext).isForwardButtonDisabled) {
+                              if (!Provider.of<UserEntryProviderHolder>(
+                                      providerContext)
+                                  .isForwardButtonDisabled) {
                                 if (_pageController.page.toInt() != 1) {
                                   _pageController.animateToPage(
                                     buildPageNumber(providerContext),
@@ -97,11 +99,11 @@ class UserEntryRoute extends StatelessWidget {
 
                                 if (_pageController.page.toInt() == 1 &&
                                     Provider.of<UserEntryProviderHolder>(
-                                        providerContext)
-                                        .userName !=
+                                                providerContext)
+                                            .userName !=
                                         null &&
                                     Provider.of<UserEntryProviderHolder>(
-                                        providerContext)
+                                            providerContext)
                                         .userName
                                         .isNotEmpty) {
                                   _pageController.animateToPage(
@@ -113,14 +115,15 @@ class UserEntryRoute extends StatelessWidget {
 
                                 if (_pageController.page.toInt() == 1 &&
                                     (Provider.of<UserEntryProviderHolder>(
-                                        providerContext)
-                                        .userName ==
-                                        null ||
+                                                    providerContext)
+                                                .userName ==
+                                            null ||
                                         Provider.of<UserEntryProviderHolder>(
-                                            providerContext)
+                                                providerContext)
                                             .userName
                                             .isEmpty)) {
-                                  _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                  _scaffoldKey.currentState
+                                      .showSnackBar(SnackBar(
                                     content: Text("Please enter your name"),
                                     behavior: SnackBarBehavior.floating,
                                   ));

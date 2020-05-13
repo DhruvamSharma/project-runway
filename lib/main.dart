@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
           accentColor: CommonColors.accentColor,
           toggleableActiveColor: CommonColors.toggleableActiveColor,
           brightness: Brightness.dark),
-      initialRoute: StatsScreen.routeName,
+      initialRoute: UserEntryRoute.routeName,
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }

@@ -6,6 +6,7 @@ import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
@@ -36,6 +37,30 @@ class _HomeScreenState extends State<HomeScreen> {
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: CommonColors.appBarColor,
+        actions: <Widget>[
+          CircleAvatar(
+            radius: 15,
+            backgroundColor: Colors.transparent,
+            child: IconButton(
+                icon: Icon(
+                  Icons.airplanemode_active,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, StatsScreen.routeName);
+                }),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: CommonDimens.MARGIN_20),
+            child: IconButton(
+                icon: Icon(
+                  Icons.person,
+                  color: Colors.white,
+                ),
+                onPressed: () {}),
+          ),
+        ],
       ),
       body: Stack(
         children: <Widget>[
