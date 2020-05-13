@@ -47,6 +47,8 @@ dependencies:
   google_sign_in: ^4.4.4
   # unique keys
   uuid: ^2.0.4
+  # charts for statistics
+  charts_flutter: ^0.9.0
 
 dev_dependencies:
   flutter_test:
