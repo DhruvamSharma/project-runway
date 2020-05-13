@@ -5,8 +5,8 @@ import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/errors/exceptions.dart';
 import 'package:project_runway/core/keys.dart';
 import 'package:project_runway/features/tasks/data/common_task_method.dart';
-import 'package:project_runway/features/tasks/data/models/managed_stats_model.dart';
-import 'package:project_runway/features/tasks/data/models/stats_model.dart';
+import 'package:project_runway/features/stats/data/models/managed_stats_model.dart';
+import 'package:project_runway/features/stats/data/models/stats_model.dart';
 import 'package:project_runway/features/tasks/data/models/task_list_model.dart';
 import 'package:project_runway/features/tasks/data/models/task_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_list_entity.dart';
@@ -19,7 +19,6 @@ abstract class TaskRemoteDataSource {
   Future<TaskModel> deleteTask(TaskModel taskModel);
   Future<TaskModel> completeTask(TaskModel taskModel);
   Future<TaskModel> readTask(String taskId);
-  Future<ManagedStatsTable> fetchStatsTable();
 }
 
 class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
@@ -54,11 +53,6 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           .collection(taskCollection)
           .document(uploadedDocument.documentID)
           .updateData({"taskId": uploadedDocument.documentID});
-      // add stats to firebase
-      addTaskAndIncrementScore(
-        taskModel.runningDate,
-        taskModel.urgency,
-      );
       // add this taskId into the model
       final response = _updateTaskId(task, uploadedDocument.documentID);
       return response;
@@ -79,8 +73,6 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           .collection(taskCollection)
           .document(syncedTask.taskId)
           .updateData({"isDeleted": true});
-      // add stats to firebase
-      deleteTaskAndDecrementScore(taskModel.runningDate, taskModel.urgency);
       // update the model with isDeleted = true
       final response = _updateIsDeleted(syncedTask);
       return response;
@@ -187,9 +179,6 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           .collection(taskCollection)
           .document(response.taskId)
           .updateData(response.toJson());
-      // add stats to firebase
-      completeTaskAndUpdateScore(
-          taskModel.runningDate, !firestoreTask.isCompleted, taskModel.urgency);
       return response;
     } on Exception catch (ex) {
       throw ServerException(message: "Error occurred during task transaction");
@@ -210,104 +199,6 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           message: "Sorry, User or the task not found."
               " Please login again into the app");
     }
-  }
-
-  @override
-  Future<ManagedStatsTable> fetchStatsTable() async {
-    final userId = sharedPreferences.getString(USER_KEY);
-    // get the stats from the database
-    final statsData =
-        await firestore.collection(STATS_COLLECTION).document(userId).get();
-    final statsModel = ManagedStatsTable.fromJson(statsData.data);
-    return statsModel;
-  }
-
-  void addTaskAndIncrementScore(DateTime runningDate, int urgency) async {
-    // fetch the stats table form the firestore
-    final fetchedStatsData = await fetchStatsTable();
-    // find out what day does the task belong to
-    final int dayOfTheWeek = runningDate.weekday;
-    // get the stats for that day
-    final dayStats = fetchedStatsData.dayStats[dayOfTheWeek - 1];
-    // add the task to the day stats
-    dayStats.tasksCreated += 1;
-    // increment the score
-    fetchedStatsData.score +=
-        (urgency * TASK_CREATION_POINTS / TASK_MEASUREMENT_DIVISION_CONSTANT)
-            .floor();
-    // assign the day Stats back to the list
-    fetchedStatsData.dayStats[dayOfTheWeek - 1] = dayStats;
-    // convert the data back to desired format
-    final statsJson = fetchedStatsData.toJson();
-    // update the data back to database
-    firestore
-        .collection(STATS_COLLECTION)
-        .document(sharedPreferences.getString(USER_KEY))
-        .setData(statsJson);
-  }
-
-  void deleteTaskAndDecrementScore(DateTime runningDate, int urgency) async {
-    // fetch the stats table form the firestore
-    final fetchedStatsData = await fetchStatsTable();
-    // find out what day does the task belong to
-    final int dayOfTheWeek = runningDate.weekday;
-    // get the stats for that day
-    final dayStats = fetchedStatsData.dayStats[dayOfTheWeek - 1];
-    // remove the task to the day stats
-    dayStats.tasksDeleted -= 1;
-    // decrement the score
-    fetchedStatsData.score -=
-        (urgency * TASK_DELETION_POINTS / TASK_MEASUREMENT_DIVISION_CONSTANT)
-            .floor();
-    // avoid non negative score, if any
-    if (fetchedStatsData.score < 0) {
-      fetchedStatsData.score = 0;
-    }
-    // assign the day Stats back to the list
-    fetchedStatsData.dayStats[dayOfTheWeek - 1] = dayStats;
-    // convert the data back to desired format
-    final statsJson = fetchedStatsData.toJson();
-    // update the data back to database
-    firestore
-        .collection(STATS_COLLECTION)
-        .document(sharedPreferences.getString(USER_KEY))
-        .setData(statsJson);
-  }
-
-  void completeTaskAndUpdateScore(
-      DateTime runningDate, bool isCompleted, int urgency) async {
-    // fetch the stats table form the firestore
-    final fetchedStatsData = await fetchStatsTable();
-    // find out what day does the task belong to
-    final int dayOfTheWeek = runningDate.weekday;
-    // get the stats for that day
-    final dayStats = fetchedStatsData.dayStats[dayOfTheWeek - 1];
-    if (isCompleted) {
-      // add the task to the day stats
-      dayStats.tasksCompleted += 1;
-      // add the score
-      fetchedStatsData.score += (urgency *
-              TASK_COMPLETION_POINTS /
-              TASK_MEASUREMENT_DIVISION_CONSTANT)
-          .floor();
-    } else {
-      // remove the task to the day stats
-      dayStats.tasksCompleted -= 1;
-      // decrement the score
-      fetchedStatsData.score -= (urgency *
-              TASK_COMPLETION_POINTS /
-              TASK_MEASUREMENT_DIVISION_CONSTANT)
-          .floor();
-    }
-    // assign the day Stats back to the list
-    fetchedStatsData.dayStats[dayOfTheWeek - 1] = dayStats;
-    // convert the data back to desired format
-    final statsJson = fetchedStatsData.toJson();
-    // update the data back to database
-    firestore
-        .collection(STATS_COLLECTION)
-        .document(sharedPreferences.getString(USER_KEY))
-        .setData(statsJson);
   }
 
   TaskModel _addUserId(TaskModel oldTask) {
