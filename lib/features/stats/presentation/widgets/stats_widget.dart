@@ -124,7 +124,7 @@ class _StatsWidgetState extends State<StatsWidget> {
             statsTable.dayStats[dayOfTheWeek - 1].tasksCreated,
             Colors.blueGrey));
         deletedTaskData.add(TaskAction(weekTranslator(dayOfTheWeek),
-            statsTable.dayStats[dayOfTheWeek - 1].tasksDeleted, Colors.red));
+            statsTable.dayStats[dayOfTheWeek - 1].tasksDeleted, Colors.grey));
         completedTaskData.add(TaskAction(
             weekTranslator(dayOfTheWeek),
             statsTable.dayStats[dayOfTheWeek - 1].tasksCompleted,
@@ -147,6 +147,13 @@ class _StatsWidgetState extends State<StatsWidget> {
         colorFn: (TaskAction clickData, _) => clickData.color,
         data: createdTaskData,
       ),
+//      charts.Series(
+//        id: 'No. of Tasks Deleted',
+//        domainFn: (TaskAction clickData, _) => clickData.dayOfTheWeek,
+//        measureFn: (TaskAction clickData, _) => clickData.taskAmount,
+//        colorFn: (TaskAction clickData, _) => clickData.color,
+//        data: deletedTaskData,
+//      ),
     ];
   }
 
