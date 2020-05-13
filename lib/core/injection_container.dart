@@ -106,6 +106,7 @@ void taskInjection() {
         allTasksForDateUseCase: sl(),
         completeTaskUseCase: sl(),
         createTaskUseCase: sl(),
+        deleteTaskUseCase: sl(),
       ));
   // use case
   sl.registerLazySingleton(() => GetAllTasksForDateUseCase(repository: sl()));

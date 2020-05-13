@@ -94,8 +94,8 @@ class StatsRemoteDataSourceImpl implements StatsRemoteDataSource {
       final int dayOfTheWeek = runningDate.weekday;
       // get the stats for that day
       final dayStats = fetchedStatsData.dayStats[dayOfTheWeek - 1];
-      // remove the task to the day stats
-      dayStats.tasksDeleted -= 1;
+      // add the task to the day stats
+      dayStats.tasksDeleted += 1;
       // decrement the score
       fetchedStatsData.score -=
           (urgency * TASK_DELETION_POINTS / TASK_MEASUREMENT_DIVISION_CONSTANT)

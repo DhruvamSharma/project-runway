@@ -100,6 +100,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           .collection(taskCollection)
           .where("userId", isEqualTo: sharedPreferences.getString(USER_KEY))
           .where("runningDate", isEqualTo: dateToStringParser(runningDate))
+          .where("isDeleted", isEqualTo: false)
           .getDocuments();
       List<TaskModel> taskList = List();
       // collecting all the documents

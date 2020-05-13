@@ -19,77 +19,84 @@ class _StatsWidgetState extends State<StatsWidget> {
   ManagedStatsTable statsTable;
   @override
   void initState() {
-    BlocProvider.of<StatsBloc>(context).dispatch(GetStatsTableEvent());
+    fetchStats();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<StatsBloc, StatsState>(
-      listener: (_, state) {
-        if (state is LoadedGetStatsState) {
-          setState(() {
-            statsTable = state.statsTable;
-            weeklyScore = statsTable.score;
-          });
-        }
+    return RefreshIndicator(
+      onRefresh: () {
+        fetchStats();
+        return;
       },
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(
-                top: CommonDimens.MARGIN_20,
-              ),
-              child: Text(
-                "Weekly Score",
-                style: CommonTextStyles.taskTextStyle(),
-              ),
-            ),
-            ScoreWidget(weeklyScore),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: CommonDimens.MARGIN_80,
-                left: CommonDimens.MARGIN_20,
-                right: CommonDimens.MARGIN_20,
-              ),
-              child: SizedBox(
-                height: 300.0,
-                child: charts.BarChart(
-                  buildSeries(),
-                  animate: true,
-                  defaultRenderer: new charts.BarRendererConfig(
-                      groupingType: charts.BarGroupingType.groupedStacked,
-                      strokeWidthPx: 2.0),
-                  defaultInteractions: true,
-                  behaviors: [
-                    new charts.SeriesLegend(
-                      // Positions for "start" and "end" will be left and right respectively
-                      // for widgets with a build context that has directionality ltr.
-                      // For rtl, "start" and "end" will be right and left respectively.
-                      // Since this example has directionality of ltr, the legend is
-                      // positioned on the right side of the chart.
-                      position: charts.BehaviorPosition.top,
-                      // By default, if the position of the chart is on the left or right of
-                      // the chart, [horizontalFirst] is set to false. This means that the
-                      // legend entries will grow as new rows first instead of a new column.
-                      horizontalFirst: false,
-                      // This defines the padding around each legend entry.
-                      cellPadding: new EdgeInsets.only(right: 4.0, bottom: 4.0),
-                      // Set show measures to true to display measures in series legend,
-                      // when the datum is selected.
-                      showMeasures: true,
-                      // Optionally provide a measure formatter to format the measure value.
-                      // If none is specified the value is formatted as a decimal.
-                      measureFormatter: (num value) {
-                        return value == null ? '-' : '${value}k';
-                      },
-                    ),
-                  ],
+      child: BlocListener<StatsBloc, StatsState>(
+        listener: (_, state) {
+          if (state is LoadedGetStatsState) {
+            setState(() {
+              statsTable = state.statsTable;
+              weeklyScore = statsTable.score;
+            });
+          }
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_20,
+                ),
+                child: Text(
+                  "Weekly Score",
+                  style: CommonTextStyles.taskTextStyle(),
                 ),
               ),
-            ),
-          ],
+              ScoreWidget(weeklyScore),
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_80,
+                  left: CommonDimens.MARGIN_20,
+                  right: CommonDimens.MARGIN_20,
+                ),
+                child: SizedBox(
+                  height: 300.0,
+                  child: charts.BarChart(
+                    buildSeries(),
+                    animate: true,
+                    defaultRenderer: new charts.BarRendererConfig(
+                        groupingType: charts.BarGroupingType.groupedStacked,
+                        strokeWidthPx: 2.0),
+                    defaultInteractions: true,
+                    behaviors: [
+                      new charts.SeriesLegend(
+                        // Positions for "start" and "end" will be left and right respectively
+                        // for widgets with a build context that has directionality ltr.
+                        // For rtl, "start" and "end" will be right and left respectively.
+                        // Since this example has directionality of ltr, the legend is
+                        // positioned on the right side of the chart.
+                        position: charts.BehaviorPosition.top,
+                        // By default, if the position of the chart is on the left or right of
+                        // the chart, [horizontalFirst] is set to false. This means that the
+                        // legend entries will grow as new rows first instead of a new column.
+                        horizontalFirst: false,
+                        // This defines the padding around each legend entry.
+                        cellPadding:
+                            new EdgeInsets.only(right: 4.0, bottom: 4.0),
+                        // Set show measures to true to display measures in series legend,
+                        // when the datum is selected.
+                        showMeasures: true,
+                        // Optionally provide a measure formatter to format the measure value.
+                        // If none is specified the value is formatted as a decimal.
+                        measureFormatter: (num value) {
+                          return value == null ? '-' : '${value}k';
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -152,5 +159,9 @@ class _StatsWidgetState extends State<StatsWidget> {
     arrangementList.addAll(numberedList.getRange(currentDay, 7));
     arrangementList.addAll(numberedList.getRange(0, currentDay));
     return arrangementList;
+  }
+
+  void fetchStats() {
+    BlocProvider.of<StatsBloc>(context).dispatch(GetStatsTableEvent());
   }
 }

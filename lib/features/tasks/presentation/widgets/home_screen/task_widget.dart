@@ -38,51 +38,70 @@ class _TaskWidgetState extends State<TaskWidget> {
             builder: (_) {
               return Container(
                 decoration: BoxDecoration(
+                  color: Colors.deepPurpleAccent,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
                   ),
                 ),
-                child: DraggableScrollableSheet(
-                  initialChildSize: 0.8,
-                  maxChildSize: 1.0,
-                  expand: false,
-                  builder: (_, controller) {
-                    return Container(
-                      color: CommonColors.scaffoldColor,
-                      child: Material(
-                        child: ChangeNotifierProvider<TaskDetailProviderModel>(
-                          create: (_) => TaskDetailProviderModel(
-                            taskTitle:
-                                Provider.of<TaskHolderProviderModel>(context)
+                child: Material(
+                  color: Colors.transparent,
+                  child: Theme(
+                    data: ThemeData.light()
+                        .copyWith(canvasColor: Colors.transparent),
+                    child: DraggableScrollableSheet(
+                      initialChildSize: 0.8,
+                      maxChildSize: 1.0,
+                      expand: false,
+                      builder: (_, controller) {
+                        return Container(
+                          color: Colors.transparent,
+                          child: Material(
+                            child:
+                                ChangeNotifierProvider<TaskDetailProviderModel>(
+                              create: (_) => TaskDetailProviderModel(
+                                taskTitle: Provider.of<TaskHolderProviderModel>(
+                                        context)
                                     .taskEntity
                                     .taskTitle,
-                            tag: Provider.of<TaskHolderProviderModel>(context)
-                                .taskEntity
-                                .tag,
-                            description:
-                                Provider.of<TaskHolderProviderModel>(context)
+                                tag: Provider.of<TaskHolderProviderModel>(
+                                        context)
                                     .taskEntity
-                                    .description,
-                            urgency:
-                                Provider.of<TaskHolderProviderModel>(context)
+                                    .tag,
+                                description:
+                                    Provider.of<TaskHolderProviderModel>(
+                                            context)
+                                        .taskEntity
+                                        .description,
+                                urgency: Provider.of<TaskHolderProviderModel>(
+                                        context)
                                     .taskEntity
                                     .urgency
                                     .toString(),
-                          ),
-                          child: EditTaskWidget(
-                              task:
-                                  Provider.of<TaskHolderProviderModel>(context)
+                              ),
+                              child: EditTaskWidget(
+                                  task: Provider.of<TaskHolderProviderModel>(
+                                          context)
                                       .taskEntity),
-                        ),
-                      ),
-                    );
-                  },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               );
             },
           );
-          if (taskEntity != null && taskEntity is TaskEntity) {
+          if (taskEntity != null &&
+              taskEntity is TaskEntity &&
+              taskEntity.isDeleted) {
+            taskEntity.isCompleted = isCompleted;
+            BlocProvider.of<HomeScreenTaskBloc>(context)
+                .dispatch(DeleteTaskEvent(task: taskEntity));
+            Provider.of<TaskListHolderProvider>(context)
+                .deleteTaskItemFromList(taskEntity);
+          } else if (taskEntity != null && taskEntity is TaskEntity) {
             taskEntity.isCompleted = isCompleted;
             BlocProvider.of<HomeScreenTaskBloc>(context)
                 .dispatch(UpdateTaskEvent(task: taskEntity));
