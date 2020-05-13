@@ -42,13 +42,8 @@ class StatsScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: CommonDimens.MARGIN_20,
-              ),
-              child: Center(
-                child: StatsWidget(),
-              ),
+            Center(
+              child: StatsWidget(),
             ),
           ],
         ),
