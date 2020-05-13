@@ -5,6 +5,7 @@ import 'package:project_runway/core/errors/failures.dart';
 import 'package:project_runway/core/use_case.dart';
 import 'package:project_runway/features/tasks/domain/use_cases/complete_task_use_case.dart';
 import 'package:project_runway/features/tasks/domain/use_cases/create_task_use_case.dart';
+import 'package:project_runway/features/tasks/domain/use_cases/delete_task_use_case.dart';
 import 'package:project_runway/features/tasks/domain/use_cases/get_all_tasks_for_date_use_case.dart';
 import 'package:project_runway/features/tasks/domain/use_cases/update_task_use_case.dart';
 import '../bloc.dart';
@@ -14,12 +15,14 @@ class HomeScreenTaskBloc extends Bloc<TaskBlocEvent, TaskBlocState> {
   final GetAllTasksForDateUseCase allTasksForDateUseCase;
   final GetCreateTaskUseCase createTaskUseCase;
   final GetUpdateTaskUseCase updateTaskUseCase;
+  final GetDeleteTaskUseCase deleteTaskUseCase;
 
   HomeScreenTaskBloc({
     @required this.completeTaskUseCase,
     @required this.allTasksForDateUseCase,
     @required this.createTaskUseCase,
     @required this.updateTaskUseCase,
+    @required this.deleteTaskUseCase,
   });
 
   @override
@@ -56,14 +59,23 @@ class HomeScreenTaskBloc extends Bloc<TaskBlocEvent, TaskBlocState> {
             message: mapFailureToMessage(failure)),
         (task) => LoadedCreateScreenCreateTaskState(taskEntity: task),
       );
-    }  else if (event is UpdateTaskEvent) {
+    } else if (event is UpdateTaskEvent) {
       yield LoadingHomeScreenState();
       final response =
-      await updateTaskUseCase(TaskParam(taskEntity: event.task));
+          await updateTaskUseCase(TaskParam(taskEntity: event.task));
       yield response.fold(
-            (failure) => ErrorEditScreenState(
-            message: mapFailureToMessage(failure)),
-            (task) => LoadedEditScreenState(taskEntity: task),
+        (failure) =>
+            ErrorEditScreenState(message: mapFailureToMessage(failure)),
+        (task) => LoadedEditScreenState(taskEntity: task),
+      );
+    } else if (event is DeleteTaskEvent) {
+      yield LoadingHomeScreenState();
+      final response =
+          await deleteTaskUseCase(TaskParam(taskEntity: event.task));
+      yield response.fold(
+        (failure) =>
+            ErrorDeleteTaskState(message: mapFailureToMessage(failure)),
+        (task) => LoadedDeleteTaskState(taskEntity: task),
       );
     }
   }

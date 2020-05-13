@@ -42,7 +42,9 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                   Provider.of<InitialTaskTitleProviderModel>(context)
                       .assignTaskTitle(text);
                 },
-                textFieldValue: Provider.of<InitialTaskTitleProviderModel>(context).taskTitle,
+                textFieldValue:
+                    Provider.of<InitialTaskTitleProviderModel>(context)
+                        .taskTitle,
                 label: "Task Title",
                 isRequired: false,
               ),
@@ -60,8 +62,10 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                     children: <Widget>[
                       OutlineButton(
                         onPressed: () async {
-                          String taskTitle = Provider.of<InitialTaskTitleProviderModel>(context)
-                              .taskTitle;
+                          String taskTitle =
+                              Provider.of<InitialTaskTitleProviderModel>(
+                                      context)
+                                  .taskTitle;
                           Provider.of<InitialTaskTitleProviderModel>(context)
                               .assignTaskTitle("");
                           final data = await Navigator.pushNamed(

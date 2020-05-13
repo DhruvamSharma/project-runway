@@ -61,3 +61,16 @@ class ReadAllTaskEvent extends TaskBlocEvent {
         runningDate,
       ];
 }
+
+class DeleteTaskEvent extends TaskBlocEvent {
+  final TaskEntity task;
+
+  DeleteTaskEvent({
+    @required this.task,
+  });
+
+  @override
+  List<Object> get props => [
+    task,
+  ];
+}
