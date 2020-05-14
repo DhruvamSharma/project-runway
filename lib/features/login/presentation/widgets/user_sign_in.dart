@@ -8,6 +8,7 @@ import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/manager/bloc.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
 import 'package:provider/provider.dart';
@@ -45,9 +46,12 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
               if (state is LoadedFindBlocState &&
                   state.user != null &&
                   !state.user.isDeleted) {
+                print(state.user.userName);
                 // save the user id if the user is not new
                 sharedPreferences.setString(USER_KEY, state.user.userId);
                 Provider.of<UserEntryProviderHolder>(context).isNewUser = false;
+                Provider.of<UserEntryProviderHolder>(context).userId =
+                    state.user.userId;
               }
             },
             child: Column(
@@ -55,7 +59,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
               children: <Widget>[
                 Text(
                   buildText(context).toUpperCase(),
-                  style: CommonTextStyles.taskTextStyle(),
+                  style: CommonTextStyles.taskTextStyle(context),
                   textAlign: TextAlign.center,
                 ),
                 Padding(
@@ -96,7 +100,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
           horizontal: CommonDimens.MARGIN_20,
         ),
         child: Material(
-          color: CommonColors.accentColor,
+          color: Provider.of<ThemeModel>(context).currentTheme.accentColor,
           borderRadius: BorderRadius.circular(5),
           child: InkWell(
             borderRadius: BorderRadius.circular(5),
@@ -126,8 +130,10 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                     ),
                     child: Text(
                       "Signed in with Google",
-                      style: CommonTextStyles.badgeTextStyle().copyWith(
-                        color: CommonColors.scaffoldColor,
+                      style: CommonTextStyles.badgeTextStyle(context).copyWith(
+                        color: Provider.of<ThemeModel>(context)
+                            .currentTheme
+                            .scaffoldBackgroundColor,
                         fontSize: 16,
                       ),
                     ),
@@ -202,8 +208,10 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                   ),
                   child: Text(
                     "Sign in with Google",
-                    style: CommonTextStyles.badgeTextStyle().copyWith(
-                      color: CommonColors.accentColor,
+                    style: CommonTextStyles.badgeTextStyle(context).copyWith(
+                      color: Provider.of<ThemeModel>(context)
+                          .currentTheme
+                          .accentColor,
                       fontSize: 16,
                     ),
                   ),

@@ -103,7 +103,7 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                     beautifyDate(Provider.of<PageHolderProviderModel>(context)
                             .runningDate ??
                         ""),
-                    style: CommonTextStyles.dateTextStyle(),
+                    style: CommonTextStyles.dateTextStyle(context),
                   ),
                 ),
                 if (Provider.of<TaskListHolderProvider>(providerContext)
@@ -169,10 +169,11 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
     );
   }
 
-  void getAllTasks() {
+  Future<Null> getAllTasks() {
     BlocProvider.of<HomeScreenTaskBloc>(context).dispatch(ReadAllTaskEvent(
       runningDate: Provider.of<PageHolderProviderModel>(context).runningDate,
     ));
+    return null;
   }
 
   @override
@@ -209,8 +210,10 @@ class TaskListHolderProvider extends ChangeNotifier {
 
   void deleteTaskItemFromList(TaskEntity taskEntity) {
     int indexToRemove = this.taskList.indexOf(taskEntity);
-    listState.currentState.removeItem(indexToRemove,
-        (context, animation) => _buildItem(context, 0, animation));
+    String textForRemoveAnimation = this.taskList[indexToRemove].taskTitle;
+    listState.currentState.removeItem(indexToRemove, (context, animation) {
+      return _buildItem(context, 0, animation, textForRemoveAnimation);
+    });
     this.taskList.removeAt(indexToRemove);
     notifyListeners();
   }
@@ -221,14 +224,15 @@ class TaskListHolderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  _buildItem(BuildContext context, int index, Animation<double> animation) {
+  _buildItem(BuildContext context, int index, Animation<double> animation,
+      String text) {
     return SizeTransition(
       key: ValueKey<int>(index),
       axis: Axis.vertical,
       sizeFactor: animation,
       child: SizedBox(
         child: ListTile(
-          title: Text('${taskList[index].taskTitle}'),
+          title: Text(text),
         ),
       ),
     );

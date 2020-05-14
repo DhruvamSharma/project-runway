@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:project_runway/core/errors/exceptions.dart';
 import 'package:project_runway/core/errors/failures.dart';
 import 'package:project_runway/core/network/network_info.dart';
+import 'package:project_runway/core/user_utility.dart';
 import 'package:project_runway/features/login/data/data_sources/user_local_data_source.dart';
 import 'package:project_runway/features/login/data/data_sources/user_remote_data_source.dart';
 import 'package:project_runway/features/login/data/models/user_model.dart';
@@ -30,7 +31,6 @@ class UserRepositoryImpl implements UserRepository {
         final userId = uuid.v1();
         userModel = addUserId(user, userId);
       }
-      print(userModel.emailId);
       final response = await remoteDataSource.createUser(userModel);
       return Right(response);
     } on ServerException catch (ex) {
@@ -116,23 +116,5 @@ class UserRepositoryImpl implements UserRepository {
       (value) => isDeleted,
     );
     return UserModel.fromJson(userMap);
-  }
-
-  UserModel convertEntityToModel(UserEntity userEntity) {
-    return UserModel(
-      userId: userEntity.userId,
-      userName: userEntity.userName,
-      phoneNumber: userEntity.phoneNumber,
-      age: userEntity.age,
-      gender: userEntity.gender,
-      createdAt: userEntity.createdAt,
-      score: userEntity.score,
-      isVerified: userEntity.isVerified,
-      isDeleted: userEntity.isDeleted,
-      isLoggedIn: userEntity.isLoggedIn,
-      googleId: userEntity.googleId,
-      userPhotoUrl: userEntity.userPhotoUrl,
-      emailId: userEntity.emailId,
-    );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/widgets/app_into.dart';
 import 'package:project_runway/features/login/presentation/widgets/congratulation.dart';
 import 'package:project_runway/features/login/presentation/widgets/user_name.dart';
@@ -86,7 +87,9 @@ class UserEntryRoute extends StatelessWidget {
                           alignment: Alignment.bottomRight,
                           child: FloatingActionButton(
                             onPressed: () {
-                              if (!Provider.of<UserEntryProviderHolder>(providerContext).isForwardButtonDisabled) {
+                              if (!Provider.of<UserEntryProviderHolder>(
+                                      providerContext)
+                                  .isForwardButtonDisabled) {
                                 if (_pageController.page.toInt() != 1) {
                                   _pageController.animateToPage(
                                     buildPageNumber(providerContext),
@@ -97,11 +100,11 @@ class UserEntryRoute extends StatelessWidget {
 
                                 if (_pageController.page.toInt() == 1 &&
                                     Provider.of<UserEntryProviderHolder>(
-                                        providerContext)
-                                        .userName !=
+                                                providerContext)
+                                            .userName !=
                                         null &&
                                     Provider.of<UserEntryProviderHolder>(
-                                        providerContext)
+                                            providerContext)
                                         .userName
                                         .isNotEmpty) {
                                   _pageController.animateToPage(
@@ -113,14 +116,15 @@ class UserEntryRoute extends StatelessWidget {
 
                                 if (_pageController.page.toInt() == 1 &&
                                     (Provider.of<UserEntryProviderHolder>(
-                                        providerContext)
-                                        .userName ==
-                                        null ||
+                                                    providerContext)
+                                                .userName ==
+                                            null ||
                                         Provider.of<UserEntryProviderHolder>(
-                                            providerContext)
+                                                providerContext)
                                             .userName
                                             .isEmpty)) {
-                                  _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                  _scaffoldKey.currentState
+                                      .showSnackBar(SnackBar(
                                     content: Text("Please enter your name"),
                                     behavior: SnackBarBehavior.floating,
                                   ));
@@ -129,6 +133,9 @@ class UserEntryRoute extends StatelessWidget {
                             },
                             mini: true,
                             child: Icon(Icons.arrow_downward),
+                            backgroundColor: Provider.of<ThemeModel>(context)
+                                .currentTheme
+                                .accentColor,
                           ),
                         ),
                       )
@@ -163,6 +170,7 @@ class UserEntryProviderHolder extends ChangeNotifier {
   String googleId;
   String userPhotoUrl;
   String emailId;
+  String userId;
   bool isVerified = false;
   int pageNumber = 0;
   bool showSkipButton = true;

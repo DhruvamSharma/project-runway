@@ -5,6 +5,7 @@ import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
@@ -124,8 +125,8 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       helperText:
                           "Urgency is a number from 0-9 that tells how urgent the task is.",
                       helperTextStyle:
-                          CommonTextStyles.badgeTextStyle().copyWith(
-                        color: CommonColors.accentColor,
+                          CommonTextStyles.badgeTextStyle(context).copyWith(
+                        color: Provider.of<ThemeModel>(context).currentTheme.accentColor,
                       ),
                       onSubmitted: (text) {},
                       textFieldValue:
@@ -198,7 +199,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                               },
                               child: Text(
                                 isEnabled ? "Update" : "Go Back",
-                                style: CommonTextStyles.taskTextStyle(),
+                                style: CommonTextStyles.taskTextStyle(context),
                               ),
                             ),
                           ),
@@ -219,7 +220,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                           },
                           child: Text(
                             "Go Back",
-                            style: CommonTextStyles.taskTextStyle(),
+                            style: CommonTextStyles.taskTextStyle(context),
                           ),
                         ),
                       ),

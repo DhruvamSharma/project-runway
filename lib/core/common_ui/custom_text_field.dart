@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:project_runway/core/theme/theme.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
+import 'package:provider/provider.dart';
 
 import '../common_colors.dart';
 import '../common_text_styles.dart';
@@ -33,29 +36,29 @@ class CustomTextField extends StatefulWidget {
   final List<TextInputFormatter> textInputFormatter;
   CustomTextField(this.minNumberRequired, this.maxNumberRequired,
       {this.label = "ID NUMBER",
-        this.isRequired = true,
-        this.leadingIcon,
-        this.initialText,
-        this.onSubmitted,
-        this.errorText,
-        this.errorTextStyle,
-        this.onValueChange,
-        this.labelTextStyle,
-        this.textStyle,
-        this.hintStyle,
-        this.trailingWidget,
-        this.helperText,
-        this.helperTextStyle,
-        this.minAmount,
-        this.hint,
-        this.textInputFormatter,
-        this.labelPadding,
-        this.prefixText,
-        this.prefixTextStyle,
-        this.textFieldValue,
-        this.onTapForFirstTime,
-        this.enabled = true,
-        this.type});
+      this.isRequired = true,
+      this.leadingIcon,
+      this.initialText,
+      this.onSubmitted,
+      this.errorText,
+      this.errorTextStyle,
+      this.onValueChange,
+      this.labelTextStyle,
+      this.textStyle,
+      this.hintStyle,
+      this.trailingWidget,
+      this.helperText,
+      this.helperTextStyle,
+      this.minAmount,
+      this.hint,
+      this.textInputFormatter,
+      this.labelPadding,
+      this.prefixText,
+      this.prefixTextStyle,
+      this.textFieldValue,
+      this.onTapForFirstTime,
+      this.enabled = true,
+      this.type});
 
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
@@ -64,11 +67,17 @@ class CustomTextField extends StatefulWidget {
 class _CustomTextFieldState extends State<CustomTextField> {
   TextEditingController _controller;
   String errorText;
-  Color borderColor = CommonColors.accentColor;
+  Color borderColor;
   FocusNode _focusNode = FocusNode();
 
   int tapCounter = 0;
   final int maxTapCount = 1;
+
+  @override
+  void didChangeDependencies() {
+    borderColor = Provider.of<ThemeModel>(context).currentTheme.accentColor;
+    super.didChangeDependencies();
+  }
 
   @override
   void initState() {
@@ -128,8 +137,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         });
         widget.onValueChange(text);
       },
-      style: widget.textStyle ??
-          buildTextStyle(),
+      style: widget.textStyle ?? buildTextStyle(),
       onFieldSubmitted: (text) {
         widget.onSubmitted(text);
       },
@@ -150,21 +158,20 @@ class _CustomTextFieldState extends State<CustomTextField> {
           padding: const EdgeInsets.all(8.0),
           child: widget.trailingWidget,
         ),
-        errorStyle: widget.errorTextStyle ??
-            CommonTextStyles.errorFieldTextStyle(),
+        errorStyle:
+            widget.errorTextStyle ?? CommonTextStyles.errorFieldTextStyle(),
         helperText: widget.helperText,
         helperMaxLines: 3,
-        helperStyle: widget.helperTextStyle ??
-            CommonTextStyles.badgeTextStyle(),
+        helperStyle:
+            widget.helperTextStyle ?? CommonTextStyles.badgeTextStyle(context),
         errorBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: CommonColors.errorTextColor),
         ),
         labelStyle: widget.labelTextStyle ??
-            CommonTextStyles.taskTextStyle().copyWith(
-              color: buildLabelAndHintColor()
-            ),
+            CommonTextStyles.taskTextStyle(context)
+                .copyWith(color: buildLabelAndHintColor()),
         hintStyle: widget.hintStyle ??
-            CommonTextStyles.taskTextStyle().copyWith(
+            CommonTextStyles.taskTextStyle(context).copyWith(
               color: buildLabelAndHintColor(),
             ),
         labelText: widget.label,
@@ -182,7 +189,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   }
 
   TextStyle buildTextStyle() {
-    TextStyle textStyle = CommonTextStyles.taskTextStyle();
+    TextStyle textStyle = CommonTextStyles.taskTextStyle(context);
     if (widget.enabled != null && !widget.enabled) {
       textStyle = textStyle.copyWith(
         color: Colors.grey,
@@ -212,9 +219,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
   Color buildLabelAndHintColor() {
     Color hintAndLabelColor;
     if (widget.enabled != null && !widget.enabled) {
-      hintAndLabelColor = CommonColors.disabledTaskTextColor ;
+      hintAndLabelColor = CommonColors.disabledTaskTextColor;
     } else {
-      hintAndLabelColor = CommonColors.taskTextColor;
+      hintAndLabelColor =
+          Provider.of<ThemeModel>(context).currentTheme == lightTheme
+              ? CommonColors.taskTextColorLightTheme
+              : CommonColors.taskTextColor;
     }
     return hintAndLabelColor;
   }
@@ -225,7 +235,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             widget.maxNumberRequired != null)) {
       if (newText.length < widget.minNumberRequired) {
         errorText =
-        "${widget.label} should be bigger than ${widget.minNumberRequired}";
+            "${widget.label} should be bigger than ${widget.minNumberRequired}";
       } else {
         errorText = null;
       }
@@ -233,13 +243,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
       if (widget.maxNumberRequired != null &&
           newText.length > widget.maxNumberRequired) {
         errorText =
-        "${widget.label} should be less than ${widget.maxNumberRequired}";
+            "${widget.label} should be less than ${widget.maxNumberRequired}";
       }
 
       if (widget.minAmount != null) {
         if (int.parse(_controller.text) < widget.minAmount)
           errorText =
-          "${widget.label} should not be less than ${widget.minAmount}";
+              "${widget.label} should not be less than ${widget.minAmount}";
         else
           errorText = null;
       }
@@ -249,7 +259,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           (newText.length < widget.minNumberRequired ||
               newText.length > widget.minNumberRequired)) {
         errorText =
-        "${widget.label} should be exactly ${widget.minNumberRequired} digits";
+            "${widget.label} should be exactly ${widget.minNumberRequired} digits";
       }
     }
     return errorText;

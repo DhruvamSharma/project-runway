@@ -34,7 +34,7 @@ class _ScoreWidgetState extends State<ScoreWidget>
             return Text(
               timeLeftStringToShowToUser,
               style:
-                  CommonTextStyles.headerTextStyle().copyWith(letterSpacing: 5),
+                  CommonTextStyles.headerTextStyle(context).copyWith(letterSpacing: 5),
             );
           },
         ),
@@ -47,5 +47,11 @@ class _ScoreWidgetState extends State<ScoreWidget>
   // to complete.
   String get timeLeftStringToShowToUser {
     return "${(widget.weeklyScore * _controller.value).floor()}";
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
