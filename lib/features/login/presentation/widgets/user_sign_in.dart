@@ -46,10 +46,11 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
               if (state is LoadedFindBlocState &&
                   state.user != null &&
                   !state.user.isDeleted) {
-                print(state.user.userName);
                 // save the user id if the user is not new
                 sharedPreferences.setString(USER_KEY, state.user.userId);
                 Provider.of<UserEntryProviderHolder>(context).isNewUser = false;
+                Provider.of<UserEntryProviderHolder>(context).createdDate =
+                    state.user.createdAt;
                 Provider.of<UserEntryProviderHolder>(context).userId =
                     state.user.userId;
               }
@@ -148,7 +149,6 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
         color: Colors.transparent,
         child: InkWell(
           onTap: () async {
-            signOutOfGoogle();
             setState(() {
               isFindingUser = true;
             });

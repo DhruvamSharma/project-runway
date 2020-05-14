@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
+import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/common_ui/custom_snackbar.dart';
+import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/date_time_parser.dart';
+import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/stats/data/models/managed_stats_model.dart';
 import 'package:project_runway/features/stats/presentation/charts/task_action.dart';
@@ -18,6 +23,7 @@ class StatsWidget extends StatefulWidget {
 
 class _StatsWidgetState extends State<StatsWidget> {
   int weeklyScore = 0;
+  bool isLoading = true;
   ManagedStatsTable statsTable;
   @override
   void initState() {
@@ -36,9 +42,43 @@ class _StatsWidgetState extends State<StatsWidget> {
         listener: (_, state) {
           if (state is LoadedGetStatsState) {
             setState(() {
+              isLoading = false;
               statsTable = state.statsTable;
               weeklyScore = statsTable.score;
             });
+          }
+
+          if (state is ErrorGetStatsState) {
+            if (state.message == NO_INTERNET)
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(
+                  "Sorry, you do not have an internet connection",
+                  style: CommonTextStyles.scaffoldTextStyle(context),
+                ),
+                behavior: SnackBarBehavior.floating,
+                backgroundColor:
+                    Provider.of<ThemeModel>(context).currentTheme == lightTheme
+                        ? CommonColors.scaffoldColor
+                        : CommonColors.accentColor,
+              ));
+            else {
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(
+                  "Sorry, some error occured",
+                  style: CommonTextStyles.scaffoldTextStyle(context),
+                ),
+                behavior: SnackBarBehavior.floating,
+                backgroundColor:
+                    Provider.of<ThemeModel>(context).currentTheme == lightTheme
+                        ? CommonColors.scaffoldColor
+                        : CommonColors.accentColor,
+              ));
+            }
+            Future.delayed(Duration(seconds: 4)).then((value) => () {
+                  setState(() {
+                    isLoading = false;
+                  });
+                });
           }
         },
         child: SingleChildScrollView(
@@ -54,49 +94,55 @@ class _StatsWidgetState extends State<StatsWidget> {
                 ),
               ),
               ScoreWidget(weeklyScore),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_80,
-                  left: CommonDimens.MARGIN_20,
-                  right: CommonDimens.MARGIN_20,
+              if (isLoading)
+                // Load a Lottie file from your assets
+                Lottie.asset(
+                  'assets/graph-statistics-solid.json',
                 ),
-                child: SizedBox(
-                  height: 300.0,
-                  child: charts.BarChart(
-                    buildSeries(),
-                    animate: true,
-                    defaultRenderer: new charts.BarRendererConfig(
-                        groupingType: charts.BarGroupingType.groupedStacked,
-                        strokeWidthPx: 2.0),
-                    defaultInteractions: true,
-                    behaviors: [
-                      new charts.SeriesLegend(
-                        // Positions for "start" and "end" will be left and right respectively
-                        // for widgets with a build context that has directionality ltr.
-                        // For rtl, "start" and "end" will be right and left respectively.
-                        // Since this example has directionality of ltr, the legend is
-                        // positioned on the right side of the chart.
-                        position: charts.BehaviorPosition.top,
-                        // By default, if the position of the chart is on the left or right of
-                        // the chart, [horizontalFirst] is set to false. This means that the
-                        // legend entries will grow as new rows first instead of a new column.
-                        horizontalFirst: false,
-                        // This defines the padding around each legend entry.
-                        cellPadding:
-                            new EdgeInsets.only(right: 4.0, bottom: 4.0),
-                        // Set show measures to true to display measures in series legend,
-                        // when the datum is selected.
-                        showMeasures: true,
-                        // Optionally provide a measure formatter to format the measure value.
-                        // If none is specified the value is formatted as a decimal.
-                        measureFormatter: (num value) {
-                          return value == null ? '-' : '${value}k';
-                        },
-                      ),
-                    ],
+              if (!isLoading)
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_80,
+                    left: CommonDimens.MARGIN_20,
+                    right: CommonDimens.MARGIN_20,
+                  ),
+                  child: SizedBox(
+                    height: 300.0,
+                    child: charts.BarChart(
+                      buildSeries(),
+                      animate: true,
+                      defaultRenderer: new charts.BarRendererConfig(
+                          groupingType: charts.BarGroupingType.groupedStacked,
+                          strokeWidthPx: 2.0),
+                      defaultInteractions: true,
+                      behaviors: [
+                        new charts.SeriesLegend(
+                          // Positions for "start" and "end" will be left and right respectively
+                          // for widgets with a build context that has directionality ltr.
+                          // For rtl, "start" and "end" will be right and left respectively.
+                          // Since this example has directionality of ltr, the legend is
+                          // positioned on the right side of the chart.
+                          position: charts.BehaviorPosition.top,
+                          // By default, if the position of the chart is on the left or right of
+                          // the chart, [horizontalFirst] is set to false. This means that the
+                          // legend entries will grow as new rows first instead of a new column.
+                          horizontalFirst: false,
+                          // This defines the padding around each legend entry.
+                          cellPadding:
+                              new EdgeInsets.only(right: 4.0, bottom: 4.0),
+                          // Set show measures to true to display measures in series legend,
+                          // when the datum is selected.
+                          showMeasures: true,
+                          // Optionally provide a measure formatter to format the measure value.
+                          // If none is specified the value is formatted as a decimal.
+                          measureFormatter: (num value) {
+                            return value == null ? '-' : '${value}k';
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -128,9 +174,10 @@ class _StatsWidgetState extends State<StatsWidget> {
         deletedTaskData.add(TaskAction(weekTranslator(dayOfTheWeek),
             statsTable.dayStats[dayOfTheWeek - 1].tasksDeleted, Colors.grey));
         completedTaskData.add(TaskAction(
-            weekTranslator(dayOfTheWeek),
-            statsTable.dayStats[dayOfTheWeek - 1].tasksCompleted,
-                Provider.of<ThemeModel>(context).currentTheme.accentColor,));
+          weekTranslator(dayOfTheWeek),
+          statsTable.dayStats[dayOfTheWeek - 1].tasksCompleted,
+          Provider.of<ThemeModel>(context).currentTheme.accentColor,
+        ));
       }
     }
     // return 3 series

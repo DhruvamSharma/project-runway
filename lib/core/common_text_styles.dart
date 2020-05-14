@@ -72,6 +72,15 @@ class CommonTextStyles {
     );
   }
 
+  static TextStyle scaffoldTextStyle(BuildContext context) {
+    return _googleFontStyle.copyWith(
+      height: 1.5,
+      color: Provider.of<ThemeModel>(context).currentTheme != lightTheme? CommonColors.taskTextColorLightTheme: CommonColors.taskTextColor,
+      fontSize: 14,
+      letterSpacing: 2,
+    );
+  }
+
   static TextStyle disabledTaskTextStyle() {
     return _googleFontStyle.copyWith(
       height: 1.5,

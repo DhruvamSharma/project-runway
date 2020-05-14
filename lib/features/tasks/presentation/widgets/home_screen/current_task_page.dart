@@ -135,15 +135,19 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                                         .taskList
                                         .length,
                                 itemBuilder: (_, i, animation) {
+                                  if (Provider.of<TaskListHolderProvider>(providerContext).taskList.isNotEmpty)
                                   return SizeTransition(
                                     sizeFactor: animation,
                                     child: ChangeNotifierProvider<
                                         TaskHolderProviderModel>(
-                                      key: ValueKey(
-                                          Provider.of<TaskListHolderProvider>(
-                                                  providerContext).taskList.isEmpty? ""
-                                              :Provider.of<TaskListHolderProvider>(
-                                              providerContext)
+                                      key: ValueKey(Provider.of<
+                                                      TaskListHolderProvider>(
+                                                  providerContext)
+                                              .taskList
+                                              .isEmpty
+                                          ? ""
+                                          : Provider.of<TaskListHolderProvider>(
+                                                  providerContext)
                                               .taskList[i]
                                               .taskId),
                                       create: (context) =>
@@ -155,6 +159,8 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                                       child: TaskWidget(),
                                     ),
                                   );
+                                  else
+                                    return Container();
                                 },
                               ),
                             ),

@@ -42,181 +42,147 @@ class _ProfileRouteState extends State<ProfileRoute> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<StatsBloc>(
-      builder: (_) => sl<StatsBloc>(),
-      child: BlocProvider<LoginBloc>(
-        builder: (_) => sl<LoginBloc>(),
-        child: Builder(
-          builder: (blocContext) => BlocListener<LoginBloc, LoginBlocState>(
-            listener: (_, state) {
-              isLoading = false;
-              if (state is ErrorLoginBlocState) {
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
-                  content: Text("Sorry, some error occurred"),
-                  behavior: SnackBarBehavior.floating,
-                ));
-              }
-            },
-            child: Scaffold(
-              key: _scaffoldKey,
-              appBar: AppBar(
-                backgroundColor: CommonColors.appBarColor,
-              ),
-              body: Stack(
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.center,
-                    child: RotatedBox(
-                      quarterTurns: 3,
-                      child: Text(
-                        APP_NAME.toUpperCase(),
-                        style: CommonTextStyles.rotatedDesignTextStyle(context),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topCenter,
+    return BlocProvider<LoginBloc>(
+      builder: (_) => sl<LoginBloc>(),
+      child: Builder(
+        builder: (blocContext) => BlocListener<LoginBloc, LoginBlocState>(
+          listener: (_, state) {
+            isLoading = false;
+            if (state is ErrorLoginBlocState) {
+              _scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text("Sorry, some error occurred"),
+                behavior: SnackBarBehavior.floating,
+              ));
+            }
+          },
+          child: Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              backgroundColor: CommonColors.appBarColor,
+            ),
+            body: Stack(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.center,
+                  child: RotatedBox(
+                    quarterTurns: 3,
                     child: Text(
-                      "profile".toUpperCase(),
-                      style: CommonTextStyles.headerTextStyle(context),
+                      APP_NAME.toUpperCase(),
+                      style: CommonTextStyles.rotatedDesignTextStyle(context),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: CommonDimens.MARGIN_80 * 2,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        ListTile(
-                          leading: Image.asset(
-                            "assets/google-logo-png-open-2000.png",
-                            height: 40,
-                            width: 30,
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    "profile".toUpperCase(),
+                    style: CommonTextStyles.headerTextStyle(context),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_80 * 2,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_40,
+                        ),
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.notifications_active,
+                            color: Provider.of<ThemeModel>(context)
+                                .currentTheme
+                                .accentColor,
+                            size: 30,
                           ),
                           title: Text(
-                            widget.user.isVerified
-                                ? "Your progress is being saved"
-                                : "Sign in to save your progress",
+                            "When do you want to receive notifications?",
                             style: CommonTextStyles.taskTextStyle(context),
                           ),
-                          onTap: () async {
-                            if (!widget.user.isVerified) {
-                              // sign in
-                              final firebaseUser =
-                                  await signInWithGoogle(context);
-                              // update the user entity
-                              setState(() {
-                                widget.user.userPhotoUrl =
-                                    firebaseUser.photoUrl;
-                                widget.user.googleId = firebaseUser.uid;
-                                widget.user.emailId = firebaseUser.email;
-                                widget.user.isVerified = true;
-                              });
-                              // update the user model in database and local
-                              BlocProvider.of<LoginBloc>(blocContext)
-                                  .dispatch(LoginUserEvent(user: widget.user));
-                            }
-                          },
+                          onTap: () {},
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_40,
-                          ),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.notifications_active,
-                              color: Provider.of<ThemeModel>(context)
-                                  .currentTheme
-                                  .accentColor,
-                              size: 30,
-                            ),
-                            title: Text(
-                              "When do you want to receive notifications?",
-                              style: CommonTextStyles.taskTextStyle(context),
-                            ),
-                            onTap: () {},
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_20,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
-                          ),
-                          child: Divider(
-                            color:
-                                Provider.of<ThemeModel>(context).currentTheme ==
-                                        lightTheme
-                                    ? CommonColors.dateTextColorLightTheme
-                                    : CommonColors.dateTextColor,
-                          ),
+                        child: Divider(
+                          color:
+                              Provider.of<ThemeModel>(context).currentTheme ==
+                                      lightTheme
+                                  ? CommonColors.dateTextColorLightTheme
+                                  : CommonColors.dateTextColor,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_20,
+                        ),
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.lightbulb_outline,
+                            color: Provider.of<ThemeModel>(context)
+                                .currentTheme
+                                .accentColor,
+                            size: 30,
                           ),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.lightbulb_outline,
-                              color: Provider.of<ThemeModel>(context)
-                                  .currentTheme
-                                  .accentColor,
-                              size: 30,
-                            ),
-                            title: Text(
-                              "Want to use light theme",
-                              style: CommonTextStyles.taskTextStyle(context),
-                            ),
-                            trailing: Checkbox(
-                              value: Provider.of<ThemeModel>(context)
-                                      .currentTheme ==
-                                  lightTheme,
-                              checkColor: Provider.of<ThemeModel>(context)
-                                  .currentTheme
-                                  .accentColor,
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.padded,
-                              activeColor: CommonColors.toggleableActiveColor,
-                              onChanged: (value) {
-                                Provider.of<ThemeModel>(context).toggleTheme();
-                              },
-                            ),
-                            onTap: () {
+                          title: Text(
+                            "Want to use light theme",
+                            style: CommonTextStyles.taskTextStyle(context),
+                          ),
+                          trailing: Checkbox(
+                            value: Provider.of<ThemeModel>(context)
+                                    .currentTheme ==
+                                lightTheme,
+                            checkColor: Provider.of<ThemeModel>(context)
+                                .currentTheme
+                                .accentColor,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.padded,
+                            activeColor: CommonColors.toggleableActiveColor,
+                            onChanged: (value) {
                               Provider.of<ThemeModel>(context).toggleTheme();
                             },
                           ),
+                          onTap: () {
+                            Provider.of<ThemeModel>(context).toggleTheme();
+                          },
                         ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: CommonDimens.MARGIN_40,
-                    ),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: OutlineButton(
-                        child: Text(
-                          "Sign out",
-                          style: CommonTextStyles.taskTextStyle(context),
-                        ),
-                        onPressed: () async {
-                          // clear local data
-                          await sharedPreferences.clear();
-                          // log out of google
-                          signOutOfGoogle();
-                          // pop the profile route
-                          Navigator.pop(context);
-                          // pop the home route
-                          Navigator.pop(context);
-                          Navigator.pushNamed(
-                              context, UserEntryRoute.routeName);
-                        },
                       ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: CommonDimens.MARGIN_40,
+                  ),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: OutlineButton(
+                      child: Text(
+                        "Sign out",
+                        style: CommonTextStyles.taskTextStyle(context),
+                      ),
+                      onPressed: () async {
+                        // clear local data
+                        await sharedPreferences.clear();
+                        // log out of google
+                        signOutOfGoogle();
+                        // pop the profile route
+                        Navigator.pop(context);
+                        // pop the home route
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                            context, UserEntryRoute.routeName);
+                      },
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
