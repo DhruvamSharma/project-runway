@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/core/theme/theme.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/data/models/user_model.dart';
 import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 import 'package:project_runway/features/login/presentation/manager/bloc.dart';
@@ -39,8 +42,14 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
             if (state is ErrorLoginBlocState) {
               Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text(
-                    "Sorry, some error occurred while creating your account, "),
+                  "Sorry, a problem occurred while creating your account",
+                  style: CommonTextStyles.scaffoldTextStyle(context),
+                ),
                 behavior: SnackBarBehavior.floating,
+                backgroundColor:
+                Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
+                    ? CommonColors.scaffoldColor
+                    : CommonColors.accentColor,
               ));
             }
           },

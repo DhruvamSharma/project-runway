@@ -108,7 +108,6 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
         final response = TaskModel.fromJson(documentList.documents[i].data);
         taskList.add(response);
       }
-      print("in remote ${taskList.length}");
       // mark the list in shared preferences as synced
       final response = TaskListModel(
         isSynced: true,

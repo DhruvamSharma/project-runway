@@ -31,6 +31,7 @@ class _TaskWidgetState extends State<TaskWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<ThemeModel>(context, listen: false);
     return Material(
       child: InkWell(
         onTap: () async {
@@ -39,7 +40,7 @@ class _TaskWidgetState extends State<TaskWidget> {
             builder: (_) {
               return Container(
                 decoration: BoxDecoration(
-                  color: Provider.of<ThemeModel>(context).currentTheme ==
+                  color: appState.currentTheme ==
                           lightTheme
                       ? CommonColors.bottomSheetColorLightTheme
                       : CommonColors.bottomSheetColor,
@@ -146,7 +147,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                   ),
                   Checkbox(
                     value: isCompleted,
-                    checkColor: Provider.of<ThemeModel>(context)
+                    checkColor: appState
                         .currentTheme
                         .accentColor,
                     materialTapTargetSize: MaterialTapTargetSize.padded,

@@ -23,7 +23,7 @@ class CustomSnackbar extends SnackBar {
       ),
       behavior: SnackBarBehavior.floating,
       backgroundColor:
-      Provider.of<ThemeModel>(context).currentTheme == lightTheme
+      Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
           ? CommonColors.scaffoldColor
           : CommonColors.accentColor,
     );

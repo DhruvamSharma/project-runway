@@ -75,7 +75,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   void didChangeDependencies() {
-    borderColor = Provider.of<ThemeModel>(context).currentTheme.accentColor;
+    borderColor = Provider.of<ThemeModel>(context, listen: false).currentTheme.accentColor;
     super.didChangeDependencies();
   }
 
@@ -222,7 +222,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       hintAndLabelColor = CommonColors.disabledTaskTextColor;
     } else {
       hintAndLabelColor =
-          Provider.of<ThemeModel>(context).currentTheme == lightTheme
+          Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
               ? CommonColors.taskTextColorLightTheme
               : CommonColors.taskTextColor;
     }

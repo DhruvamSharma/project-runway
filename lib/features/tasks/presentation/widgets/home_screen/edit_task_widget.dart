@@ -5,6 +5,7 @@ import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
@@ -37,6 +38,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<ThemeModel>(context, listen: false);
     return Builder(
       builder: (newContext) => Padding(
         padding: const EdgeInsets.all(
@@ -126,7 +128,9 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                           "Urgency is a number from 0-9 that tells how urgent the task is.",
                       helperTextStyle:
                           CommonTextStyles.badgeTextStyle(context).copyWith(
-                        color: Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                        color: appState
+                            .currentTheme
+                            .accentColor,
                       ),
                       onSubmitted: (text) {},
                       textFieldValue:
@@ -159,7 +163,11 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                               child: IconButton(
                                   icon: Icon(
                                     Icons.delete_forever,
-                                    color: CommonColors.accentColor,
+                                    color: appState
+                                                .currentTheme ==
+                                            lightTheme
+                                        ? CommonColors.scaffoldColor
+                                        : CommonColors.accentColor,
                                   ),
                                   onPressed: () {
                                     taskEntity.isDeleted = true;

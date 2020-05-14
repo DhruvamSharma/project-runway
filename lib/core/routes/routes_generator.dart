@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
@@ -52,6 +53,20 @@ class RouteGenerator {
   }
 
   static PageRoute _transitionRoute(Widget route) {
-    return MaterialPageRoute(builder: (_) => route);
+    return PageRouteBuilder(
+        pageBuilder: (context, primaryAnimation, secondaryAnimation) {
+      return Material(
+        elevation: 16,
+        child: route,
+      );
+    }, transitionsBuilder: (context, firstAnimation, secondAnimation, child) {
+      return SlideTransition(
+        position: firstAnimation.drive(
+          Tween(begin: Offset(0, 1), end: Offset(0, 0))
+              .chain(CurveTween(curve: Curves.easeOutCubic)),
+        ),
+        child: child,
+      );
+    });
   }
 }

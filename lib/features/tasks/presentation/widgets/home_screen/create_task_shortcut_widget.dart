@@ -5,6 +5,7 @@ import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
@@ -23,32 +24,55 @@ class CreateTaskShortcutWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext parentContext) {
+    final appState = Provider.of<ThemeModel>(parentContext, listen: false);
     return ChangeNotifierProvider<InitialTaskTitleProviderModel>(
       create: (_) => InitialTaskTitleProviderModel(),
       child: Builder(
         builder: (context) => Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(
-                top: CommonDimens.MARGIN_40,
-                left: CommonDimens.MARGIN_20,
-                right: CommonDimens.MARGIN_20,
-              ),
-              child: CustomTextField(
-                null,
-                null,
-                enabled:
-                    Provider.of<PageHolderProviderModel>(context).pageNumber !=
-                        0,
-                onValueChange: (text) {
-                  Provider.of<InitialTaskTitleProviderModel>(context)
-                      .assignTaskTitle(text);
-                },
-                textFieldValue:
+            GestureDetector(
+              onTap: () {
+                if (Provider.of<PageHolderProviderModel>(context).pageNumber ==
+                    0) {
+                  Scaffold.of(context).removeCurrentSnackBar();
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "Sorry, you cannot create any more tasks",
+                        style: CommonTextStyles.scaffoldTextStyle(context),
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor:
+                          appState.currentTheme ==
+                                  lightTheme
+                              ? CommonColors.scaffoldColor
+                              : CommonColors.accentColor,
+                    ),
+                  );
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_40,
+                  left: CommonDimens.MARGIN_20,
+                  right: CommonDimens.MARGIN_20,
+                ),
+                child: CustomTextField(
+                  null,
+                  null,
+                  enabled: Provider.of<PageHolderProviderModel>(context)
+                          .pageNumber !=
+                      0,
+                  onValueChange: (text) {
                     Provider.of<InitialTaskTitleProviderModel>(context)
-                        .taskTitle,
-                label: "Task Title",
-                isRequired: false,
+                        .assignTaskTitle(text);
+                  },
+                  textFieldValue:
+                      Provider.of<InitialTaskTitleProviderModel>(context)
+                          .taskTitle,
+                  label: "Task Title",
+                  isRequired: false,
+                ),
               ),
             ),
             Align(
@@ -87,77 +111,136 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                             Provider.of<TaskListHolderProvider>(context)
                                 .insertTaskToList(data);
                           }
+                        } else {
+                          Scaffold.of(context).removeCurrentSnackBar();
+                          Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Sorry, you cannot create any more tasks",
+                                style:
+                                    CommonTextStyles.scaffoldTextStyle(context),
+                              ),
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: appState
+                                          .currentTheme ==
+                                      lightTheme
+                                  ? CommonColors.scaffoldColor
+                                  : CommonColors.accentColor,
+                            ),
+                          );
                         }
                       },
                       child: Text(
                         "More Details",
-                        style: CommonTextStyles.badgeTextStyle(context).copyWith(
-                            color: Provider.of<PageHolderProviderModel>(context)
-                                        .pageNumber ==
-                                    0
-                                ? CommonColors.disabledTaskTextColor
-                                : Provider.of<ThemeModel>(context).currentTheme.accentColor,
-                            letterSpacing: 3,
-                            fontSize: 14),
+                        style: CommonTextStyles.badgeTextStyle(context)
+                            .copyWith(
+                                color: Provider.of<PageHolderProviderModel>(
+                                                context)
+                                            .pageNumber ==
+                                        0
+                                    ? CommonColors.disabledTaskTextColor
+                                    : appState
+                                        .currentTheme
+                                        .accentColor,
+                                letterSpacing: 3,
+                                fontSize: 14),
                       ),
                     ),
-                    Material(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      child: InkWell(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        onTap: () {
-                          // check if the user can create the task or not.
-                          if (Provider.of<PageHolderProviderModel>(context)
-                                  .pageNumber !=
-                              0) {
-                            if (totalTaskNumber <= TOTAL_TASK_CREATION_LIMIT) {
-                              String initialTitle =
-                                  Provider.of<InitialTaskTitleProviderModel>(
-                                          context)
-                                      .taskTitle;
-                              // check if the task is entered in the field or not
-                              if (initialTitle != null &&
-                                  initialTitle.isNotEmpty) {
-                                final TaskEntity task = createTaskArgs(context);
-                                // add to data base
-                                BlocProvider.of<HomeScreenTaskBloc>(context)
-                                    .dispatch(CreateTaskEvent(task: task));
-                              } else {
-                                Scaffold.of(context).showSnackBar(
-                                  SnackBar(
-                                    behavior: SnackBarBehavior.floating,
-                                    content: Text(
-                                        "Please enter title for your amazing task"),
-                                  ),
-                                );
-                              }
-                            } else {
-                              Scaffold.of(context).showSnackBar(
-                                SnackBar(
-                                  behavior: SnackBarBehavior.floating,
-                                  content: Text(
-                                      "Sorry, you cannot create more any more tasks"),
-                                ),
-                              );
-                            }
-                            Provider.of<InitialTaskTitleProviderModel>(context)
-                                .assignTaskTitle("");
-                          }
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 32.0),
-                          child: Icon(
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: CommonDimens.MARGIN_20,
+                      ),
+                      child: IconButton(
+                          icon: Icon(
                             Icons.send,
                             color: Provider.of<PageHolderProviderModel>(context)
                                         .pageNumber ==
                                     0
                                 ? CommonColors.disabledTaskTextColor
-                                : Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                                : appState
+                                    .currentTheme
+                                    .accentColor,
                             semanticLabel: "Create Task",
                           ),
-                        ),
-                      ),
+                          onPressed: () {
+                            // check if the user can create the task or not.
+                            if (Provider.of<PageHolderProviderModel>(context)
+                                    .pageNumber !=
+                                0) {
+                              if (totalTaskNumber <=
+                                  TOTAL_TASK_CREATION_LIMIT) {
+                                String initialTitle =
+                                    Provider.of<InitialTaskTitleProviderModel>(
+                                            context)
+                                        .taskTitle;
+                                // check if the task is entered in the field or not
+                                if (initialTitle != null &&
+                                    initialTitle.isNotEmpty) {
+                                  final TaskEntity task =
+                                      createTaskArgs(context);
+                                  // add to data base
+                                  BlocProvider.of<HomeScreenTaskBloc>(context)
+                                      .dispatch(CreateTaskEvent(task: task));
+                                } else {
+                                  Scaffold.of(context).removeCurrentSnackBar();
+                                  Scaffold.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        "Please enter title for your task",
+                                        style:
+                                            CommonTextStyles.scaffoldTextStyle(
+                                                context),
+                                      ),
+                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor:
+                                          appState
+                                                      .currentTheme ==
+                                                  lightTheme
+                                              ? CommonColors.scaffoldColor
+                                              : CommonColors.accentColor,
+                                    ),
+                                  );
+                                }
+                              } else {
+                                Scaffold.of(context).removeCurrentSnackBar();
+                                Scaffold.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "Sorry, you cannot create any more tasks",
+                                      style: CommonTextStyles.scaffoldTextStyle(
+                                          context),
+                                    ),
+                                    behavior: SnackBarBehavior.floating,
+                                    backgroundColor:
+                                        appState
+                                                    .currentTheme ==
+                                                lightTheme
+                                            ? CommonColors.scaffoldColor
+                                            : CommonColors.accentColor,
+                                  ),
+                                );
+                              }
+                              Provider.of<InitialTaskTitleProviderModel>(
+                                      context)
+                                  .assignTaskTitle("");
+                            } else {
+                              Scaffold.of(context).removeCurrentSnackBar();
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                                  "You cannot create task for yesterday",
+                                  style: CommonTextStyles.scaffoldTextStyle(
+                                      context),
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                                backgroundColor:
+                                    appState
+                                                .currentTheme ==
+                                            lightTheme
+                                        ? CommonColors.scaffoldColor
+                                        : CommonColors.accentColor,
+                              ));
+                            }
+                          }),
                     ),
                   ],
                 ),

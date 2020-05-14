@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/widgets/app_into.dart';
 import 'package:project_runway/features/login/presentation/widgets/congratulation.dart';
@@ -15,6 +17,7 @@ class UserEntryRoute extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<ThemeModel>(context, listen: false);
     return ChangeNotifierProvider<UserEntryProviderHolder>(
       create: (_) => UserEntryProviderHolder(),
       child: Builder(
@@ -60,7 +63,7 @@ class UserEntryRoute extends StatelessWidget {
                           );
                         },
                         mini: true,
-                        child: Icon(Icons.arrow_upward, color: Provider.of<ThemeModel>(context)
+                        child: Icon(Icons.arrow_upward, color: appState
                             .currentTheme
                             .accentColor,),
                         backgroundColor: Colors.transparent,
@@ -123,15 +126,22 @@ class UserEntryRoute extends StatelessWidget {
                                             .isEmpty)) {
                                   _scaffoldKey.currentState
                                       .showSnackBar(SnackBar(
-                                    content: Text("Please enter your name"),
+                                    content: Text(
+                                      "Please enter your name",
+                                      style: CommonTextStyles.scaffoldTextStyle(context),
+                                    ),
                                     behavior: SnackBarBehavior.floating,
+                                    backgroundColor:
+                                    Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
+                                        ? CommonColors.scaffoldColor
+                                        : CommonColors.accentColor,
                                   ));
                                 }
                               }
                             },
                             mini: true,
                             child: Icon(Icons.arrow_downward),
-                            backgroundColor: Provider.of<ThemeModel>(context)
+                            backgroundColor: appState
                                 .currentTheme
                                 .accentColor,
                           ),

@@ -7,6 +7,7 @@ import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
@@ -27,6 +28,7 @@ class CreateTaskPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<ThemeModel>(context, listen: false);
     return ChangeNotifierProvider<TaskDetailProviderModel>(
       create: (_) => TaskDetailProviderModel(taskTitle: initialTaskTitle),
       child: BlocProvider<HomeScreenTaskBloc>(
@@ -172,7 +174,7 @@ class CreateTaskPage extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              color: Provider.of<ThemeModel>(context)
+                              color: appState
                                   .currentTheme
                                   .scaffoldBackgroundColor,
                               child: Padding(
@@ -232,15 +234,30 @@ class CreateTaskPage extends StatelessWidget {
       } else {
         Scaffold.of(newContext).showSnackBar(
           SnackBar(
+            content: Text(
+              "Please enter title for your task",
+              style: CommonTextStyles.scaffoldTextStyle(newContext),
+            ),
             behavior: SnackBarBehavior.floating,
-            content: Text("Please enter title for your amazing task"),
+            backgroundColor:
+            Provider.of<ThemeModel>(newContext, listen: false).currentTheme == lightTheme
+                ? CommonColors.scaffoldColor
+                : CommonColors.accentColor,
           ),
         );
       }
     } else {
       Scaffold.of(newContext).showSnackBar(
         SnackBar(
-          content: Text("Sorry, you cannot create any more tasks for today"),
+          content: Text(
+            "Sorry, you cannot create any more tasks for today",
+            style: CommonTextStyles.scaffoldTextStyle(newContext),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor:
+          Provider.of<ThemeModel>(newContext, listen: false).currentTheme == lightTheme
+              ? CommonColors.scaffoldColor
+              : CommonColors.accentColor,
         ),
       );
     }

@@ -3,6 +3,9 @@ import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/pages/profile_route.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
@@ -17,7 +20,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with RouteAware {
   PageController _controller;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
@@ -30,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = Provider.of<ThemeModel>(context, listen: false);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -41,8 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: IconButton(
                 icon: Icon(
                   Icons.airplanemode_active,
-                  color:
-                      Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                  color: state.currentTheme.accentColor,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, StatsScreen.routeName);
@@ -53,13 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 const EdgeInsets.symmetric(horizontal: CommonDimens.MARGIN_20),
             child: IconButton(
                 icon: Icon(
-                  Icons.person,
-                  color:
-                      Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                  Icons.settings,
+                  color: state.currentTheme.accentColor,
                 ),
                 onPressed: () async {
-                  await Navigator.pushNamed(context, ProfileRoute.routeName);
-                  Provider.of<ThemeModel>(context).refreshApp();
+                  Navigator.pushNamed(context, ProfileRoute.routeName);
                 }),
           ),
         ],
@@ -96,8 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   radius: 10,
                   dotHeight: 7,
                   dotWidth: 7,
-                  activeDotColor:
-                      Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                  activeDotColor: state.currentTheme.accentColor,
                 ),
               ),
             ),
@@ -124,6 +124,36 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void openSecretPuzzleDoor(ThemeModel appState) {
+    _scaffoldKey.currentState.showBottomSheet(
+      (context) => Container(
+        decoration: BoxDecoration(
+          color: appState.currentTheme == lightTheme
+              ? CommonColors.bottomSheetColorLightTheme
+              : CommonColors.bottomSheetColor,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
+          ),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: Theme(
+            data: ThemeData.light().copyWith(canvasColor: Colors.transparent),
+            child: DraggableScrollableSheet(
+              initialChildSize: 0.8,
+              maxChildSize: 1.0,
+              expand: false,
+              builder: (_, controller) {
+                return Container();
+              },
+            ),
+          ),
+        ),
       ),
     );
   }

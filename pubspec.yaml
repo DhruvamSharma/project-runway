@@ -53,6 +53,11 @@ dependencies:
   onesignal_flutter: ^2.4.1
   # lottie for better animations
   lottie: ^0.3.3
+  # reporting crashes
+  firebase_crashlytics: ^0.1.3+3
+  # analytics for tab
+  # and route transitions
+  firebase_analytics: ^5.0.11
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +79,9 @@ flutter:
   assets:
     - assets/google-logo-png-open-2000.png
     - assets/graph-statistics-solid.json
+    - assets/lf30_editor_CH6Lht.json
+    - assets/lf30_editor_tLnnBp.json
+    - assets/lf30_editor_2qKBQS.json
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
