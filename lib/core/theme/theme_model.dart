@@ -9,7 +9,6 @@ class ThemeModel extends ChangeNotifier {
   ThemeData currentTheme;
   ThemeType _themeType;
 
-
   ThemeModel() {
     if (!sharedPreferences.containsKey(THEME_KEY)) {
       currentTheme = darkTheme;

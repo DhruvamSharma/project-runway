@@ -163,8 +163,12 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             style: CommonTextStyles.taskTextStyle(context),
                           ),
                           trailing: Checkbox(
-                            value: Provider.of<ThemeModel>(context).currentTheme == lightTheme,
-                            checkColor: Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                            value:
+                                Provider.of<ThemeModel>(context).currentTheme ==
+                                    lightTheme,
+                            checkColor: Provider.of<ThemeModel>(context)
+                                .currentTheme
+                                .accentColor,
                             materialTapTargetSize: MaterialTapTargetSize.padded,
                             activeColor: CommonColors.toggleableActiveColor,
                             onChanged: (value) {
