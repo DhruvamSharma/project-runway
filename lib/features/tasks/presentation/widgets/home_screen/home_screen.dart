@@ -41,7 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: IconButton(
                 icon: Icon(
                   Icons.airplanemode_active,
-                  color: Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                  color:
+                      Provider.of<ThemeModel>(context).currentTheme.accentColor,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, StatsScreen.routeName);
@@ -53,10 +54,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: IconButton(
                 icon: Icon(
                   Icons.person,
-                  color: Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                  color:
+                      Provider.of<ThemeModel>(context).currentTheme.accentColor,
                 ),
                 onPressed: () async {
                   await Navigator.pushNamed(context, ProfileRoute.routeName);
+                  Provider.of<ThemeModel>(context).refreshApp();
                 }),
           ),
         ],
@@ -93,7 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   radius: 10,
                   dotHeight: 7,
                   dotWidth: 7,
-                  activeDotColor: Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                  activeDotColor:
+                      Provider.of<ThemeModel>(context).currentTheme.accentColor,
                 ),
               ),
             ),

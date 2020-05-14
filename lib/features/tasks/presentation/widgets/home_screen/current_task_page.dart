@@ -141,7 +141,9 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                                         TaskHolderProviderModel>(
                                       key: ValueKey(
                                           Provider.of<TaskListHolderProvider>(
-                                                  providerContext)
+                                                  providerContext).taskList.isEmpty? ""
+                                              :Provider.of<TaskListHolderProvider>(
+                                              providerContext)
                                               .taskList[i]
                                               .taskId),
                                       create: (context) =>

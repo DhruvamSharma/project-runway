@@ -30,18 +30,27 @@ class CommonColors {
   // for dark theme
   static final Color rotatedDesignTextColor = _getColor(0xff171616);
   // for light theme
-  static final Color rotatedDesignTextColorLightTheme = Colors.black12.withAlpha(10);
+  static final Color rotatedDesignTextColorLightTheme =
+      Colors.black12.withAlpha(10);
 
   // for dark theme
   static final Color taskBadgeTextColor = scaffoldColor;
   // for light theme
   static final Color taskBadgeTextColorLightTheme = accentColor;
+  // for dark theme
   static final Color taskBadgeColor = accentColor;
+  // for light theme
+  static final Color taskBadgeColorLightTheme = scaffoldColor;
+
   static final Color errorTextColor = Colors.red;
 
   // App bar colors
   static final Color appBarColor = Colors.transparent;
 
+  // bottom sheet color dark theme
+  static final Color bottomSheetColor = _getColor(0xff121111);
+  // bottom sheet color light theme
+  static final Color bottomSheetColorLightTheme = _getColor(0xffEBEAEA);
 
   static Map<int, Color> _color = {
     50: Color.fromRGBO(136, 14, 79, .1),

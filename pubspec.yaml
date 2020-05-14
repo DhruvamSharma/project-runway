@@ -49,6 +49,8 @@ dependencies:
   uuid: ^2.0.4
   # charts for statistics
   charts_flutter: ^0.9.0
+  # notifications
+  onesignal_flutter: ^2.4.1
 
 dev_dependencies:
   flutter_test:
