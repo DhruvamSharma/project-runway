@@ -21,6 +21,7 @@ import 'package:project_runway/features/login/presentation/manager/login_bloc_ev
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
 import 'package:project_runway/features/stats/presentation/manager/bloc.dart';
 import 'package:project_runway/features/stats/presentation/manager/stats_event.dart';
+import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:provider/provider.dart';
 
 class ProfileRoute extends StatefulWidget {
@@ -42,6 +43,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<ThemeModel>(context, listen: false);
     return BlocProvider<LoginBloc>(
       builder: (_) => sl<LoginBloc>(),
       child: Builder(
@@ -50,8 +52,16 @@ class _ProfileRouteState extends State<ProfileRoute> {
             isLoading = false;
             if (state is ErrorLoginBlocState) {
               _scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text("Sorry, some error occurred"),
+                content: Text(
+                  "Sorry, a problem occurred",
+                  style: CommonTextStyles.scaffoldTextStyle(context),
+                ),
                 behavior: SnackBarBehavior.floating,
+                backgroundColor: Provider.of<ThemeModel>(context, listen: false)
+                            .currentTheme ==
+                        lightTheme
+                    ? CommonColors.scaffoldColor
+                    : CommonColors.accentColor,
               ));
             }
           },
@@ -76,7 +86,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                 Align(
                   alignment: Alignment.topCenter,
                   child: Text(
-                    "profile".toUpperCase(),
+                    "config".toUpperCase(),
                     style: CommonTextStyles.headerTextStyle(context),
                     textAlign: TextAlign.center,
                   ),
@@ -84,81 +94,155 @@ class _ProfileRouteState extends State<ProfileRoute> {
                 Padding(
                   padding: const EdgeInsets.only(
                     top: CommonDimens.MARGIN_80 * 2,
+                    bottom: CommonDimens.MARGIN_80,
                   ),
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: CommonDimens.MARGIN_40,
-                        ),
-                        child: ListTile(
-                          leading: Icon(
-                            Icons.notifications_active,
-                            color: Provider.of<ThemeModel>(context)
-                                .currentTheme
-                                .accentColor,
-                            size: 30,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: CommonDimens.MARGIN_40,
                           ),
-                          title: Text(
-                            "When do you want to receive notifications?",
-                            style: CommonTextStyles.taskTextStyle(context),
-                          ),
-                          onTap: () {},
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: CommonDimens.MARGIN_20,
-                        ),
-                        child: Divider(
-                          color:
-                              Provider.of<ThemeModel>(context).currentTheme ==
-                                      lightTheme
-                                  ? CommonColors.dateTextColorLightTheme
-                                  : CommonColors.dateTextColor,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: CommonDimens.MARGIN_20,
-                        ),
-                        child: ListTile(
-                          leading: Icon(
-                            Icons.lightbulb_outline,
-                            color: Provider.of<ThemeModel>(context)
-                                .currentTheme
-                                .accentColor,
-                            size: 30,
-                          ),
-                          title: Text(
-                            "Want to use light theme",
-                            style: CommonTextStyles.taskTextStyle(context),
-                          ),
-                          trailing: Checkbox(
-                            value: Provider.of<ThemeModel>(context)
-                                    .currentTheme ==
-                                lightTheme,
-                            checkColor: Provider.of<ThemeModel>(context)
-                                .currentTheme
-                                .accentColor,
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.padded,
-                            activeColor: CommonColors.toggleableActiveColor,
-                            onChanged: (value) {
-                              Provider.of<ThemeModel>(context).toggleTheme();
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.airplanemode_active,
+                              color: appState.currentTheme.accentColor,
+                              size: 30,
+                            ),
+                            title: Text(
+                              "See your weekly stats and how you perform",
+                              style: CommonTextStyles.taskTextStyle(context),
+                            ),
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, StatsScreen.routeName);
                             },
                           ),
-                          onTap: () {
-                            Provider.of<ThemeModel>(context).toggleTheme();
-                          },
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: CommonDimens.MARGIN_20,
+                          ),
+                          child: Divider(
+                            color: appState.currentTheme == lightTheme
+                                ? CommonColors.dateTextColorLightTheme
+                                : CommonColors.dateTextColor,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: CommonDimens.MARGIN_20,
+                          ),
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.lightbulb_outline,
+                              color: appState.currentTheme.accentColor,
+                              size: 30,
+                            ),
+                            title: Text(
+                              "Want to use light theme",
+                              style: CommonTextStyles.taskTextStyle(context),
+                            ),
+                            trailing: Checkbox(
+                              value: appState.currentTheme == lightTheme,
+                              checkColor: appState.currentTheme.accentColor,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.padded,
+                              activeColor: CommonColors.toggleableActiveColor,
+                              onChanged: (value) {
+                                appState.toggleTheme();
+                              },
+                            ),
+                            onTap: () {
+                              appState.toggleTheme();
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: CommonDimens.MARGIN_20,
+                          ),
+                          child: Divider(
+                            color: appState.currentTheme == lightTheme
+                                ? CommonColors.dateTextColorLightTheme
+                                : CommonColors.dateTextColor,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: CommonDimens.MARGIN_20,
+                          ),
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.cached,
+                              color: appState.currentTheme.accentColor,
+                              size: 30,
+                            ),
+                            title: Text(
+                              "View the app tutorial again",
+                              style: CommonTextStyles.taskTextStyle(context),
+                            ),
+                            onTap: () {
+//                            Navigator.pushNamed(context, StatsScreen.routeName);
+                            },
+                          ),
+                        ),
+                        if (sharedPreferences.containsKey(REFRESH_KEY))
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: CommonDimens.MARGIN_20,
+                            ),
+                            child: Divider(
+                              color: appState.currentTheme == lightTheme
+                                  ? CommonColors.dateTextColorLightTheme
+                                  : CommonColors.dateTextColor,
+                            ),
+                          ),
+                        if (sharedPreferences.containsKey(REFRESH_KEY))
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 8.0,
+                              bottom: CommonDimens.MARGIN_20,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: CommonDimens.MARGIN_20 - 4,
+                                  ),
+                                  color: appState.currentTheme.accentColor,
+                                  padding: const EdgeInsets.all(
+                                    CommonDimens.MARGIN_20 / 8,
+                                  ),
+                                  child: Text(
+                                    "Secret Puzzle",
+                                    style: CommonTextStyles.badgeTextStyle(
+                                        context),
+                                  ),
+                                ),
+                                ListTile(
+                                  leading: Icon(
+                                    Icons.all_inclusive,
+                                    color: appState.currentTheme.accentColor,
+                                    size: 30,
+                                  ),
+                                  title: Text(
+                                    "Read the secret again",
+                                    style:
+                                        CommonTextStyles.taskTextStyle(context),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    bottom: CommonDimens.MARGIN_40,
+                    bottom: CommonDimens.MARGIN_20,
                   ),
                   child: Align(
                     alignment: Alignment.bottomCenter,
@@ -176,8 +260,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                         Navigator.pop(context);
                         // pop the home route
                         Navigator.pop(context);
-                        Navigator.pushNamed(
-                            context, UserEntryRoute.routeName);
+                        Navigator.pushNamed(context, UserEntryRoute.routeName);
                       },
                     ),
                   ),

@@ -33,6 +33,7 @@ class _StatsWidgetState extends State<StatsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<ThemeModel>(context, listen: false);
     return RefreshIndicator(
       onRefresh: () {
         fetchStats();
@@ -57,7 +58,7 @@ class _StatsWidgetState extends State<StatsWidget> {
                 ),
                 behavior: SnackBarBehavior.floating,
                 backgroundColor:
-                    Provider.of<ThemeModel>(context).currentTheme == lightTheme
+                    appState.currentTheme == lightTheme
                         ? CommonColors.scaffoldColor
                         : CommonColors.accentColor,
               ));
@@ -69,7 +70,7 @@ class _StatsWidgetState extends State<StatsWidget> {
                 ),
                 behavior: SnackBarBehavior.floating,
                 backgroundColor:
-                    Provider.of<ThemeModel>(context).currentTheme == lightTheme
+                    appState.currentTheme == lightTheme
                         ? CommonColors.scaffoldColor
                         : CommonColors.accentColor,
               ));
@@ -97,7 +98,7 @@ class _StatsWidgetState extends State<StatsWidget> {
               if (isLoading)
                 // Load a Lottie file from your assets
                 Lottie.asset(
-                  'assets/graph-statistics-solid.json',
+                  appState.currentTheme == lightTheme? 'assets/graph-statistics-solid.json': "assets/lf30_editor_2qKBQS.json",
                 ),
               if (!isLoading)
                 Padding(
@@ -109,7 +110,7 @@ class _StatsWidgetState extends State<StatsWidget> {
                   child: SizedBox(
                     height: 300.0,
                     child: charts.BarChart(
-                      buildSeries(),
+                      buildSeries(appState),
                       animate: true,
                       defaultRenderer: new charts.BarRendererConfig(
                           groupingType: charts.BarGroupingType.groupedStacked,
@@ -151,7 +152,7 @@ class _StatsWidgetState extends State<StatsWidget> {
   }
 
   // build the stats chart
-  List<charts.Series<TaskAction, String>> buildSeries() {
+  List<charts.Series<TaskAction, String>> buildSeries(ThemeModel appState) {
     // create task lists
     List<TaskAction> createdTaskData = List();
     List<TaskAction> deletedTaskData = List();
@@ -171,12 +172,12 @@ class _StatsWidgetState extends State<StatsWidget> {
             weekTranslator(dayOfTheWeek),
             statsTable.dayStats[dayOfTheWeek - 1].tasksCreated,
             Colors.blueGrey));
-        deletedTaskData.add(TaskAction(weekTranslator(dayOfTheWeek),
-            statsTable.dayStats[dayOfTheWeek - 1].tasksDeleted, Colors.grey));
+//        deletedTaskData.add(TaskAction(weekTranslator(dayOfTheWeek),
+//            statsTable.dayStats[dayOfTheWeek - 1].tasksDeleted, Colors.grey));
         completedTaskData.add(TaskAction(
           weekTranslator(dayOfTheWeek),
           statsTable.dayStats[dayOfTheWeek - 1].tasksCompleted,
-          Provider.of<ThemeModel>(context).currentTheme.accentColor,
+          appState.currentTheme.accentColor,
         ));
       }
     }

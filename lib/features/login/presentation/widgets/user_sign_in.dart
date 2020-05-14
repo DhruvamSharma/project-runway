@@ -8,6 +8,7 @@ import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/manager/bloc.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
@@ -25,6 +26,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<ThemeModel>(context, listen: false);
     return BlocProvider<LoginBloc>(
       builder: (_) => sl<LoginBloc>(),
       child: Builder(
@@ -67,7 +69,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                   padding: const EdgeInsets.only(
                     top: CommonDimens.MARGIN_60,
                   ),
-                  child: buildSignInButton(blocContext),
+                  child: buildSignInButton(blocContext, appState),
                 ),
                 if (isFindingUser)
                   Padding(
@@ -94,14 +96,14 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
     }
   }
 
-  Widget buildSignInButton(BuildContext blocContext) {
+  Widget buildSignInButton(BuildContext blocContext, ThemeModel appState) {
     return AnimatedCrossFade(
       firstChild: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: CommonDimens.MARGIN_20,
         ),
         child: Material(
-          color: Provider.of<ThemeModel>(context).currentTheme.accentColor,
+          color: appState.currentTheme.accentColor,
           borderRadius: BorderRadius.circular(5),
           child: InkWell(
             borderRadius: BorderRadius.circular(5),
@@ -132,9 +134,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                     child: Text(
                       "Signed in with Google",
                       style: CommonTextStyles.badgeTextStyle(context).copyWith(
-                        color: Provider.of<ThemeModel>(context)
-                            .currentTheme
-                            .scaffoldBackgroundColor,
+                        color: appState.currentTheme.scaffoldBackgroundColor,
                         fontSize: 16,
                       ),
                     ),
@@ -170,8 +170,15 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                   .dispatch(CheckIfUserExistsEvent(googleId: firebaseUser.uid));
             } else {
               Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text("Some error occurred, please try again"),
+                content: Text(
+                  "Sorry, a problem occurred, please try again",
+                  style: CommonTextStyles.scaffoldTextStyle(context),
+                ),
                 behavior: SnackBarBehavior.floating,
+                backgroundColor:
+                Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
+                    ? CommonColors.scaffoldColor
+                    : CommonColors.accentColor,
               ));
               setState(() {
                 isFindingUser = false;
@@ -209,9 +216,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                   child: Text(
                     "Sign in with Google",
                     style: CommonTextStyles.badgeTextStyle(context).copyWith(
-                      color: Provider.of<ThemeModel>(context)
-                          .currentTheme
-                          .accentColor,
+                      color: appState.currentTheme.accentColor,
                       fontSize: 16,
                     ),
                   ),

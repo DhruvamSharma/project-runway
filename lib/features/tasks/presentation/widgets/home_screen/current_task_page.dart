@@ -2,12 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
+import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/core/theme/theme.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/data/models/task_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_list_entity.dart';
@@ -26,13 +30,28 @@ class CurrentTaskPage extends StatefulWidget {
 }
 
 class _CurrentTaskPageState extends State<CurrentTaskPage>
-    with AutomaticKeepAliveClientMixin<CurrentTaskPage> {
+    with
+        AutomaticKeepAliveClientMixin<CurrentTaskPage>,
+        SingleTickerProviderStateMixin {
   String initialTaskText;
   GlobalKey<AnimatedListState> animatedListStateKey = GlobalKey();
+  bool isLoadingTasks = true;
+  AnimationController _animationController;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+        vsync: this,
+        duration: Duration(
+          milliseconds: 1000,
+        ));
+    _animationController.forward();
+    _animationController.repeat();
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
-    print("fetching tasks");
     getAllTasks();
     super.didChangeDependencies();
   }
@@ -40,6 +59,7 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final appState = Provider.of<ThemeModel>(context, listen: false);
     return ChangeNotifierProvider<TaskListHolderProvider>(
       create: (_) => TaskListHolderProvider(listState: animatedListStateKey),
       child: Builder(
@@ -47,8 +67,34 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
           return BlocListener<HomeScreenTaskBloc, TaskBlocState>(
             listener: (_, state) {
               if (state is LoadedHomeScreenAllTasksState) {
+                setState(() {
+                  isLoadingTasks = false;
+                });
                 Provider.of<TaskListHolderProvider>(providerContext)
                     .assignTaskList(state.taskListEntity.taskList);
+              }
+
+              if (state is ErrorHomeScreenAllTasksState) {
+                // show error
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    state.message,
+                    style: CommonTextStyles.scaffoldTextStyle(context),
+                  ),
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor:
+                      appState.currentTheme ==
+                              lightTheme
+                          ? CommonColors.scaffoldColor
+                          : CommonColors.accentColor,
+                ));
+                // stop loading
+                setState(() {
+                  isLoadingTasks = false;
+                });
+                // give an empty list
+                Provider.of<TaskListHolderProvider>(providerContext)
+                    .assignTaskList([]);
               }
 
               if (state is LoadedCreateScreenCreateTaskState) {
@@ -87,90 +133,103 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
               if (state is ErrorHomeScreenCompleteTaskState) {
                 Scaffold.of(context).removeCurrentSnackBar();
                 Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    state.message,
+                    style: CommonTextStyles.scaffoldTextStyle(context),
+                  ),
                   behavior: SnackBarBehavior.floating,
-                  content: Text(state.message ??
-                      "Sorry, could not update the task. Please check your internet connection"),
+                  backgroundColor:
+                  Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
+                      ? CommonColors.scaffoldColor
+                      : CommonColors.accentColor,
                 ));
               }
             },
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: CommonDimens.MARGIN_20,
-                  ),
-                  child: Text(
-                    beautifyDate(Provider.of<PageHolderProviderModel>(context)
-                            .runningDate ??
-                        ""),
-                    style: CommonTextStyles.dateTextStyle(context),
-                  ),
-                ),
-                if (Provider.of<TaskListHolderProvider>(providerContext)
-                        .taskList !=
-                    null)
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height * 2,
-                        child: Column(
-                          children: <Widget>[
-                            CreateTaskShortcutWidget(
-                              totalTaskNumber:
-                                  Provider.of<TaskListHolderProvider>(
-                                          providerContext)
-                                      .taskList
-                                      .length,
-                            ),
-                            Expanded(
-                              child: AnimatedList(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: CommonDimens.MARGIN_20,
-                                ),
-                                key: animatedListStateKey,
-                                physics: NeverScrollableScrollPhysics(),
-                                initialItemCount:
-                                    Provider.of<TaskListHolderProvider>(
-                                            providerContext)
-                                        .taskList
-                                        .length,
-                                itemBuilder: (_, i, animation) {
-                                  if (Provider.of<TaskListHolderProvider>(providerContext).taskList.isNotEmpty)
-                                  return SizeTransition(
-                                    sizeFactor: animation,
-                                    child: ChangeNotifierProvider<
-                                        TaskHolderProviderModel>(
-                                      key: ValueKey(Provider.of<
-                                                      TaskListHolderProvider>(
-                                                  providerContext)
-                                              .taskList
-                                              .isEmpty
-                                          ? ""
-                                          : Provider.of<TaskListHolderProvider>(
-                                                  providerContext)
-                                              .taskList[i]
-                                              .taskId),
-                                      create: (context) =>
-                                          TaskHolderProviderModel(
-                                              taskEntity: Provider.of<
-                                                          TaskListHolderProvider>(
-                                                      providerContext)
-                                                  .taskList[i]),
-                                      child: TaskWidget(),
-                                    ),
-                                  );
-                                  else
-                                    return Container();
-                                },
-                              ),
-                            ),
-                          ],
+            child: isLoadingTasks
+                ? buildLoadingAnimation(appState)
+                : Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: CommonDimens.MARGIN_20,
+                        ),
+                        child: Text(
+                          beautifyDate(
+                              Provider.of<PageHolderProviderModel>(context)
+                                      .runningDate ??
+                                  ""),
+                          style: CommonTextStyles.dateTextStyle(context),
                         ),
                       ),
-                    ),
+                      if (Provider.of<TaskListHolderProvider>(providerContext)
+                              .taskList !=
+                          null)
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height * 2,
+                              child: Column(
+                                children: <Widget>[
+                                  CreateTaskShortcutWidget(
+                                    totalTaskNumber:
+                                        Provider.of<TaskListHolderProvider>(
+                                                providerContext)
+                                            .taskList
+                                            .length,
+                                  ),
+                                  Expanded(
+                                    child: AnimatedList(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: CommonDimens.MARGIN_20,
+                                      ),
+                                      key: animatedListStateKey,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      initialItemCount:
+                                          Provider.of<TaskListHolderProvider>(
+                                                  providerContext)
+                                              .taskList
+                                              .length,
+                                      itemBuilder: (_, i, animation) {
+                                        if (Provider.of<TaskListHolderProvider>(
+                                                providerContext)
+                                            .taskList
+                                            .isNotEmpty)
+                                          return SizeTransition(
+                                            sizeFactor: animation,
+                                            child: ChangeNotifierProvider<
+                                                TaskHolderProviderModel>(
+                                              key: ValueKey(Provider.of<
+                                                              TaskListHolderProvider>(
+                                                          providerContext)
+                                                      .taskList
+                                                      .isEmpty
+                                                  ? ""
+                                                  : Provider.of<
+                                                              TaskListHolderProvider>(
+                                                          providerContext)
+                                                      .taskList[i]
+                                                      .taskId),
+                                              create: (context) =>
+                                                  TaskHolderProviderModel(
+                                                      taskEntity: Provider.of<
+                                                                  TaskListHolderProvider>(
+                                                              providerContext)
+                                                          .taskList[i]),
+                                              child: TaskWidget(),
+                                            ),
+                                          );
+                                        else
+                                          return Container();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-              ],
-            ),
           );
         },
       ),
@@ -186,6 +245,19 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
 
   @override
   bool get wantKeepAlive => true;
+
+  Widget buildLoadingAnimation(ThemeModel appState) {
+    return RotatedBox(
+        quarterTurns: 3,
+        child: Lottie.asset(
+            appState.currentTheme == lightTheme
+                ? "assets/lf30_editor_CH6Lht.json"
+                : "assets/lf30_editor_tLnnBp.json",
+            animate: true,
+            width: MediaQuery.of(context).size.width,
+            controller: _animationController,
+            repeat: true));
+  }
 }
 
 class TaskHolderProviderModel extends ChangeNotifier {
