@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
@@ -142,6 +143,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                   ),
                   Checkbox(
                     value: isCompleted,
+                    checkColor: Provider.of<ThemeModel>(context).currentTheme.accentColor,
                     materialTapTargetSize: MaterialTapTargetSize.padded,
                     activeColor: selectCheckStyleColor(),
                     onChanged: selectCheckBoxState(),
@@ -182,7 +184,7 @@ class _TaskWidgetState extends State<TaskWidget> {
     if (isCompleted) {
       taskTextStyle = CommonTextStyles.disabledTaskTextStyle();
     } else {
-      taskTextStyle = CommonTextStyles.taskTextStyle();
+      taskTextStyle = CommonTextStyles.taskTextStyle(context);
     }
     // calculating if the task is for a previous day
     if (Provider.of<TaskHolderProviderModel>(context)

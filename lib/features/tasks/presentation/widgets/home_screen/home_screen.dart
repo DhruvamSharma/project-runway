@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/constants.dart';
-import 'package:project_runway/core/date_time_parser.dart';
-import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
+import 'package:project_runway/features/login/presentation/pages/profile_route.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
-import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
-import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
-import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -44,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: IconButton(
                 icon: Icon(
                   Icons.airplanemode_active,
-                  color: Colors.white,
+                  color: Provider.of<ThemeModel>(context).currentTheme.accentColor,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, StatsScreen.routeName);
@@ -56,9 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
             child: IconButton(
                 icon: Icon(
                   Icons.person,
-                  color: Colors.white,
+                  color: Provider.of<ThemeModel>(context).currentTheme.accentColor,
                 ),
-                onPressed: () {}),
+                onPressed: () async {
+                  await Navigator.pushNamed(context, ProfileRoute.routeName);
+                }),
           ),
         ],
       ),
@@ -70,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
               quarterTurns: 3,
               child: Text(
                 APP_NAME.toUpperCase(),
-                style: CommonTextStyles.rotatedDesignTextStyle(),
+                style: CommonTextStyles.rotatedDesignTextStyle(context),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -79,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
             alignment: Alignment.topCenter,
             child: Text(
               APP_NAME.toUpperCase(),
-              style: CommonTextStyles.headerTextStyle(),
+              style: CommonTextStyles.headerTextStyle(context),
               textAlign: TextAlign.center,
             ),
           ),
@@ -94,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   radius: 10,
                   dotHeight: 7,
                   dotWidth: 7,
-                  activeDotColor: CommonColors.accentColor,
+                  activeDotColor: Provider.of<ThemeModel>(context).currentTheme.accentColor,
                 ),
               ),
             ),

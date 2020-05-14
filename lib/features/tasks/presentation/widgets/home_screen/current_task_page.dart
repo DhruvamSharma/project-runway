@@ -103,7 +103,7 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                     beautifyDate(Provider.of<PageHolderProviderModel>(context)
                             .runningDate ??
                         ""),
-                    style: CommonTextStyles.dateTextStyle(),
+                    style: CommonTextStyles.dateTextStyle(context),
                   ),
                 ),
                 if (Provider.of<TaskListHolderProvider>(providerContext)
@@ -169,10 +169,11 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
     );
   }
 
-  void getAllTasks() {
+  Future<Null> getAllTasks() {
     BlocProvider.of<HomeScreenTaskBloc>(context).dispatch(ReadAllTaskEvent(
       runningDate: Provider.of<PageHolderProviderModel>(context).runningDate,
     ));
+    return null;
   }
 
   @override
@@ -211,8 +212,7 @@ class TaskListHolderProvider extends ChangeNotifier {
     int indexToRemove = this.taskList.indexOf(taskEntity);
     String textForRemoveAnimation = this.taskList[indexToRemove].taskTitle;
     listState.currentState.removeItem(indexToRemove, (context, animation) {
-      return _buildItem(
-          context, 0, animation, textForRemoveAnimation);
+      return _buildItem(context, 0, animation, textForRemoveAnimation);
     });
     this.taskList.removeAt(indexToRemove);
     notifyListeners();

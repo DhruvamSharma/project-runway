@@ -18,7 +18,7 @@ class UserNameWidget extends StatelessWidget {
 
           Text(
             "Your turn now, \nwhat's your name?".toUpperCase(),
-            style: CommonTextStyles.taskTextStyle(),
+            style: CommonTextStyles.taskTextStyle(context),
             textAlign: TextAlign.center,
           ),
 

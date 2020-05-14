@@ -14,7 +14,7 @@ class AppIntroWidget extends StatelessWidget {
         children: <Widget>[
           Text(
             "Welcome to Project\nRunway.",
-            style: CommonTextStyles.loginTextStyle(),
+            style: CommonTextStyles.loginTextStyle(context),
             textAlign: TextAlign.center,
           ),
           Padding(
@@ -23,7 +23,7 @@ class AppIntroWidget extends StatelessWidget {
             ),
             child: Text(
               "Let me introduce you to myself. \n\nI am Runner, your personal assistant to help you gain more productivity. \n\nWITH EASE",
-              style: CommonTextStyles.taskTextStyle(),
+              style: CommonTextStyles.taskTextStyle(context),
               textAlign: TextAlign.center,
             ),
           ),

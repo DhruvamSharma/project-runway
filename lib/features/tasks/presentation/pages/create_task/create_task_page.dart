@@ -7,6 +7,7 @@ import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
@@ -57,7 +58,8 @@ class CreateTaskPage extends StatelessWidget {
                         quarterTurns: 3,
                         child: Text(
                           screenName.toUpperCase(),
-                          style: CommonTextStyles.rotatedDesignTextStyle(),
+                          style:
+                              CommonTextStyles.rotatedDesignTextStyle(context),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -74,7 +76,8 @@ class CreateTaskPage extends StatelessWidget {
                               alignment: Alignment.topCenter,
                               child: Text(
                                 screenName.toUpperCase(),
-                                style: CommonTextStyles.headerTextStyle(),
+                                style:
+                                    CommonTextStyles.headerTextStyle(context),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -169,7 +172,9 @@ class CreateTaskPage extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              color: CommonColors.scaffoldColor,
+                              color: Provider.of<ThemeModel>(context)
+                                  .currentTheme
+                                  .scaffoldBackgroundColor,
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   top: CommonDimens.MARGIN_80,
@@ -181,7 +186,8 @@ class CreateTaskPage extends StatelessWidget {
                                   },
                                   child: Text(
                                     "Create",
-                                    style: CommonTextStyles.taskTextStyle(),
+                                    style:
+                                        CommonTextStyles.taskTextStyle(context),
                                   ),
                                 ),
                               ),

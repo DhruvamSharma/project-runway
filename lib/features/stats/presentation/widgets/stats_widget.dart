@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/date_time_parser.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/stats/data/models/managed_stats_model.dart';
 import 'package:project_runway/features/stats/presentation/charts/task_action.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:project_runway/features/stats/presentation/manager/bloc.dart';
 import 'package:project_runway/features/stats/presentation/widgets/score_widget.dart';
+import 'package:provider/provider.dart';
 
 class StatsWidget extends StatefulWidget {
   @override
@@ -48,7 +50,7 @@ class _StatsWidgetState extends State<StatsWidget> {
                 ),
                 child: Text(
                   "Weekly Score",
-                  style: CommonTextStyles.taskTextStyle(),
+                  style: CommonTextStyles.taskTextStyle(context),
                 ),
               ),
               ScoreWidget(weeklyScore),
@@ -128,7 +130,7 @@ class _StatsWidgetState extends State<StatsWidget> {
         completedTaskData.add(TaskAction(
             weekTranslator(dayOfTheWeek),
             statsTable.dayStats[dayOfTheWeek - 1].tasksCompleted,
-            Colors.white));
+                Provider.of<ThemeModel>(context).currentTheme.accentColor,));
       }
     }
     // return 3 series

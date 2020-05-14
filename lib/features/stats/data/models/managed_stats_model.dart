@@ -37,13 +37,13 @@ class ManagedStatsTable extends Equatable {
         userId: sharedPreferences.getString(USER_KEY),
         score: 0,
         dayStats: [
-          DayStatsModel(), //1
-          DayStatsModel(), //2
-          DayStatsModel(), //3
-          DayStatsModel(), //4
-          DayStatsModel(), //5
-          DayStatsModel(), //6
-          DayStatsModel(), //7
+          DayStatsModel(runningDate: DateTime.now()), //1
+          DayStatsModel(runningDate: DateTime.now()), //2
+          DayStatsModel(runningDate: DateTime.now()), //3
+          DayStatsModel(runningDate: DateTime.now()), //4
+          DayStatsModel(runningDate: DateTime.now()), //5
+          DayStatsModel(runningDate: DateTime.now()), //6
+          DayStatsModel(runningDate: DateTime.now()), //7
         ],
       );
     }

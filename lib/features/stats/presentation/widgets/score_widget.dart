@@ -34,7 +34,7 @@ class _ScoreWidgetState extends State<ScoreWidget>
             return Text(
               timeLeftStringToShowToUser,
               style:
-                  CommonTextStyles.headerTextStyle().copyWith(letterSpacing: 5),
+                  CommonTextStyles.headerTextStyle(context).copyWith(letterSpacing: 5),
             );
           },
         ),

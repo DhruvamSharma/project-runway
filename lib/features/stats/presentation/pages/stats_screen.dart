@@ -11,7 +11,7 @@ import 'package:project_runway/features/stats/presentation/manager/bloc.dart';
 import 'package:project_runway/features/stats/presentation/widgets/stats_widget.dart';
 
 class StatsScreen extends StatelessWidget {
-  static const String routeName = "${APP_NAME}_v1_task_stats-screen";
+  static const String routeName = "${APP_NAME}_v1_stats_stats-screen";
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class StatsScreen extends StatelessWidget {
                 quarterTurns: 3,
                 child: Text(
                   APP_NAME.toUpperCase(),
-                  style: CommonTextStyles.rotatedDesignTextStyle(),
+                  style: CommonTextStyles.rotatedDesignTextStyle(context),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -38,7 +38,7 @@ class StatsScreen extends StatelessWidget {
               alignment: Alignment.topCenter,
               child: Text(
                 "Stats".toUpperCase(),
-                style: CommonTextStyles.headerTextStyle(),
+                style: CommonTextStyles.headerTextStyle(context),
                 textAlign: TextAlign.center,
               ),
             ),
