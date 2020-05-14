@@ -22,7 +22,7 @@ class TaskBadge extends StatelessWidget {
       ),
       child: Text(
         Provider.of<TaskHolderProviderModel>(context).taskEntity.tag,
-        style: CommonTextStyles.badgeTextStyle(),
+        style: CommonTextStyles.badgeTextStyle(context),
       ),
     );
   }

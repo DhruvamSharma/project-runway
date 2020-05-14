@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/widgets/app_into.dart';
 import 'package:project_runway/features/login/presentation/widgets/congratulation.dart';
 import 'package:project_runway/features/login/presentation/widgets/user_name.dart';
@@ -132,6 +133,9 @@ class UserEntryRoute extends StatelessWidget {
                             },
                             mini: true,
                             child: Icon(Icons.arrow_downward),
+                            backgroundColor: Provider.of<ThemeModel>(context)
+                                .currentTheme
+                                .accentColor,
                           ),
                         ),
                       )
@@ -166,6 +170,7 @@ class UserEntryProviderHolder extends ChangeNotifier {
   String googleId;
   String userPhotoUrl;
   String emailId;
+  String userId;
   bool isVerified = false;
   int pageNumber = 0;
   bool showSkipButton = true;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/features/login/presentation/pages/profile_route.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
@@ -20,6 +21,8 @@ class RouteGenerator {
         break;
       case HomeScreen.routeName:
         return _transitionRoute(HomeScreen());
+      case ProfileRoute.routeName:
+        return _transitionRoute(ProfileRoute());
       case CreateTaskPage.routeName:
         final CreateTaskScreenArguments args = settings.arguments;
         return _transitionRoute(CreateTaskPage(

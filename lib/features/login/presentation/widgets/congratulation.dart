@@ -53,7 +53,7 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
               children: <Widget>[
                 Text(
                   "Congratulations\nYou are all set up to increase your productivity",
-                  style: CommonTextStyles.loginTextStyle(),
+                  style: CommonTextStyles.loginTextStyle(context),
                   textAlign: TextAlign.center,
                 ),
                 Padding(

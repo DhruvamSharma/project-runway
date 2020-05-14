@@ -51,7 +51,20 @@ class StatsRemoteDataSourceImpl implements StatsRemoteDataSource {
       // get the stats from the database
       final statsData =
           await firestore.collection(STATS_COLLECTION).document(userId).get();
+      // parse the data
       final statsModel = ManagedStatsTable.fromJson(statsData.data);
+      // find out which day of the week is today
+      final int dayOfTheWeek = DateTime.now().weekday;
+      // get the stats for that day
+      final dayStats = statsModel.dayStats[dayOfTheWeek - 1];
+      // check if the today stats are of today and not of previous week
+      // and if they are, reset them
+      if (dayStats.runningDate.day != DateTime.now().day) {
+        dayStats.runningDate = DateTime.now();
+        dayStats.tasksCreated = 0;
+        dayStats.tasksCompleted = 0;
+        dayStats.tasksDeleted = 0;
+      }
       return statsModel;
     } catch (ex) {
       throw ServerException(message: FIREBASE_ERROR);

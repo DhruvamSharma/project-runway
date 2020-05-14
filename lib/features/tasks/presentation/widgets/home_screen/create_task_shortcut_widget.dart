@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
@@ -49,19 +51,21 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                 isRequired: false,
               ),
             ),
-            if (Provider.of<PageHolderProviderModel>(context).pageNumber != 0)
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_20,
-                    right: CommonDimens.MARGIN_20,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      OutlineButton(
-                        onPressed: () async {
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_20,
+                  right: CommonDimens.MARGIN_20,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    OutlineButton(
+                      onPressed: () async {
+                        if (Provider.of<PageHolderProviderModel>(context)
+                                .pageNumber !=
+                            0) {
                           String taskTitle =
                               Provider.of<InitialTaskTitleProviderModel>(
                                       context)
@@ -83,16 +87,30 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                             Provider.of<TaskListHolderProvider>(context)
                                 .insertTaskToList(data);
                           }
-                        },
-                        child: Text("More Details"),
+                        }
+                      },
+                      child: Text(
+                        "More Details",
+                        style: CommonTextStyles.badgeTextStyle(context).copyWith(
+                            color: Provider.of<PageHolderProviderModel>(context)
+                                        .pageNumber ==
+                                    0
+                                ? CommonColors.disabledTaskTextColor
+                                : Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                            letterSpacing: 3,
+                            fontSize: 14),
                       ),
-                      Material(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        child: InkWell(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                          onTap: () {
-                            // check if the user can create the task or not.
+                    ),
+                    Material(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      child: InkWell(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        onTap: () {
+                          // check if the user can create the task or not.
+                          if (Provider.of<PageHolderProviderModel>(context)
+                                  .pageNumber !=
+                              0) {
                             if (totalTaskNumber <= TOTAL_TASK_CREATION_LIMIT) {
                               String initialTitle =
                                   Provider.of<InitialTaskTitleProviderModel>(
@@ -101,7 +119,8 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                               // check if the task is entered in the field or not
                               if (initialTitle != null &&
                                   initialTitle.isNotEmpty) {
-                                final task = createTaskArgs(context);
+                                final TaskEntity task = createTaskArgs(context);
+                                // add to data base
                                 BlocProvider.of<HomeScreenTaskBloc>(context)
                                     .dispatch(CreateTaskEvent(task: task));
                               } else {
@@ -124,20 +143,26 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                             }
                             Provider.of<InitialTaskTitleProviderModel>(context)
                                 .assignTaskTitle("");
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 32.0),
-                            child: Icon(
-                              Icons.send,
-                              semanticLabel: "Create Task",
-                            ),
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 32.0),
+                          child: Icon(
+                            Icons.send,
+                            color: Provider.of<PageHolderProviderModel>(context)
+                                        .pageNumber ==
+                                    0
+                                ? CommonColors.disabledTaskTextColor
+                                : Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                            semanticLabel: "Create Task",
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
+            ),
           ],
         ),
       ),
