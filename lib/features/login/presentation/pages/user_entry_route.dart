@@ -41,6 +41,31 @@ class UserEntryRoute extends StatelessWidget {
                   ),
                 ],
               ),
+              if (Provider.of<UserEntryProviderHolder>(providerContext)
+                      .pageNumber !=
+                  0)
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_40,
+                    right: CommonDimens.MARGIN_20,
+                  ),
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          _pageController.animateToPage(
+                            buildPageNumberInReverse(providerContext),
+                            duration: Duration(milliseconds: 400),
+                            curve: Curves.easeOutCubic,
+                          );
+                        },
+                        mini: true,
+                        child: Icon(Icons.arrow_upward, color: Provider.of<ThemeModel>(context)
+                            .currentTheme
+                            .accentColor,),
+                        backgroundColor: Colors.transparent,
+                      )),
+                ),
               Padding(
                 padding: const EdgeInsets.only(
                   bottom: CommonDimens.MARGIN_20,
@@ -49,33 +74,6 @@ class UserEntryRoute extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    if (Provider.of<UserEntryProviderHolder>(providerContext)
-                                .pageNumber ==
-                            2 &&
-                        Provider.of<UserEntryProviderHolder>(providerContext)
-                            .showSkipButton)
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: FloatingActionButton.extended(
-                          onPressed: () async {
-                            Provider.of<UserEntryProviderHolder>(
-                                    providerContext)
-                                .userPhotoUrl = null;
-                            Provider.of<UserEntryProviderHolder>(
-                                    providerContext)
-                                .googleId = null;
-                            Provider.of<UserEntryProviderHolder>(
-                                    providerContext)
-                                .isVerified = false;
-                            await _pageController.animateToPage(
-                              buildPageNumber(providerContext),
-                              duration: Duration(milliseconds: 400),
-                              curve: Curves.easeOutCubic,
-                            );
-                          },
-                          label: Text("Skip"),
-                        ),
-                      ),
                     if (Provider.of<UserEntryProviderHolder>(providerContext)
                             .pageNumber !=
                         3)
@@ -163,6 +161,18 @@ class UserEntryRoute extends StatelessWidget {
         .assignPageNumber(nextPageNumber);
     return nextPageNumber;
   }
+
+  int buildPageNumberInReverse(BuildContext context) {
+    int nextPageNumber = 0;
+    double currentPageNumber = _pageController.page;
+    if (currentPageNumber > 0) {
+      nextPageNumber = currentPageNumber.toInt() - 1;
+    }
+
+    Provider.of<UserEntryProviderHolder>(context)
+        .assignPageNumber(nextPageNumber);
+    return nextPageNumber;
+  }
 }
 
 class UserEntryProviderHolder extends ChangeNotifier {
@@ -171,6 +181,7 @@ class UserEntryProviderHolder extends ChangeNotifier {
   String userPhotoUrl;
   String emailId;
   String userId;
+  DateTime createdDate = DateTime.now();
   bool isVerified = false;
   int pageNumber = 0;
   bool showSkipButton = true;

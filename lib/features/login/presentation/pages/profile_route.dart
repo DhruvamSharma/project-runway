@@ -19,6 +19,8 @@ import 'package:project_runway/features/login/presentation/manager/bloc.dart';
 import 'package:project_runway/features/login/presentation/manager/login_bloc_bloc.dart';
 import 'package:project_runway/features/login/presentation/manager/login_bloc_event.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
+import 'package:project_runway/features/stats/presentation/manager/bloc.dart';
+import 'package:project_runway/features/stats/presentation/manager/stats_event.dart';
 import 'package:provider/provider.dart';
 
 class ProfileRoute extends StatefulWidget {
@@ -85,36 +87,6 @@ class _ProfileRouteState extends State<ProfileRoute> {
                   ),
                   child: Column(
                     children: <Widget>[
-                      ListTile(
-                        leading: Image.asset(
-                          "assets/google-logo-png-open-2000.png",
-                          height: 40,
-                          width: 30,
-                        ),
-                        title: Text(
-                          widget.user.isVerified
-                              ? "Your progress is being saved"
-                              : "Sign in to save your progress",
-                          style: CommonTextStyles.taskTextStyle(context),
-                        ),
-                        onTap: () async {
-                          if (!widget.user.isVerified) {
-                            // sign in
-                            final firebaseUser =
-                                await signInWithGoogle(context);
-                            // update the user entity
-                            setState(() {
-                              widget.user.userPhotoUrl = firebaseUser.photoUrl;
-                              widget.user.googleId = firebaseUser.uid;
-                              widget.user.emailId = firebaseUser.email;
-                              widget.user.isVerified = true;
-                            });
-                            // update the user model in database and local
-                            BlocProvider.of<LoginBloc>(blocContext)
-                                .dispatch(LoginUserEvent(user: widget.user));
-                          }
-                        },
-                      ),
                       Padding(
                         padding: const EdgeInsets.only(
                           top: CommonDimens.MARGIN_40,
@@ -163,13 +135,14 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             style: CommonTextStyles.taskTextStyle(context),
                           ),
                           trailing: Checkbox(
-                            value:
-                                Provider.of<ThemeModel>(context).currentTheme ==
-                                    lightTheme,
+                            value: Provider.of<ThemeModel>(context)
+                                    .currentTheme ==
+                                lightTheme,
                             checkColor: Provider.of<ThemeModel>(context)
                                 .currentTheme
                                 .accentColor,
-                            materialTapTargetSize: MaterialTapTargetSize.padded,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.padded,
                             activeColor: CommonColors.toggleableActiveColor,
                             onChanged: (value) {
                               Provider.of<ThemeModel>(context).toggleTheme();
@@ -203,7 +176,8 @@ class _ProfileRouteState extends State<ProfileRoute> {
                         Navigator.pop(context);
                         // pop the home route
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, UserEntryRoute.routeName);
+                        Navigator.pushNamed(
+                            context, UserEntryRoute.routeName);
                       },
                     ),
                   ),

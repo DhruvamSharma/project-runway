@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
@@ -31,7 +32,6 @@ class _TaskWidgetState extends State<TaskWidget> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
       child: InkWell(
         onTap: () async {
           final taskEntity = await showCupertinoModalPopup(
@@ -39,7 +39,10 @@ class _TaskWidgetState extends State<TaskWidget> {
             builder: (_) {
               return Container(
                 decoration: BoxDecoration(
-                  color: Colors.deepPurpleAccent,
+                  color: Provider.of<ThemeModel>(context).currentTheme ==
+                          lightTheme
+                      ? CommonColors.bottomSheetColorLightTheme
+                      : CommonColors.bottomSheetColor,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
@@ -143,7 +146,9 @@ class _TaskWidgetState extends State<TaskWidget> {
                   ),
                   Checkbox(
                     value: isCompleted,
-                    checkColor: Provider.of<ThemeModel>(context).currentTheme.accentColor,
+                    checkColor: Provider.of<ThemeModel>(context)
+                        .currentTheme
+                        .accentColor,
                     materialTapTargetSize: MaterialTapTargetSize.padded,
                     activeColor: selectCheckStyleColor(),
                     onChanged: selectCheckBoxState(),

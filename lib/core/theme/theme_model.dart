@@ -37,4 +37,8 @@ class ThemeModel extends ChangeNotifier {
       return notifyListeners();
     }
   }
+
+  refreshApp() {
+    return notifyListeners();
+  }
 }
