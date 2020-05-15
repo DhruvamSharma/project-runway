@@ -25,11 +25,13 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<Either<Failure, UserEntity>> createUser(UserEntity user) async {
-    UserEntity userModel = user;
+    var userModel;
     try {
       if (user.userId == null) {
         final userId = uuid.v1();
         userModel = addUserId(user, userId);
+      } else {
+        userModel = convertEntityToModel(user);
       }
       final response = await remoteDataSource.createUser(userModel);
       return Right(response);
@@ -85,7 +87,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, UserEntity>> updateUser(UserEntity user) async {
     try {
-      final response = await remoteDataSource.updateUser(user);
+      final response = await remoteDataSource.updateUser(convertEntityToModel(user));
       return Right(response);
     } on ServerException catch (ex) {
       return Left(ServerFailure(message: ex.message));

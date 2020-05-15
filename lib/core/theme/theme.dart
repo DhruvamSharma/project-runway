@@ -12,6 +12,9 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   iconTheme: IconThemeData(color: Colors.white),
   primaryIconTheme: IconThemeData(color: Colors.white),
   accentIconTheme: IconThemeData(color: Colors.white),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: CommonColors.accentColor,
+  ),
   inputDecorationTheme: InputDecorationTheme(
     errorBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: Colors.red),
@@ -41,6 +44,9 @@ ThemeData lightTheme = ThemeData.light().copyWith(
   primaryIconTheme: IconThemeData(color: Colors.black26),
   accentIconTheme: IconThemeData(color: Colors.black26),
   scaffoldBackgroundColor: CommonColors.accentColor,
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: CommonColors.scaffoldColor,
+  ),
   canvasColor: Colors.transparent,
   appBarTheme: AppBarTheme(
     elevation: 0,

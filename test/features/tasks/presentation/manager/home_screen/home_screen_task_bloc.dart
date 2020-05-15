@@ -59,7 +59,7 @@ void main() {
 //      when(completeTaskUseCase(StringParam(taskId: any)))
 //          .thenAnswer((_) async => Right(tTaskEntity));
       // act
-      homeScreenTaskBloc.dispatch(CompleteTaskEvent(task: tTaskEntity));
+      homeScreenTaskBloc.add(CompleteTaskEvent(task: tTaskEntity));
       await untilCalled(completeTaskUseCase(TaskParam(taskEntity: tTaskEntity)));
       // assert
       verify(completeTaskUseCase(TaskParam(taskEntity: tTaskEntity)));
@@ -75,7 +75,7 @@ void main() {
         LoadedHomeScreenCompleteTaskState(taskEntity: tTaskEntity),
       ];
       // act
-      homeScreenTaskBloc.dispatch(CompleteTaskEvent(task: tTaskEntity));
+      homeScreenTaskBloc.add(CompleteTaskEvent(task: tTaskEntity));
       // assert
       expectLater(homeScreenTaskBloc.state, emitsInOrder(tStates));
     });
@@ -91,7 +91,7 @@ void main() {
         ErrorHomeScreenCompleteTaskState(message: SERVER_FAILURE_MESSAGE),
       ];
       // act
-      homeScreenTaskBloc.dispatch(CompleteTaskEvent(task: tTaskEntity));
+      homeScreenTaskBloc.add(CompleteTaskEvent(task: tTaskEntity));
       // assert
       expectLater(homeScreenTaskBloc.state, emitsInOrder(tStates));
     });
@@ -131,7 +131,7 @@ void main() {
 
     test("calls the usecase", () async {
       // act
-      homeScreenTaskBloc.dispatch(ReadAllTaskEvent(runningDate: tRunningDate));
+      homeScreenTaskBloc.add(ReadAllTaskEvent(runningDate: tRunningDate));
       await untilCalled(allTasksForDateUseCase(DateParam(runningDate: tRunningDate)));
       // assert
       verify(allTasksForDateUseCase(DateParam(runningDate: tRunningDate)));
@@ -147,7 +147,7 @@ void main() {
         LoadedHomeScreenAllTasksState(taskListEntity: tTaskListEntity),
       ];
       // act
-      homeScreenTaskBloc.dispatch(ReadAllTaskEvent(runningDate: tRunningDate));
+      homeScreenTaskBloc.add(ReadAllTaskEvent(runningDate: tRunningDate));
       // assert
       expectLater(homeScreenTaskBloc.state, emitsInOrder(tStates));
     });
@@ -163,7 +163,7 @@ void main() {
         ErrorHomeScreenAllTasksState(message: SERVER_FAILURE_MESSAGE),
       ];
       // act
-      homeScreenTaskBloc.dispatch(ReadAllTaskEvent(runningDate: tRunningDate));
+      homeScreenTaskBloc.add(ReadAllTaskEvent(runningDate: tRunningDate));
       // assert
       expectLater(homeScreenTaskBloc.state, emitsInOrder(tStates));
     });

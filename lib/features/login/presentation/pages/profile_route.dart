@@ -19,9 +19,11 @@ import 'package:project_runway/features/login/presentation/manager/bloc.dart';
 import 'package:project_runway/features/login/presentation/manager/login_bloc_bloc.dart';
 import 'package:project_runway/features/login/presentation/manager/login_bloc_event.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
+import 'package:project_runway/features/login/presentation/widgets/app_into.dart';
 import 'package:project_runway/features/stats/presentation/manager/bloc.dart';
 import 'package:project_runway/features/stats/presentation/manager/stats_event.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
+import 'package:project_runway/features/tasks/presentation/widgets/secret_puzzle_widget.dart';
 import 'package:provider/provider.dart';
 
 class ProfileRoute extends StatefulWidget {
@@ -45,7 +47,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
   Widget build(BuildContext context) {
     final appState = Provider.of<ThemeModel>(context, listen: false);
     return BlocProvider<LoginBloc>(
-      builder: (_) => sl<LoginBloc>(),
+      create: (_) => sl<LoginBloc>(),
       child: Builder(
         builder: (blocContext) => BlocListener<LoginBloc, LoginBlocState>(
           listener: (_, state) {
@@ -57,7 +59,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                   style: CommonTextStyles.scaffoldTextStyle(context),
                 ),
                 behavior: SnackBarBehavior.floating,
-                backgroundColor: Provider.of<ThemeModel>(context, listen: false)
+                backgroundColor: appState
                             .currentTheme ==
                         lightTheme
                     ? CommonColors.scaffoldColor
@@ -154,6 +156,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               },
                             ),
                             onTap: () {
+                              appState.refreshApp();
                               appState.toggleTheme();
                             },
                           ),
@@ -183,7 +186,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               style: CommonTextStyles.taskTextStyle(context),
                             ),
                             onTap: () {
-//                            Navigator.pushNamed(context, StatsScreen.routeName);
+                            Navigator.pushNamed(context, AppIntroWidget.routeName);
                             },
                           ),
                         ),
@@ -232,6 +235,9 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                     style:
                                         CommonTextStyles.taskTextStyle(context),
                                   ),
+                                  onTap: () {
+                                    Navigator.pushNamed(context, SecretPuzzleWidget.routeName);
+                                  },
                                 ),
                               ],
                             ),

@@ -4,10 +4,12 @@ import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
 import 'package:project_runway/features/login/presentation/pages/profile_route.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
+import 'package:project_runway/features/login/presentation/widgets/app_into.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/home_screen.dart';
+import 'package:project_runway/features/tasks/presentation/widgets/secret_puzzle_widget.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -24,6 +26,13 @@ class RouteGenerator {
         return _transitionRoute(HomeScreen());
       case ProfileRoute.routeName:
         return _transitionRoute(ProfileRoute());
+      case SecretPuzzleWidget.routeName:
+        return _transitionRoute(SecretPuzzleWidget());
+      case AppIntroWidget.routeName:
+        return _transitionRoute(Scaffold(
+          appBar: AppBar(elevation: 0, backgroundColor: Colors.transparent,),
+          body: AppIntroWidget(),
+        ));
       case CreateTaskPage.routeName:
         final CreateTaskScreenArguments args = settings.arguments;
         return _transitionRoute(CreateTaskPage(

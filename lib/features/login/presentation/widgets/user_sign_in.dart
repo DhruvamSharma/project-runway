@@ -25,10 +25,17 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
   bool isFindingUser = false;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final appState = Provider.of<ThemeModel>(context, listen: false);
+    final userEntryState =
+        Provider.of<UserEntryProviderHolder>(context, listen: false);
     return BlocProvider<LoginBloc>(
-      builder: (_) => sl<LoginBloc>(),
+      create: (_) => sl<LoginBloc>(),
       child: Builder(
         builder: (blocContext) => Padding(
           padding: const EdgeInsets.all(
@@ -39,29 +46,26 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
               setState(() {
                 isFindingUser = false;
               });
-              Provider.of<UserEntryProviderHolder>(blocContext)
-                  .disableForwardButton(false);
               if (state is ErrorFindUserBlocState) {
-                Provider.of<UserEntryProviderHolder>(context).isNewUser = true;
+                userEntryState.isNewUser = true;
               }
 
               if (state is LoadedFindBlocState &&
                   state.user != null &&
                   !state.user.isDeleted) {
+                userEntryState.disableForwardButton(false);
                 // save the user id if the user is not new
                 sharedPreferences.setString(USER_KEY, state.user.userId);
-                Provider.of<UserEntryProviderHolder>(context).isNewUser = false;
-                Provider.of<UserEntryProviderHolder>(context).createdDate =
-                    state.user.createdAt;
-                Provider.of<UserEntryProviderHolder>(context).userId =
-                    state.user.userId;
+                userEntryState.isNewUser = false;
+                userEntryState.createdDate = state.user.createdAt;
+                userEntryState.userId = state.user.userId;
               }
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  buildText(context).toUpperCase(),
+                  buildText(context, userEntryState).toUpperCase(),
                   style: CommonTextStyles.taskTextStyle(context),
                   textAlign: TextAlign.center,
                 ),
@@ -69,7 +73,8 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                   padding: const EdgeInsets.only(
                     top: CommonDimens.MARGIN_60,
                   ),
-                  child: buildSignInButton(blocContext, appState),
+                  child:
+                      buildSignInButton(blocContext, appState, userEntryState),
                 ),
                 if (isFindingUser)
                   Padding(
@@ -86,17 +91,18 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
     );
   }
 
-  String buildText(BuildContext blocContext) {
-    String initialText =
-        "Hey ${Provider.of<UserEntryProviderHolder>(blocContext).userName},";
-    if (Provider.of<UserEntryProviderHolder>(blocContext).isVerified) {
+  String buildText(
+      BuildContext blocContext, UserEntryProviderHolder userEntryState) {
+    String initialText = "Hey ${userEntryState.userName},";
+    if (userEntryState.isVerified) {
       return "$initialText your progress will be saved";
     } else {
-      return "$initialText want to save your progress?";
+      return "$initialText Let's sign in to save our progress?";
     }
   }
 
-  Widget buildSignInButton(BuildContext blocContext, ThemeModel appState) {
+  Widget buildSignInButton(BuildContext blocContext, ThemeModel appState,
+      UserEntryProviderHolder userEntryState) {
     return AnimatedCrossFade(
       firstChild: Padding(
         padding: const EdgeInsets.symmetric(
@@ -154,20 +160,13 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
             });
             final firebaseUser = await signInWithGoogle(blocContext);
             if (firebaseUser != null) {
-              Provider.of<UserEntryProviderHolder>(blocContext)
-                  .assignSkipButtonVisibility(false);
-              Provider.of<UserEntryProviderHolder>(blocContext)
-                  .disableForwardButton(true);
-              Provider.of<UserEntryProviderHolder>(blocContext).userPhotoUrl =
-                  firebaseUser.photoUrl;
-              Provider.of<UserEntryProviderHolder>(blocContext).googleId =
-                  firebaseUser.uid;
-              Provider.of<UserEntryProviderHolder>(blocContext).emailId =
-                  firebaseUser.email;
-              Provider.of<UserEntryProviderHolder>(blocContext).isVerified =
-                  true;
+              userEntryState.disableForwardButton(true);
+              userEntryState.userPhotoUrl = firebaseUser.photoUrl;
+              userEntryState.googleId = firebaseUser.uid;
+              userEntryState.emailId = firebaseUser.email;
+              userEntryState.isVerified = true;
               BlocProvider.of<LoginBloc>(blocContext)
-                  .dispatch(CheckIfUserExistsEvent(googleId: firebaseUser.uid));
+                  .add(CheckIfUserExistsEvent(googleId: firebaseUser.uid));
             } else {
               Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text(
@@ -175,16 +174,13 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                   style: CommonTextStyles.scaffoldTextStyle(context),
                 ),
                 behavior: SnackBarBehavior.floating,
-                backgroundColor:
-                Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
+                backgroundColor: appState.currentTheme == lightTheme
                     ? CommonColors.scaffoldColor
                     : CommonColors.accentColor,
               ));
               setState(() {
                 isFindingUser = false;
               });
-              Provider.of<UserEntryProviderHolder>(blocContext)
-                  .assignSkipButtonVisibility(true);
             }
           },
           child: Container(
@@ -226,10 +222,9 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
           ),
         ),
       ),
-      crossFadeState:
-          Provider.of<UserEntryProviderHolder>(blocContext).isVerified
-              ? CrossFadeState.showFirst
-              : CrossFadeState.showSecond,
+      crossFadeState: userEntryState.isVerified
+          ? CrossFadeState.showFirst
+          : CrossFadeState.showSecond,
       duration: Duration(
         milliseconds: 300,
       ),

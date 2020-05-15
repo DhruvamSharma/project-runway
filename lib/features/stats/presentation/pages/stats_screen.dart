@@ -16,7 +16,7 @@ class StatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<StatsBloc>(
-      builder: (_) => sl<StatsBloc>(),
+      create: (_) => sl<StatsBloc>(),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: CommonColors.appBarColor,

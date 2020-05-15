@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 class UserNameWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final userEntryState = Provider.of<UserEntryProviderHolder>(context);
     return Padding(
       padding: const EdgeInsets.all(
         CommonDimens.MARGIN_20,
@@ -30,9 +31,9 @@ class UserNameWidget extends StatelessWidget {
               null,
               null,
               label: "Your Name",
-              initialText: Provider.of<UserEntryProviderHolder>(context).userName,
+              initialText: userEntryState.userName,
               onValueChange: (userName) {
-                Provider.of<UserEntryProviderHolder>(context).assignUserName(userName);
+                userEntryState.assignUserName(userName);
               },
             ),
           ),

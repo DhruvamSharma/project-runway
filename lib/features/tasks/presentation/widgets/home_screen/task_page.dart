@@ -24,7 +24,7 @@ class TaskPage extends StatelessWidget {
         );
       },
       child: BlocProvider<HomeScreenTaskBloc>(
-        builder: (_) => sl<HomeScreenTaskBloc>(),
+        create: (_) => sl<HomeScreenTaskBloc>(),
         child: BlocBuilder<HomeScreenTaskBloc, TaskBlocState>(
           builder: (_, state) {
             return CurrentTaskPage();

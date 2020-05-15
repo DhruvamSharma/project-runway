@@ -25,6 +25,8 @@ class CreateTaskShortcutWidget extends StatelessWidget {
   @override
   Widget build(BuildContext parentContext) {
     final appState = Provider.of<ThemeModel>(parentContext, listen: false);
+    final pageState =
+        Provider.of<PageHolderProviderModel>(parentContext, listen: false);
     return ChangeNotifierProvider<InitialTaskTitleProviderModel>(
       create: (_) => InitialTaskTitleProviderModel(),
       child: Builder(
@@ -32,8 +34,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
           children: <Widget>[
             GestureDetector(
               onTap: () {
-                if (Provider.of<PageHolderProviderModel>(context).pageNumber ==
-                    0) {
+                if (pageState.pageNumber == 0) {
                   Scaffold.of(context).removeCurrentSnackBar();
                   Scaffold.of(context).showSnackBar(
                     SnackBar(
@@ -42,11 +43,9 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                         style: CommonTextStyles.scaffoldTextStyle(context),
                       ),
                       behavior: SnackBarBehavior.floating,
-                      backgroundColor:
-                          appState.currentTheme ==
-                                  lightTheme
-                              ? CommonColors.scaffoldColor
-                              : CommonColors.accentColor,
+                      backgroundColor: appState.currentTheme == lightTheme
+                          ? CommonColors.scaffoldColor
+                          : CommonColors.accentColor,
                     ),
                   );
                 }
@@ -60,16 +59,16 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                 child: CustomTextField(
                   null,
                   null,
-                  enabled: Provider.of<PageHolderProviderModel>(context)
-                          .pageNumber !=
-                      0,
+                  enabled: pageState.pageNumber != 0,
                   onValueChange: (text) {
-                    Provider.of<InitialTaskTitleProviderModel>(context)
+                    Provider.of<InitialTaskTitleProviderModel>(context,
+                            listen: false)
                         .assignTaskTitle(text);
                   },
-                  textFieldValue:
-                      Provider.of<InitialTaskTitleProviderModel>(context)
-                          .taskTitle,
+                  textFieldValue: Provider.of<InitialTaskTitleProviderModel>(
+                          context,
+                          listen: false)
+                      .taskTitle,
                   label: "Task Title",
                   isRequired: false,
                 ),
@@ -87,28 +86,27 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                   children: <Widget>[
                     OutlineButton(
                       onPressed: () async {
-                        if (Provider.of<PageHolderProviderModel>(context)
-                                .pageNumber !=
-                            0) {
+                        if (pageState.pageNumber != 0) {
                           String taskTitle =
                               Provider.of<InitialTaskTitleProviderModel>(
-                                      context)
+                                      context,
+                                      listen: false)
                                   .taskTitle;
-                          Provider.of<InitialTaskTitleProviderModel>(context)
+                          Provider.of<InitialTaskTitleProviderModel>(context,
+                                  listen: false)
                               .assignTaskTitle("");
                           final data = await Navigator.pushNamed(
                             context,
                             CreateTaskPage.routeName,
                             arguments: CreateTaskScreenArguments(
-                              runningDate:
-                                  Provider.of<PageHolderProviderModel>(context)
-                                      .runningDate,
+                              runningDate: pageState.runningDate,
                               initialTaskTitle: taskTitle,
                               totalTasksCreated: totalTaskNumber,
                             ),
                           );
                           if (data != null && data is TaskEntity) {
-                            Provider.of<TaskListHolderProvider>(context)
+                            Provider.of<TaskListHolderProvider>(context,
+                                    listen: false)
                                 .insertTaskToList(data);
                           }
                         } else {
@@ -121,11 +119,10 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                                     CommonTextStyles.scaffoldTextStyle(context),
                               ),
                               behavior: SnackBarBehavior.floating,
-                              backgroundColor: appState
-                                          .currentTheme ==
-                                      lightTheme
-                                  ? CommonColors.scaffoldColor
-                                  : CommonColors.accentColor,
+                              backgroundColor:
+                                  appState.currentTheme == lightTheme
+                                      ? CommonColors.scaffoldColor
+                                      : CommonColors.accentColor,
                             ),
                           );
                         }
@@ -134,14 +131,9 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                         "More Details",
                         style: CommonTextStyles.badgeTextStyle(context)
                             .copyWith(
-                                color: Provider.of<PageHolderProviderModel>(
-                                                context)
-                                            .pageNumber ==
-                                        0
+                                color: pageState.pageNumber == 0
                                     ? CommonColors.disabledTaskTextColor
-                                    : appState
-                                        .currentTheme
-                                        .accentColor,
+                                    : appState.currentTheme.accentColor,
                                 letterSpacing: 3,
                                 fontSize: 14),
                       ),
@@ -153,34 +145,29 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                       child: IconButton(
                           icon: Icon(
                             Icons.send,
-                            color: Provider.of<PageHolderProviderModel>(context)
-                                        .pageNumber ==
-                                    0
+                            color: pageState.pageNumber == 0
                                 ? CommonColors.disabledTaskTextColor
-                                : appState
-                                    .currentTheme
-                                    .accentColor,
+                                : appState.currentTheme.accentColor,
                             semanticLabel: "Create Task",
                           ),
                           onPressed: () {
                             // check if the user can create the task or not.
-                            if (Provider.of<PageHolderProviderModel>(context)
-                                    .pageNumber !=
-                                0) {
+                            if (pageState.pageNumber != 0) {
                               if (totalTaskNumber <=
                                   TOTAL_TASK_CREATION_LIMIT) {
                                 String initialTitle =
                                     Provider.of<InitialTaskTitleProviderModel>(
-                                            context)
+                                            context,
+                                            listen: false)
                                         .taskTitle;
                                 // check if the task is entered in the field or not
                                 if (initialTitle != null &&
                                     initialTitle.isNotEmpty) {
                                   final TaskEntity task =
-                                      createTaskArgs(context);
+                                      createTaskArgs(context, pageState);
                                   // add to data base
                                   BlocProvider.of<HomeScreenTaskBloc>(context)
-                                      .dispatch(CreateTaskEvent(task: task));
+                                      .add(CreateTaskEvent(task: task));
                                 } else {
                                   Scaffold.of(context).removeCurrentSnackBar();
                                   Scaffold.of(context).showSnackBar(
@@ -193,9 +180,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                                       ),
                                       behavior: SnackBarBehavior.floating,
                                       backgroundColor:
-                                          appState
-                                                      .currentTheme ==
-                                                  lightTheme
+                                          appState.currentTheme == lightTheme
                                               ? CommonColors.scaffoldColor
                                               : CommonColors.accentColor,
                                     ),
@@ -212,17 +197,16 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                                     ),
                                     behavior: SnackBarBehavior.floating,
                                     backgroundColor:
-                                        appState
-                                                    .currentTheme ==
-                                                lightTheme
+                                        appState.currentTheme == lightTheme
                                             ? CommonColors.scaffoldColor
                                             : CommonColors.accentColor,
                                   ),
                                 );
                               }
                               Provider.of<InitialTaskTitleProviderModel>(
-                                      context)
-                                  .assignTaskTitle("");
+                                context,
+                                listen: false,
+                              ).assignTaskTitle("");
                             } else {
                               Scaffold.of(context).removeCurrentSnackBar();
                               Scaffold.of(context).showSnackBar(SnackBar(
@@ -233,9 +217,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                                 ),
                                 behavior: SnackBarBehavior.floating,
                                 backgroundColor:
-                                    appState
-                                                .currentTheme ==
-                                            lightTheme
+                                    appState.currentTheme == lightTheme
                                         ? CommonColors.scaffoldColor
                                         : CommonColors.accentColor,
                               ));
@@ -252,17 +234,20 @@ class CreateTaskShortcutWidget extends StatelessWidget {
     );
   }
 
-  TaskEntity createTaskArgs(BuildContext context) {
+  TaskEntity createTaskArgs(
+      BuildContext context, PageHolderProviderModel pageState) {
     final task = TaskEntity(
       userId: "Dhruvam",
       taskId: "hello",
-      taskTitle: Provider.of<InitialTaskTitleProviderModel>(context).taskTitle,
+      taskTitle:
+          Provider.of<InitialTaskTitleProviderModel>(context, listen: false)
+              .taskTitle,
       description: null,
       urgency: DEFAULT_URGENCY,
       tag: null,
       notificationTime: null,
       createdAt: DateTime.now(),
-      runningDate: Provider.of<PageHolderProviderModel>(context).runningDate,
+      runningDate: pageState.runningDate,
       lastUpdatedAt: DateTime.now(),
       isSynced: false,
       isDeleted: false,

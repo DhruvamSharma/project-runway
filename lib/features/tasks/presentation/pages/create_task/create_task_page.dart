@@ -32,7 +32,7 @@ class CreateTaskPage extends StatelessWidget {
     return ChangeNotifierProvider<TaskDetailProviderModel>(
       create: (_) => TaskDetailProviderModel(taskTitle: initialTaskTitle),
       child: BlocProvider<HomeScreenTaskBloc>(
-        builder: (_) => sl<HomeScreenTaskBloc>(),
+        create: (_) => sl<HomeScreenTaskBloc>(),
         child: BlocBuilder<HomeScreenTaskBloc, TaskBlocState>(
           builder: (_, state) => Scaffold(
             appBar: AppBar(
@@ -93,7 +93,7 @@ class CreateTaskPage extends StatelessWidget {
                                 initialText: initialTaskTitle,
                                 onValueChange: (text) {
                                   Provider.of<TaskDetailProviderModel>(
-                                          newContext)
+                                          newContext, listen: false)
                                       .assignTaskTitle(text);
                                 },
                                 label: "Task Title",
@@ -112,7 +112,7 @@ class CreateTaskPage extends StatelessWidget {
                                 null,
                                 onValueChange: (description) {
                                   Provider.of<TaskDetailProviderModel>(
-                                          newContext)
+                                          newContext, listen: false)
                                       .assignTaskDescription(description);
                                 },
                                 label: "Task Description",
@@ -131,7 +131,7 @@ class CreateTaskPage extends StatelessWidget {
                                 null,
                                 onValueChange: (tag) {
                                   Provider.of<TaskDetailProviderModel>(
-                                          newContext)
+                                          newContext, listen: false)
                                       .assignTaskTag(tag);
                                 },
                                 label: "Tag",
@@ -150,7 +150,7 @@ class CreateTaskPage extends StatelessWidget {
                                 1,
                                 onValueChange: (urgency) {
                                   Provider.of<TaskDetailProviderModel>(
-                                          newContext)
+                                          newContext, listen: false)
                                       .assignTaskUrgency(urgency);
                                 },
                                 label: "Urgency",
@@ -162,7 +162,7 @@ class CreateTaskPage extends StatelessWidget {
                                 onSubmitted: (text) {},
                                 textFieldValue:
                                     Provider.of<TaskDetailProviderModel>(
-                                            newContext)
+                                            newContext, listen: false)
                                         .urgency,
                                 type: TextInputType.phone,
                                 textInputFormatter: [
@@ -184,7 +184,7 @@ class CreateTaskPage extends StatelessWidget {
                                 ),
                                 child: OutlineButton(
                                   onPressed: () {
-                                    createTask(newContext);
+                                    createTask(newContext, appState);
                                   },
                                   child: Text(
                                     "Create",
@@ -208,8 +208,8 @@ class CreateTaskPage extends StatelessWidget {
     );
   }
 
-  void createTask(BuildContext newContext) {
-    final state = Provider.of<TaskDetailProviderModel>(newContext);
+  void createTask(BuildContext newContext, ThemeModel appState) {
+    final state = Provider.of<TaskDetailProviderModel>(newContext, listen: false);
     if (totalTasksCreated <= TOTAL_TASK_CREATION_LIMIT) {
       if (state.taskTitle != null && state.taskTitle.isNotEmpty) {
         final task = TaskEntity(
@@ -230,7 +230,7 @@ class CreateTaskPage extends StatelessWidget {
         );
 
         BlocProvider.of<HomeScreenTaskBloc>(newContext)
-            .dispatch(CreateTaskEvent(task: task));
+            .add(CreateTaskEvent(task: task));
       } else {
         Scaffold.of(newContext).showSnackBar(
           SnackBar(
@@ -240,7 +240,7 @@ class CreateTaskPage extends StatelessWidget {
             ),
             behavior: SnackBarBehavior.floating,
             backgroundColor:
-            Provider.of<ThemeModel>(newContext, listen: false).currentTheme == lightTheme
+            appState.currentTheme == lightTheme
                 ? CommonColors.scaffoldColor
                 : CommonColors.accentColor,
           ),
@@ -255,7 +255,7 @@ class CreateTaskPage extends StatelessWidget {
           ),
           behavior: SnackBarBehavior.floating,
           backgroundColor:
-          Provider.of<ThemeModel>(newContext, listen: false).currentTheme == lightTheme
+          appState.currentTheme == lightTheme
               ? CommonColors.scaffoldColor
               : CommonColors.accentColor,
         ),
