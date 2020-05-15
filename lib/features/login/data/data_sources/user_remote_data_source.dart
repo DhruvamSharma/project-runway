@@ -60,6 +60,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<UserModel> updateUser(UserModel user) {
+    print(user.userName);
     try {
       firestore
           .collection(USER_COLLECTION)

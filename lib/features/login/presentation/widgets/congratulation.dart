@@ -25,8 +25,10 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
   bool isCreatingAccount = false;
   @override
   Widget build(BuildContext context) {
+    final userEntryState = Provider.of<UserEntryProviderHolder>(context);
+    final appState = Provider.of<ThemeModel>(context);
     return BlocProvider<LoginBloc>(
-      builder: (_) => sl<LoginBloc>(),
+      create: (_) => sl<LoginBloc>(),
       child: Builder(
         builder: (blocContext) => BlocListener<LoginBloc, LoginBlocState>(
           listener: (_, state) {
@@ -47,7 +49,7 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
                 ),
                 behavior: SnackBarBehavior.floating,
                 backgroundColor:
-                Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
+                appState.currentTheme == lightTheme
                     ? CommonColors.scaffoldColor
                     : CommonColors.accentColor,
               ));
@@ -60,33 +62,32 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Spacer(),
                 Text(
                   "Congratulations\nYou are all set up to increase your productivity",
                   style: CommonTextStyles.loginTextStyle(context),
                   textAlign: TextAlign.center,
                 ),
+                Spacer(),
                 Padding(
                   padding: const EdgeInsets.only(
                     top: CommonDimens.MARGIN_60,
                   ),
-                  child: OutlineButton(
-                    onPressed: () {
-                      if (!Provider.of<UserEntryProviderHolder>(context)
-                          .isNewUser) {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, HomeScreen.routeName);
-                      } else {
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: OutlineButton(
+                      onPressed: () {
                         if (!isCreatingAccount) {
                           setState(() {
                             isCreatingAccount = true;
                           });
-                          final user = createUser(blocContext);
+                          final user = createUser(blocContext, userEntryState);
                           BlocProvider.of<LoginBloc>(blocContext)
-                              .dispatch(LoginUserEvent(user: user));
+                              .add(LoginUserEvent(user: user));
                         }
-                      }
-                    },
-                    child: Text("Let's Begin"),
+                      },
+                      child: Text("Let's Begin", style: CommonTextStyles.taskTextStyle(context),),
+                    ),
                   ),
                 ),
                 if (isCreatingAccount)
@@ -107,22 +108,21 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
     );
   }
 
-  UserEntity createUser(BuildContext context) {
-    final state = Provider.of<UserEntryProviderHolder>(context);
+  UserEntity createUser(BuildContext context, UserEntryProviderHolder userEntryState) {
     return UserEntity(
       userId: sharedPreferences.getString(USER_KEY),
-      googleId: state.googleId,
-      userName: state.userName,
+      googleId: userEntryState.googleId,
+      userName: userEntryState.userName,
       phoneNumber: null,
       age: null,
       gender: null,
-      userPhotoUrl: state.userPhotoUrl,
-      createdAt: DateTime.now(),
+      userPhotoUrl: userEntryState.userPhotoUrl,
+      createdAt: userEntryState.createdDate,
       score: null,
-      isVerified: state.isVerified,
+      isVerified: userEntryState.isVerified,
       isDeleted: false,
       isLoggedIn: true,
-      emailId: state.emailId,
+      emailId: userEntryState.emailId,
     );
   }
 }

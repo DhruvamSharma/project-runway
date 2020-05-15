@@ -25,13 +25,15 @@ class _TaskWidgetState extends State<TaskWidget> {
   @override
   void didChangeDependencies() {
     isCompleted =
-        Provider.of<TaskHolderProviderModel>(context).taskEntity.isCompleted;
+        Provider.of<TaskHolderProviderModel>(context, listen: false).taskEntity.isCompleted;
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<ThemeModel>(context, listen: false);
+    final taskState = Provider.of<TaskHolderProviderModel>(context, listen: false);
+    final taskListState = Provider.of<TaskListHolderProvider>(context,);
     return Material(
       child: InkWell(
         onTap: () async {
@@ -65,28 +67,23 @@ class _TaskWidgetState extends State<TaskWidget> {
                             child:
                                 ChangeNotifierProvider<TaskDetailProviderModel>(
                               create: (_) => TaskDetailProviderModel(
-                                taskTitle: Provider.of<TaskHolderProviderModel>(
-                                        context)
+                                taskTitle: taskState
                                     .taskEntity
                                     .taskTitle,
-                                tag: Provider.of<TaskHolderProviderModel>(
-                                        context)
+                                tag: taskState
                                     .taskEntity
                                     .tag,
                                 description:
-                                    Provider.of<TaskHolderProviderModel>(
-                                            context)
+                                    taskState
                                         .taskEntity
                                         .description,
-                                urgency: Provider.of<TaskHolderProviderModel>(
-                                        context)
+                                urgency: taskState
                                     .taskEntity
                                     .urgency
                                     .toString(),
                               ),
                               child: EditTaskWidget(
-                                  task: Provider.of<TaskHolderProviderModel>(
-                                          context)
+                                  task: taskState
                                       .taskEntity),
                             ),
                           ),
@@ -101,15 +98,15 @@ class _TaskWidgetState extends State<TaskWidget> {
           if (taskEntity != null &&
               taskEntity is TaskEntity &&
               taskEntity.isDeleted) {
-            taskEntity.isCompleted = isCompleted;
+//            taskEntity.isCompleted = isCompleted;
             BlocProvider.of<HomeScreenTaskBloc>(context)
-                .dispatch(DeleteTaskEvent(task: taskEntity));
-            Provider.of<TaskListHolderProvider>(context)
+                .add(DeleteTaskEvent(task: taskEntity));
+            taskListState
                 .deleteTaskItemFromList(taskEntity);
           } else if (taskEntity != null && taskEntity is TaskEntity) {
             taskEntity.isCompleted = isCompleted;
             BlocProvider.of<HomeScreenTaskBloc>(context)
-                .dispatch(UpdateTaskEvent(task: taskEntity));
+                .add(UpdateTaskEvent(task: taskEntity));
           }
         },
         child: Container(
@@ -122,11 +119,11 @@ class _TaskWidgetState extends State<TaskWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              if (Provider.of<TaskHolderProviderModel>(context)
+              if (taskState
                           .taskEntity
                           .tag !=
                       null &&
-                  Provider.of<TaskHolderProviderModel>(context)
+                  taskState
                       .taskEntity
                       .tag
                       .isNotEmpty)
@@ -139,10 +136,10 @@ class _TaskWidgetState extends State<TaskWidget> {
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      Provider.of<TaskHolderProviderModel>(context)
+                      taskState
                           .taskEntity
                           .taskTitle,
-                      style: selectTaskStyle(),
+                      style: selectTaskStyle(taskState),
                     ),
                   ),
                   Checkbox(
@@ -151,8 +148,8 @@ class _TaskWidgetState extends State<TaskWidget> {
                         .currentTheme
                         .accentColor,
                     materialTapTargetSize: MaterialTapTargetSize.padded,
-                    activeColor: selectCheckStyleColor(),
-                    onChanged: selectCheckBoxState(),
+                    activeColor: selectCheckStyleColor(taskState),
+                    onChanged: selectCheckBoxState(taskState),
                   ),
                 ],
               ),
@@ -163,9 +160,9 @@ class _TaskWidgetState extends State<TaskWidget> {
     );
   }
 
-  Function selectCheckBoxState() {
+  Function selectCheckBoxState(TaskHolderProviderModel taskState) {
     // calculating if the task is for a previous day
-    if (Provider.of<TaskHolderProviderModel>(context)
+    if (taskState
             .taskEntity
             .runningDate
             .day <
@@ -176,15 +173,15 @@ class _TaskWidgetState extends State<TaskWidget> {
         // update the status
         isCompleted = completeStatus;
         // update the update time
-        Provider.of<TaskHolderProviderModel>(context).taskEntity.lastUpdatedAt =
+        taskState.taskEntity.lastUpdatedAt =
             DateTime.now();
-        BlocProvider.of<HomeScreenTaskBloc>(context).dispatch(CompleteTaskEvent(
-            task: Provider.of<TaskHolderProviderModel>(context).taskEntity));
+        BlocProvider.of<HomeScreenTaskBloc>(context).add(CompleteTaskEvent(
+            task: taskState.taskEntity));
       };
     }
   }
 
-  TextStyle selectTaskStyle() {
+  TextStyle selectTaskStyle(TaskHolderProviderModel taskState) {
     TextStyle taskTextStyle;
     // calculating if the task is completed
     if (isCompleted) {
@@ -193,7 +190,7 @@ class _TaskWidgetState extends State<TaskWidget> {
       taskTextStyle = CommonTextStyles.taskTextStyle(context);
     }
     // calculating if the task is for a previous day
-    if (Provider.of<TaskHolderProviderModel>(context)
+    if (taskState
             .taskEntity
             .runningDate
             .day <
@@ -203,10 +200,10 @@ class _TaskWidgetState extends State<TaskWidget> {
     return taskTextStyle;
   }
 
-  Color selectCheckStyleColor() {
+  Color selectCheckStyleColor(TaskHolderProviderModel taskState) {
     Color checkStyleActiveColor;
     // calculating if the task is for a previous day
-    if (Provider.of<TaskHolderProviderModel>(context)
+    if (taskState
             .taskEntity
             .runningDate
             .day <

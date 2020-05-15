@@ -11,7 +11,7 @@ class CommonTextStyles {
   static TextStyle headerTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context).currentTheme == lightTheme
+      color: Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
           ? CommonColors.headerTextColorLightTheme
           : CommonColors.headerTextColor,
       fontSize: 40,
@@ -22,7 +22,7 @@ class CommonTextStyles {
   static TextStyle loginTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context).currentTheme == lightTheme
+      color: Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
           ? CommonColors.taskTextColorLightTheme
           : CommonColors.taskTextColor,
       fontSize: 28,
@@ -33,7 +33,7 @@ class CommonTextStyles {
   static TextStyle dateTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context).currentTheme == lightTheme
+      color: Provider.of<ThemeModel>(context,).currentTheme == lightTheme
           ? CommonColors.dateTextColorLightTheme
           : CommonColors.dateTextColor,
       fontSize: 16,
@@ -44,7 +44,7 @@ class CommonTextStyles {
   static TextStyle badgeTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context).currentTheme == lightTheme
+      color: Provider.of<ThemeModel>(context,).currentTheme == lightTheme
           ? CommonColors.taskBadgeTextColorLightTheme
           : CommonColors.taskBadgeTextColor,
       fontSize: 10,
@@ -55,7 +55,7 @@ class CommonTextStyles {
   static TextStyle rotatedDesignTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context).currentTheme == lightTheme
+      color: Provider.of<ThemeModel>(context,).currentTheme == lightTheme
           ? CommonColors.rotatedDesignTextColorLightTheme
           : CommonColors.rotatedDesignTextColor,
       fontSize: 40,
@@ -66,7 +66,9 @@ class CommonTextStyles {
   static TextStyle taskTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context).currentTheme == lightTheme? CommonColors.taskTextColorLightTheme: CommonColors.taskTextColor,
+      color: Provider.of<ThemeModel>(context,).currentTheme == lightTheme
+          ? CommonColors.taskTextColorLightTheme
+          : CommonColors.taskTextColor,
       fontSize: 20,
       letterSpacing: 5,
     );
@@ -75,7 +77,9 @@ class CommonTextStyles {
   static TextStyle scaffoldTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context).currentTheme != lightTheme? CommonColors.taskTextColorLightTheme: CommonColors.taskTextColor,
+      color: Provider.of<ThemeModel>(context, listen: false).currentTheme != lightTheme
+          ? CommonColors.taskTextColorLightTheme
+          : CommonColors.taskTextColor,
       fontSize: 14,
       letterSpacing: 2,
     );

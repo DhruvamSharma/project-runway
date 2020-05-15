@@ -14,6 +14,9 @@ const String STATS_ROUTE_KEY = "stats";
 const String PROFILE_ROUTE_KEY = "profile";
 const String HOME_ROUTE_KEY = "home";
 
+// First entries
+const String FIRST_HOME_ENTRY = "home_entry";
+
 
 // secrets
 const String REFRESH_KEY = "refresh_w5bmD85rLtxWDynzgi9Sp9F75jAv";

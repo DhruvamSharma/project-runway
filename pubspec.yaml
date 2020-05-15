@@ -32,7 +32,7 @@ dependencies:
   # firebase database
   cloud_firestore: ^0.13.5
   # Bloc for state management
-  flutter_bloc: ^0.21.0
+  flutter_bloc: ^4.0.0
   #Fonts Package
   google_fonts: ^1.0.0
   # page indicator
@@ -40,7 +40,7 @@ dependencies:
   # service locator
   get_it: ^4.0.2
   # provider
-  provider: ^3.0.0
+  provider: ^4.0.5
   # firebase auth
   firebase_auth: ^0.16.0
   # google auth
@@ -58,6 +58,8 @@ dependencies:
   # analytics for tab
   # and route transitions
   firebase_analytics: ^5.0.11
+  # caching images
+  cached_network_image: ^2.2.0+1
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +84,13 @@ flutter:
     - assets/lf30_editor_CH6Lht.json
     - assets/lf30_editor_tLnnBp.json
     - assets/lf30_editor_2qKBQS.json
+    - assets/hand_animation_dark.json
+    - assets/hand_animation_light.json
+    - assets/intro_graph_light.png
+    - assets/intro_graph_dark.png
+    - assets/intro_pedestal_light.png
+    - assets/intro_pedestal_dark.png
+    - assets/confetti_animation.json
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

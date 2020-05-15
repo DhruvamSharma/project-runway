@@ -59,6 +59,8 @@ class StatsRemoteDataSourceImpl implements StatsRemoteDataSource {
       final dayStats = statsModel.dayStats[dayOfTheWeek - 1];
       // check if the today stats are of today and not of previous week
       // and if they are, reset them
+      // also make a check if the user has entered task for the t+1 day
+      // and if so, then do not reset the stat
       if (dayStats.runningDate.day != DateTime.now().day) {
         dayStats.runningDate = DateTime.now();
         dayStats.tasksCreated = 0;
@@ -81,6 +83,8 @@ class StatsRemoteDataSourceImpl implements StatsRemoteDataSource {
       final dayStats = fetchedStatsData.dayStats[dayOfTheWeek - 1];
       // add the task to the day stats
       dayStats.tasksCreated += 1;
+      // assign the running date to that day stats
+      dayStats.runningDate = runningDate;
       // increment the score
       fetchedStatsData.score +=
           (urgency * TASK_CREATION_POINTS / TASK_MEASUREMENT_DIVISION_CONSTANT)
@@ -109,6 +113,8 @@ class StatsRemoteDataSourceImpl implements StatsRemoteDataSource {
       final dayStats = fetchedStatsData.dayStats[dayOfTheWeek - 1];
       // add the task to the day stats
       dayStats.tasksDeleted += 1;
+      // assign the running date to that day stats
+      dayStats.runningDate = runningDate;
       // decrement the score
       fetchedStatsData.score -=
           (urgency * TASK_DELETION_POINTS / TASK_MEASUREMENT_DIVISION_CONSTANT)
@@ -157,6 +163,8 @@ class StatsRemoteDataSourceImpl implements StatsRemoteDataSource {
                 TASK_MEASUREMENT_DIVISION_CONSTANT)
             .floor();
       }
+      // assign the running date to that day stats
+      dayStats.runningDate = runningDate;
       // assign the day Stats back to the list
       fetchedStatsData.dayStats[dayOfTheWeek - 1] = dayStats;
       // convert the data back to desired format

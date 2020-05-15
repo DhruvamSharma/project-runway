@@ -44,8 +44,9 @@ class UserEntryRoute extends StatelessWidget {
                   ),
                 ],
               ),
-              if (Provider.of<UserEntryProviderHolder>(providerContext)
-                      .pageNumber !=
+              if (Provider.of<UserEntryProviderHolder>(
+                    providerContext,
+                  ).pageNumber !=
                   0)
                 Padding(
                   padding: const EdgeInsets.only(
@@ -63,87 +64,76 @@ class UserEntryRoute extends StatelessWidget {
                           );
                         },
                         mini: true,
-                        child: Icon(Icons.arrow_upward, color: appState
-                            .currentTheme
-                            .accentColor,),
+                        child: Icon(
+                          Icons.arrow_upward,
+                          color: appState.currentTheme.accentColor,
+                        ),
                         backgroundColor: Colors.transparent,
+                        elevation: 0,
                       )),
                 ),
               Padding(
                 padding: const EdgeInsets.only(
                   bottom: CommonDimens.MARGIN_20,
-                  right: CommonDimens.MARGIN_20,
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: Provider.of<UserEntryProviderHolder>(
+                            providerContext,
+                          ).pageNumber ==
+                          0
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.end,
                   children: <Widget>[
-                    if (Provider.of<UserEntryProviderHolder>(providerContext)
-                            .pageNumber !=
-                        3)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: CommonDimens.MARGIN_20,
-                        ),
-                        child: Align(
-                          alignment: Alignment.bottomRight,
+                    if (Provider.of<UserEntryProviderHolder>(
+                          providerContext,
+                        ).pageNumber ==
+                        0)
+                      Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: CommonDimens.MARGIN_20,
+                            ),
+                            child: MaterialButton(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: CommonDimens.MARGIN_40,
+                                vertical: CommonDimens.MARGIN_20 / 2,
+                              ),
+                              onPressed: () {
+                                onForwardClick(providerContext);
+                              },
+                              child: Text(
+                                "Get Started",
+                                style: CommonTextStyles.taskTextStyle(context)
+                                    .copyWith(
+                                  color: appState
+                                      .currentTheme.scaffoldBackgroundColor,
+                                  letterSpacing: 5,
+                                ),
+                              ),
+                              color: appState.currentTheme.accentColor,
+                            ),
+                          )),
+                    if (Provider.of<UserEntryProviderHolder>(
+                              providerContext,
+                            ).pageNumber !=
+                            3 &&
+                        Provider.of<UserEntryProviderHolder>(
+                              providerContext,
+                            ).pageNumber !=
+                            0)
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            right: CommonDimens.MARGIN_20,
+                          ),
                           child: FloatingActionButton(
                             onPressed: () {
-                              if (!Provider.of<UserEntryProviderHolder>(
-                                      providerContext)
-                                  .isForwardButtonDisabled) {
-                                if (_pageController.page.toInt() != 1) {
-                                  _pageController.animateToPage(
-                                    buildPageNumber(providerContext),
-                                    duration: Duration(milliseconds: 400),
-                                    curve: Curves.easeOutCubic,
-                                  );
-                                }
-
-                                if (_pageController.page.toInt() == 1 &&
-                                    Provider.of<UserEntryProviderHolder>(
-                                                providerContext)
-                                            .userName !=
-                                        null &&
-                                    Provider.of<UserEntryProviderHolder>(
-                                            providerContext)
-                                        .userName
-                                        .isNotEmpty) {
-                                  _pageController.animateToPage(
-                                    buildPageNumber(providerContext),
-                                    duration: Duration(milliseconds: 400),
-                                    curve: Curves.easeOutCubic,
-                                  );
-                                }
-
-                                if (_pageController.page.toInt() == 1 &&
-                                    (Provider.of<UserEntryProviderHolder>(
-                                                    providerContext)
-                                                .userName ==
-                                            null ||
-                                        Provider.of<UserEntryProviderHolder>(
-                                                providerContext)
-                                            .userName
-                                            .isEmpty)) {
-                                  _scaffoldKey.currentState
-                                      .showSnackBar(SnackBar(
-                                    content: Text(
-                                      "Please enter your name",
-                                      style: CommonTextStyles.scaffoldTextStyle(context),
-                                    ),
-                                    behavior: SnackBarBehavior.floating,
-                                    backgroundColor:
-                                    Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
-                                        ? CommonColors.scaffoldColor
-                                        : CommonColors.accentColor,
-                                  ));
-                                }
-                              }
+                              onForwardClick(providerContext);
                             },
                             mini: true,
                             child: Icon(Icons.arrow_downward),
-                            backgroundColor: appState
-                                .currentTheme
-                                .accentColor,
                           ),
                         ),
                       )
@@ -167,7 +157,7 @@ class UserEntryRoute extends StatelessWidget {
     if (currentPageNumber == MAX_PAGES - 1) {
 //      nextPageNumber = 2;
     }
-    Provider.of<UserEntryProviderHolder>(context)
+    Provider.of<UserEntryProviderHolder>(context, listen: false)
         .assignPageNumber(nextPageNumber);
     return nextPageNumber;
   }
@@ -179,9 +169,94 @@ class UserEntryRoute extends StatelessWidget {
       nextPageNumber = currentPageNumber.toInt() - 1;
     }
 
-    Provider.of<UserEntryProviderHolder>(context)
+    Provider.of<UserEntryProviderHolder>(context, listen: false)
         .assignPageNumber(nextPageNumber);
     return nextPageNumber;
+  }
+
+  void onForwardClick(BuildContext providerContext) {
+    if (!Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
+        .isForwardButtonDisabled) {
+      if (_pageController.page.toInt() != 1 && _pageController.page.toInt() != 2) {
+        _pageController.animateToPage(
+          buildPageNumber(providerContext),
+          duration: Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+        );
+      }
+
+      if (_pageController.page.toInt() == 2 &&
+          Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
+              .isVerified !=
+              null &&
+          Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
+              .isVerified) {
+        _pageController.animateToPage(
+          buildPageNumber(providerContext),
+          duration: Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+        );
+      }
+
+      if (_pageController.page.toInt() == 1 &&
+          Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
+                  .userName !=
+              null &&
+          Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
+              .userName
+              .isNotEmpty) {
+        _pageController.animateToPage(
+          buildPageNumber(providerContext),
+          duration: Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+        );
+      }
+
+      if (_pageController.page.toInt() == 2 &&
+          (Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
+              .isVerified ==
+              null ||
+              !Provider.of<UserEntryProviderHolder>(providerContext,
+                  listen: false)
+                  .isVerified)) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(
+            "Please login to use full suite of tools",
+            style: CommonTextStyles.scaffoldTextStyle(providerContext),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor:
+          Provider.of<ThemeModel>(providerContext, listen: false)
+              .currentTheme ==
+              lightTheme
+              ? CommonColors.scaffoldColor
+              : CommonColors.accentColor,
+        ));
+      }
+
+      if (_pageController.page.toInt() == 1 &&
+          (Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
+                      .userName ==
+                  null ||
+              Provider.of<UserEntryProviderHolder>(providerContext,
+                      listen: false)
+                  .userName
+                  .isEmpty)) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(
+            "Please enter your name",
+            style: CommonTextStyles.scaffoldTextStyle(providerContext),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor:
+              Provider.of<ThemeModel>(providerContext, listen: false)
+                          .currentTheme ==
+                      lightTheme
+                  ? CommonColors.scaffoldColor
+                  : CommonColors.accentColor,
+        ));
+      }
+    }
   }
 }
 

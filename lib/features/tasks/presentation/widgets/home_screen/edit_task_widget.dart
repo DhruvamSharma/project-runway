@@ -39,6 +39,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<ThemeModel>(context, listen: false);
+    final taskDetailState = Provider.of<TaskDetailProviderModel>(context, listen: false);;
     return Builder(
       builder: (newContext) => Padding(
         padding: const EdgeInsets.all(
@@ -60,7 +61,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       enabled: isEnabled,
                       initialText: widget.task.taskTitle,
                       onValueChange: (text) {
-                        Provider.of<TaskDetailProviderModel>(newContext)
+                        taskDetailState
                             .assignTaskTitle(text);
                       },
                       label: "Task Title",
@@ -78,7 +79,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       null,
                       initialText: widget.task.description,
                       onValueChange: (description) {
-                        Provider.of<TaskDetailProviderModel>(newContext)
+                        taskDetailState
                             .assignTaskDescription(description);
                       },
                       label: "Task Description",
@@ -97,7 +98,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       null,
                       initialText: widget.task.tag,
                       onValueChange: (tag) {
-                        Provider.of<TaskDetailProviderModel>(newContext)
+                        taskDetailState
                             .assignTaskTag(tag);
                       },
                       label: "Tag",
@@ -116,7 +117,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       1,
                       initialText: widget.task.urgency.toString(),
                       onValueChange: (urgency) {
-                        Provider.of<TaskDetailProviderModel>(newContext)
+                        taskDetailState
                             .assignTaskUrgency(urgency);
                       },
                       label: "Urgency",
@@ -134,7 +135,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       ),
                       onSubmitted: (text) {},
                       textFieldValue:
-                          Provider.of<TaskDetailProviderModel>(newContext)
+                          taskDetailState
                               .urgency,
                       type: TextInputType.phone,
                       textInputFormatter: [
@@ -187,20 +188,16 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                             child: OutlineButton(
                               onPressed: () {
                                 taskEntity.description =
-                                    Provider.of<TaskDetailProviderModel>(
-                                            newContext)
+                                    taskDetailState
                                         .description;
                                 taskEntity.urgency = buildUrgency(
-                                    Provider.of<TaskDetailProviderModel>(
-                                            context)
+                                    taskDetailState
                                         .urgency);
                                 taskEntity.taskTitle =
-                                    Provider.of<TaskDetailProviderModel>(
-                                            newContext)
+                                    taskDetailState
                                         .taskTitle;
                                 taskEntity.tag =
-                                    Provider.of<TaskDetailProviderModel>(
-                                            context)
+                                    taskDetailState
                                         .tag;
                                 taskEntity.lastUpdatedAt = DateTime.now();
                                 Navigator.pop(context, taskEntity);

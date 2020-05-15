@@ -17,20 +17,21 @@ class TaskBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<ThemeModel>(context, listen: false);
+    final taskState = Provider.of<TaskHolderProviderModel>(context, listen: false);
     return Container(
-      color: selectBadgeColor(context, appState),
+      color: selectBadgeColor(context, appState, taskState),
       padding: const EdgeInsets.symmetric(
         horizontal: 2,
         vertical: 1,
       ),
       child: Text(
-        Provider.of<TaskHolderProviderModel>(context).taskEntity.tag,
+        taskState.taskEntity.tag,
         style: CommonTextStyles.badgeTextStyle(context),
       ),
     );
   }
 
-  Color selectBadgeColor(BuildContext context, ThemeModel appState) {
+  Color selectBadgeColor(BuildContext context, ThemeModel appState, TaskHolderProviderModel taskState) {
     Color badgeColor;
     if (isCompleted) {
       badgeColor = CommonColors.disabledTaskTextColor;
@@ -41,7 +42,7 @@ class TaskBadge extends StatelessWidget {
     }
 
     // calculating if the task is for a previous day
-    if (Provider.of<TaskHolderProviderModel>(context)
+    if (taskState
             .taskEntity
             .runningDate
             .day <

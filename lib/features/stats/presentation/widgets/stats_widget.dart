@@ -219,6 +219,6 @@ class _StatsWidgetState extends State<StatsWidget> {
   }
 
   void fetchStats() {
-    BlocProvider.of<StatsBloc>(context).dispatch(GetStatsTableEvent());
+    BlocProvider.of<StatsBloc>(context).add(GetStatsTableEvent());
   }
 }
