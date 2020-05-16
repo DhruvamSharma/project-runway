@@ -43,17 +43,20 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
               });
               if (state is ErrorFindUserBlocState) {
                 userEntryState.isNewUser = true;
+                userEntryState.animatedToNextPage();
               }
 
-              if (state is LoadedFindBlocState &&
-                  state.user != null &&
-                  !state.user.isDeleted) {
-                userEntryState.disableForwardButton(false);
-                // save the user id if the user is not new
-                sharedPreferences.setString(USER_KEY, state.user.userId);
-                userEntryState.isNewUser = false;
-                userEntryState.createdDate = state.user.createdAt;
-                userEntryState.userId = state.user.userId;
+              if (state is LoadedFindBlocState) {
+                print("in loaded state");
+                if (state.user != null && !state.user.isDeleted) {
+                  userEntryState.disableForwardButton(false);
+                  // save the user id if the user is not new
+                  sharedPreferences.setString(USER_KEY, state.user.userId);
+                  userEntryState.isNewUser = false;
+                  userEntryState.createdDate = state.user.createdAt;
+                  userEntryState.userId = state.user.userId;
+                }
+                userEntryState.animatedToNextPage();
               }
             },
             child: Column(
@@ -90,7 +93,8 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                         });
                         // login the user anonymously so that the
                         // user can still user firebase products
-                        final firebaseUser = await AuthService.signInAnonymously();
+                        final firebaseUser =
+                            await AuthService.signInAnonymously();
                         // stop showing a loader
                         setState(() {
                           isSigningInAnonymously = false;
@@ -98,10 +102,25 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                         userEntryState.disableForwardButton(false);
                         userEntryState.googleId = firebaseUser.uid;
                         userEntryState.isVerified = false;
+
+                        userEntryState.animatedToNextPage();
                       },
                       child: Text("Skip",
                           style: CommonTextStyles.taskTextStyle(context))),
-                )
+                ),
+                if (isSigningInAnonymously)
+                  Padding(
+                    padding: const EdgeInsets.all(CommonDimens.MARGIN_40),
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: CommonDimens.MARGIN_20,
+                        ),
+                        child: LinearProgressIndicator(),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -180,6 +199,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
             setState(() {
               isFindingUser = true;
             });
+            await AuthService.signOutOfGoogle();
             final firebaseUser = await AuthService.signInWithGoogle();
             if (firebaseUser != null) {
               userEntryState.disableForwardButton(true);

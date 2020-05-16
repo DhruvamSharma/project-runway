@@ -121,7 +121,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_80 * 2,
+                    top: CommonDimens.MARGIN_80,
                     bottom: CommonDimens.MARGIN_80,
                   ),
                   child: SingleChildScrollView(
@@ -130,9 +130,10 @@ class _ProfileRouteState extends State<ProfileRoute> {
                         if (!widget.user.isVerified)
                           Padding(
                             padding: const EdgeInsets.only(
-                              top: CommonDimens.MARGIN_40,
+                              top: CommonDimens.MARGIN_20,
                             ),
                             child: ListTile(
+                              contentPadding: const EdgeInsets.all(CommonDimens.MARGIN_20,),
                               leading: Icon(
                                 Icons.link,
                                 color: appState.currentTheme.accentColor,
@@ -177,148 +178,120 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               },
                             ),
                           ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_40,
-                          ),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.airplanemode_active,
-                              color: appState.currentTheme.accentColor,
-                              size: 30,
-                            ),
-                            title: Text(
-                              "See your weekly stats and how you perform",
-                              style: CommonTextStyles.taskTextStyle(context),
-                            ),
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, StatsScreen.routeName);
-                            },
-                          ),
+                        Divider(
+                          color: appState.currentTheme == lightTheme
+                              ? CommonColors.dateTextColorLightTheme
+                              : CommonColors.dateTextColor,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
+                        ListTile(
+                          contentPadding: const EdgeInsets.all(CommonDimens.MARGIN_20,),
+                          leading: Icon(
+                            Icons.airplanemode_active,
+                            color: appState.currentTheme.accentColor,
+                            size: 30,
                           ),
-                          child: Divider(
-                            color: appState.currentTheme == lightTheme
-                                ? CommonColors.dateTextColorLightTheme
-                                : CommonColors.dateTextColor,
+                          title: Text(
+                            "See your weekly stats and how you perform",
+                            style: CommonTextStyles.taskTextStyle(context),
                           ),
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, StatsScreen.routeName);
+                          },
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
+                        Divider(
+                          color: appState.currentTheme == lightTheme
+                              ? CommonColors.dateTextColorLightTheme
+                              : CommonColors.dateTextColor,
+                        ),
+                        ListTile(
+                          contentPadding: const EdgeInsets.all(CommonDimens.MARGIN_20,),
+                          leading: Icon(
+                            Icons.lightbulb_outline,
+                            color: appState.currentTheme.accentColor,
+                            size: 30,
                           ),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.lightbulb_outline,
-                              color: appState.currentTheme.accentColor,
-                              size: 30,
-                            ),
-                            title: Text(
-                              "Want to use light theme",
-                              style: CommonTextStyles.taskTextStyle(context),
-                            ),
-                            trailing: Checkbox(
-                              value: appState.currentTheme == lightTheme,
-                              checkColor: appState.currentTheme.accentColor,
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.padded,
-                              activeColor: CommonColors.toggleableActiveColor,
-                              onChanged: (value) {
-                                appState.toggleTheme();
-                              },
-                            ),
-                            onTap: () {
-                              appState.refreshApp();
+                          title: Text(
+                            "Want to use light theme",
+                            style: CommonTextStyles.taskTextStyle(context),
+                          ),
+                          trailing: Checkbox(
+                            value: appState.currentTheme == lightTheme,
+                            checkColor: appState.currentTheme.accentColor,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.padded,
+                            activeColor: CommonColors.toggleableActiveColor,
+                            onChanged: (value) {
                               appState.toggleTheme();
                             },
                           ),
+                          onTap: () {
+                            appState.refreshApp();
+                            appState.toggleTheme();
+                          },
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
+                        Divider(
+                          color: appState.currentTheme == lightTheme
+                              ? CommonColors.dateTextColorLightTheme
+                              : CommonColors.dateTextColor,
+                        ),
+                        ListTile(
+                          contentPadding: const EdgeInsets.all(CommonDimens.MARGIN_20,),
+                          leading: Icon(
+                            Icons.cached,
+                            color: appState.currentTheme.accentColor,
+                            size: 30,
                           ),
-                          child: Divider(
+                          title: Text(
+                            "View the app tutorial again",
+                            style: CommonTextStyles.taskTextStyle(context),
+                          ),
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, AppIntroWidget.routeName);
+                          },
+                        ),
+                        if (sharedPreferences.containsKey(REFRESH_KEY))
+                          Divider(
                             color: appState.currentTheme == lightTheme
                                 ? CommonColors.dateTextColorLightTheme
                                 : CommonColors.dateTextColor,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
-                          ),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.cached,
-                              color: appState.currentTheme.accentColor,
-                              size: 30,
-                            ),
-                            title: Text(
-                              "View the app tutorial again",
-                              style: CommonTextStyles.taskTextStyle(context),
-                            ),
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, AppIntroWidget.routeName);
-                            },
-                          ),
-                        ),
                         if (sharedPreferences.containsKey(REFRESH_KEY))
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: CommonDimens.MARGIN_20,
-                            ),
-                            child: Divider(
-                              color: appState.currentTheme == lightTheme
-                                  ? CommonColors.dateTextColorLightTheme
-                                  : CommonColors.dateTextColor,
-                            ),
-                          ),
-                        if (sharedPreferences.containsKey(REFRESH_KEY))
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8.0,
-                              bottom: CommonDimens.MARGIN_20,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  margin: const EdgeInsets.only(
-                                    left: CommonDimens.MARGIN_20 - 4,
-                                  ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                margin: const EdgeInsets.only(
+                                  left: CommonDimens.MARGIN_20 - 4,
+                                ),
+                                color: appState.currentTheme.accentColor,
+                                padding: const EdgeInsets.all(
+                                  CommonDimens.MARGIN_20 / 8,
+                                ),
+                                child: Text(
+                                  "Secret Puzzle",
+                                  style: CommonTextStyles.badgeTextStyle(
+                                      context),
+                                ),
+                              ),
+                              ListTile(
+                                leading: Icon(
+                                  Icons.all_inclusive,
                                   color: appState.currentTheme.accentColor,
-                                  padding: const EdgeInsets.all(
-                                    CommonDimens.MARGIN_20 / 8,
-                                  ),
-                                  child: Text(
-                                    "Secret Puzzle",
-                                    style: CommonTextStyles.badgeTextStyle(
-                                        context),
-                                  ),
+                                  size: 30,
                                 ),
-                                ListTile(
-                                  leading: Icon(
-                                    Icons.all_inclusive,
-                                    color: appState.currentTheme.accentColor,
-                                    size: 30,
-                                  ),
-                                  title: Text(
-                                    "Read the secret again",
-                                    style:
-                                        CommonTextStyles.taskTextStyle(context),
-                                  ),
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, SecretPuzzleWidget.routeName);
-                                  },
+                                title: Text(
+                                  "Read the secret again",
+                                  style:
+                                      CommonTextStyles.taskTextStyle(context),
                                 ),
-                              ],
-                            ),
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, SecretPuzzleWidget.routeName);
+                                },
+                              ),
+                            ],
                           ),
                       ],
                     ),

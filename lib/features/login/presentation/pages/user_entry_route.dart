@@ -19,7 +19,7 @@ class UserEntryRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = Provider.of<ThemeModel>(context, listen: false);
     return ChangeNotifierProvider<UserEntryProviderHolder>(
-      create: (_) => UserEntryProviderHolder(),
+      create: (_) => UserEntryProviderHolder(controller: _pageController),
       child: Builder(
         builder: (providerContext) => Scaffold(
           key: _scaffoldKey,
@@ -121,7 +121,10 @@ class UserEntryRoute extends StatelessWidget {
                         Provider.of<UserEntryProviderHolder>(
                               providerContext,
                             ).pageNumber !=
-                            0)
+                            0 && Provider.of<UserEntryProviderHolder>(
+                      providerContext,
+                    ).pageNumber !=
+                        2)
                       Align(
                         alignment: Alignment.bottomRight,
                         child: Padding(
@@ -272,10 +275,14 @@ class UserEntryProviderHolder extends ChangeNotifier {
   bool showSkipButton = true;
   bool isForwardButtonDisabled = false;
   bool isNewUser = true;
+  final PageController controller;
+
   void assignUserName(String userName) {
     this.userName = userName;
     notifyListeners();
   }
+
+  UserEntryProviderHolder({@required this.controller});
 
   void assignPageNumber(int pageNumber) {
     this.pageNumber = pageNumber;
@@ -289,6 +296,13 @@ class UserEntryProviderHolder extends ChangeNotifier {
 
   void assignSkipButtonVisibility(bool showOrSkip) {
     this.showSkipButton = showOrSkip;
+    notifyListeners();
+  }
+
+  void animatedToNextPage() {
+    print("here");
+    controller.animateToPage(3, duration: Duration(milliseconds: 400),
+      curve: Curves.easeOutCubic,);
     notifyListeners();
   }
 }
