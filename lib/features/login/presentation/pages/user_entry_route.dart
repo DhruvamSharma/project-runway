@@ -187,10 +187,10 @@ class UserEntryRoute extends StatelessWidget {
 
       if (_pageController.page.toInt() == 2 &&
           Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
-              .isVerified !=
+              .googleId !=
               null &&
           Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
-              .isVerified) {
+              .googleId.isNotEmpty) {
         _pageController.animateToPage(
           buildPageNumber(providerContext),
           duration: Duration(milliseconds: 400),
@@ -214,11 +214,11 @@ class UserEntryRoute extends StatelessWidget {
 
       if (_pageController.page.toInt() == 2 &&
           (Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
-              .isVerified ==
+              .googleId ==
               null ||
-              !Provider.of<UserEntryProviderHolder>(providerContext,
+              Provider.of<UserEntryProviderHolder>(providerContext,
                   listen: false)
-                  .isVerified)) {
+                  .googleId.isEmpty)) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text(
             "Please login to use full suite of tools",

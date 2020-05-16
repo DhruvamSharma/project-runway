@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:project_runway/core/auth_service.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
@@ -20,14 +21,8 @@ class UserSignInWidget extends StatefulWidget {
 }
 
 class _UserSignInWidgetState extends State<UserSignInWidget> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
   bool isFindingUser = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
+  bool isSigningInAnonymously = false;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +78,30 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                     ),
                     child: LinearProgressIndicator(),
                   ),
+                Padding(
+                  padding: const EdgeInsets.all(
+                    CommonDimens.MARGIN_20 / 2,
+                  ),
+                  child: FlatButton(
+                      onPressed: () async {
+                        // start showing a loader
+                        setState(() {
+                          isSigningInAnonymously = true;
+                        });
+                        // login the user anonymously so that the
+                        // user can still user firebase products
+                        final firebaseUser = await AuthService.signInAnonymously();
+                        // stop showing a loader
+                        setState(() {
+                          isSigningInAnonymously = false;
+                        });
+                        userEntryState.disableForwardButton(false);
+                        userEntryState.googleId = firebaseUser.uid;
+                        userEntryState.isVerified = false;
+                      },
+                      child: Text("Skip",
+                          style: CommonTextStyles.taskTextStyle(context))),
+                )
               ],
             ),
           ),
@@ -133,15 +152,18 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                     height: 20,
                     width: 20,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: CommonDimens.MARGIN_20,
-                    ),
-                    child: Text(
-                      "Signed in with Google",
-                      style: CommonTextStyles.badgeTextStyle(context).copyWith(
-                        color: appState.currentTheme.scaffoldBackgroundColor,
-                        fontSize: 16,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: CommonDimens.MARGIN_20,
+                      ),
+                      child: Text(
+                        "Signed in with Google",
+                        style:
+                            CommonTextStyles.badgeTextStyle(context).copyWith(
+                          color: appState.currentTheme.scaffoldBackgroundColor,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   )
@@ -158,7 +180,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
             setState(() {
               isFindingUser = true;
             });
-            final firebaseUser = await signInWithGoogle(blocContext);
+            final firebaseUser = await AuthService.signInWithGoogle();
             if (firebaseUser != null) {
               userEntryState.disableForwardButton(true);
               userEntryState.userPhotoUrl = firebaseUser.photoUrl;
@@ -229,36 +251,5 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
         milliseconds: 300,
       ),
     );
-  }
-
-  Future<FirebaseUser> signInWithGoogle(BuildContext context) async {
-    // show the sign in dialogBox
-    final GoogleSignInAccount googleSignInAccount =
-        await _googleSignIn.signIn();
-    GoogleSignInAuthentication googleSignInAuthentication;
-    if (googleSignInAccount != null) {
-      googleSignInAuthentication = await googleSignInAccount.authentication;
-    } else {
-      return null;
-    }
-
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      idToken: googleSignInAuthentication.idToken,
-      accessToken: googleSignInAuthentication.accessToken,
-    );
-    final AuthResult authResult = await _auth.signInWithCredential(credential);
-    final FirebaseUser firebaseUser = authResult.user;
-
-    assert(!firebaseUser.isAnonymous);
-    assert(await firebaseUser.getIdToken() != null);
-
-    final FirebaseUser currentUser = await _auth.currentUser();
-    assert(firebaseUser.uid == currentUser.uid);
-
-    return firebaseUser;
-  }
-
-  void signOutOfGoogle() async {
-    await _googleSignIn.signOut();
   }
 }
