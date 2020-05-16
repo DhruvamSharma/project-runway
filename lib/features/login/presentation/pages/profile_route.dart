@@ -143,6 +143,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                 style: CommonTextStyles.taskTextStyle(context),
                               ),
                               onTap: () async {
+                                await AuthService.signOutOfGoogle();
                                 FirebaseUser firebaseUser = await AuthService
                                     .linkAnonymousAccountWithGoogleAuth();
                                 if (firebaseUser != null) {
