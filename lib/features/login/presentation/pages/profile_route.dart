@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:project_runway/core/auth_service.dart';
@@ -133,7 +134,9 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               top: CommonDimens.MARGIN_20,
                             ),
                             child: ListTile(
-                              contentPadding: const EdgeInsets.all(CommonDimens.MARGIN_20,),
+                              contentPadding: const EdgeInsets.all(
+                                CommonDimens.MARGIN_20,
+                              ),
                               leading: Icon(
                                 Icons.link,
                                 color: appState.currentTheme.accentColor,
@@ -178,13 +181,16 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               },
                             ),
                           ),
-                        Divider(
-                          color: appState.currentTheme == lightTheme
-                              ? CommonColors.dateTextColorLightTheme
-                              : CommonColors.dateTextColor,
-                        ),
+                        if (!widget.user.isVerified)
+                          Divider(
+                            color: appState.currentTheme == lightTheme
+                                ? CommonColors.dateTextColorLightTheme
+                                : CommonColors.dateTextColor,
+                          ),
                         ListTile(
-                          contentPadding: const EdgeInsets.all(CommonDimens.MARGIN_20,),
+                          contentPadding: const EdgeInsets.all(
+                            CommonDimens.MARGIN_20,
+                          ),
                           leading: Icon(
                             Icons.airplanemode_active,
                             color: appState.currentTheme.accentColor,
@@ -195,8 +201,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             style: CommonTextStyles.taskTextStyle(context),
                           ),
                           onTap: () {
-                            Navigator.pushNamed(
-                                context, StatsScreen.routeName);
+                            Navigator.pushNamed(context, StatsScreen.routeName);
                           },
                         ),
                         Divider(
@@ -205,7 +210,9 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               : CommonColors.dateTextColor,
                         ),
                         ListTile(
-                          contentPadding: const EdgeInsets.all(CommonDimens.MARGIN_20,),
+                          contentPadding: const EdgeInsets.all(
+                            CommonDimens.MARGIN_20,
+                          ),
                           leading: Icon(
                             Icons.lightbulb_outline,
                             color: appState.currentTheme.accentColor,
@@ -218,15 +225,24 @@ class _ProfileRouteState extends State<ProfileRoute> {
                           trailing: Checkbox(
                             value: appState.currentTheme == lightTheme,
                             checkColor: appState.currentTheme.accentColor,
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.padded,
+                            materialTapTargetSize: MaterialTapTargetSize.padded,
                             activeColor: CommonColors.toggleableActiveColor,
                             onChanged: (value) {
                               appState.toggleTheme();
                             },
                           ),
                           onTap: () {
-                            appState.refreshApp();
+                            if (appState.currentTheme == lightTheme) {
+                              SystemChrome.setSystemUIOverlayStyle(
+                                  SystemUiOverlayStyle(
+                                statusBarColor: Colors.black87,
+                              ));
+                            } else {
+                              SystemChrome.setSystemUIOverlayStyle(
+                                  SystemUiOverlayStyle(
+                                statusBarColor: Colors.white,
+                              ));
+                            }
                             appState.toggleTheme();
                           },
                         ),
@@ -236,7 +252,9 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               : CommonColors.dateTextColor,
                         ),
                         ListTile(
-                          contentPadding: const EdgeInsets.all(CommonDimens.MARGIN_20,),
+                          contentPadding: const EdgeInsets.all(
+                            CommonDimens.MARGIN_20,
+                          ),
                           leading: Icon(
                             Icons.cached,
                             color: appState.currentTheme.accentColor,
@@ -251,47 +269,52 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                 context, AppIntroWidget.routeName);
                           },
                         ),
-                        if (sharedPreferences.containsKey(REFRESH_KEY))
+                        if (sharedPreferences.containsKey(REFRESH_KEY) ||
+                            widget.user.score != null)
                           Divider(
                             color: appState.currentTheme == lightTheme
                                 ? CommonColors.dateTextColorLightTheme
                                 : CommonColors.dateTextColor,
                           ),
-                        if (sharedPreferences.containsKey(REFRESH_KEY))
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  left: CommonDimens.MARGIN_20 - 4,
-                                ),
-                                color: appState.currentTheme.accentColor,
-                                padding: const EdgeInsets.all(
-                                  CommonDimens.MARGIN_20 / 8,
-                                ),
-                                child: Text(
-                                  "Secret Puzzle",
-                                  style: CommonTextStyles.badgeTextStyle(
-                                      context),
-                                ),
-                              ),
-                              ListTile(
-                                leading: Icon(
-                                  Icons.all_inclusive,
+                        if (sharedPreferences.containsKey(REFRESH_KEY) ||
+                            widget.user.score != null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: CommonDimens.MARGIN_20 - 4,
+                                  ),
                                   color: appState.currentTheme.accentColor,
-                                  size: 30,
+                                  padding: const EdgeInsets.all(
+                                    CommonDimens.MARGIN_20 / 8,
+                                  ),
+                                  child: Text(
+                                    "Secret Puzzle",
+                                    style: CommonTextStyles.badgeTextStyle(
+                                        context),
+                                  ),
                                 ),
-                                title: Text(
-                                  "Read the secret again",
-                                  style:
-                                      CommonTextStyles.taskTextStyle(context),
+                                ListTile(
+                                  leading: Icon(
+                                    Icons.all_inclusive,
+                                    color: appState.currentTheme.accentColor,
+                                    size: 30,
+                                  ),
+                                  title: Text(
+                                    "Read the secret again",
+                                    style:
+                                        CommonTextStyles.taskTextStyle(context),
+                                  ),
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, SecretPuzzleWidget.routeName);
+                                  },
                                 ),
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                      context, SecretPuzzleWidget.routeName);
-                                },
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                       ],
                     ),

@@ -47,7 +47,6 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
               }
 
               if (state is LoadedFindBlocState) {
-                print("in loaded state");
                 if (state.user != null && !state.user.isDeleted) {
                   userEntryState.disableForwardButton(false);
                   // save the user id if the user is not new
@@ -55,6 +54,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                   userEntryState.isNewUser = false;
                   userEntryState.createdDate = state.user.createdAt;
                   userEntryState.userId = state.user.userId;
+                  userEntryState.score = state.user.score;
                 }
                 userEntryState.animatedToNextPage();
               }
@@ -81,33 +81,49 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                     ),
                     child: LinearProgressIndicator(),
                   ),
-                Padding(
-                  padding: const EdgeInsets.all(
-                    CommonDimens.MARGIN_20 / 2,
-                  ),
-                  child: FlatButton(
-                      onPressed: () async {
-                        // start showing a loader
-                        setState(() {
-                          isSigningInAnonymously = true;
-                        });
-                        // login the user anonymously so that the
-                        // user can still user firebase products
-                        final firebaseUser =
-                            await AuthService.signInAnonymously();
-                        // stop showing a loader
-                        setState(() {
-                          isSigningInAnonymously = false;
-                        });
-                        userEntryState.disableForwardButton(false);
-                        userEntryState.googleId = firebaseUser.uid;
-                        userEntryState.isVerified = false;
+                if (!isFindingUser)
+                  Padding(
+                    padding: const EdgeInsets.all(
+                      CommonDimens.MARGIN_20 / 2,
+                    ),
+                    child: FlatButton(
+                        onPressed: () async {
+                          // start showing a loader
+                          setState(() {
+                            isSigningInAnonymously = true;
+                          });
+                          // login the user anonymously so that the
+                          // user can still user firebase products
+                          final firebaseUser =
+                              await AuthService.signInAnonymously();
+                          if (firebaseUser != null) {
+                            userEntryState.disableForwardButton(false);
+                            userEntryState.googleId = firebaseUser.uid;
+                            userEntryState.isVerified = false;
 
-                        userEntryState.animatedToNextPage();
-                      },
-                      child: Text("Skip",
-                          style: CommonTextStyles.taskTextStyle(context))),
-                ),
+                            userEntryState.animatedToNextPage();
+                          } else {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                "Sorry, a problem occurred, please try again",
+                                style:
+                                    CommonTextStyles.scaffoldTextStyle(context),
+                              ),
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor:
+                                  appState.currentTheme == lightTheme
+                                      ? CommonColors.scaffoldColor
+                                      : CommonColors.accentColor,
+                            ));
+                          }
+                          // stop showing a loader
+                          setState(() {
+                            isSigningInAnonymously = false;
+                          });
+                        },
+                        child: Text("Skip",
+                            style: CommonTextStyles.taskTextStyle(context))),
+                  ),
                 if (isSigningInAnonymously)
                   Padding(
                     padding: const EdgeInsets.all(CommonDimens.MARGIN_40),

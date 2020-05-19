@@ -29,7 +29,7 @@ class _UserNotVerifiedWidgetState extends State<UserNotVerifiedWidget> {
               height: 300,
               child: AnimatedCrossFade(
                 firstChild: Center(child: Padding(
-                  padding: const EdgeInsets.only(top: CommonDimens.MARGIN_80 * 2,),
+                  padding: const EdgeInsets.only(top: CommonDimens.MARGIN_80 * 2, left: CommonDimens.MARGIN_40, right: CommonDimens.MARGIN_40,),
                   child: LinearProgressIndicator(),
                 )),
                 secondChild: Lottie.network(

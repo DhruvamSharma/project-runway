@@ -53,7 +53,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(
-                      top: CommonDimens.MARGIN_60,
+                      top: CommonDimens.MARGIN_20,
                     ),
                     child: CustomTextField(
                       null,

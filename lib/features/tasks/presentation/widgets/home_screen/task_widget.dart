@@ -57,7 +57,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                     data: ThemeData.light()
                         .copyWith(canvasColor: Colors.transparent),
                     child: DraggableScrollableSheet(
-                      initialChildSize: 0.8,
+                      initialChildSize: 0.75,
                       maxChildSize: 1.0,
                       expand: false,
                       builder: (_, controller) {
@@ -114,7 +114,6 @@ class _TaskWidgetState extends State<TaskWidget> {
             top: CommonDimens.MARGIN_20,
             left: CommonDimens.MARGIN_20,
             right: CommonDimens.MARGIN_20,
-            bottom: CommonDimens.MARGIN_20,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

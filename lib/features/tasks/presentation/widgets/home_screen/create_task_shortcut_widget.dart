@@ -27,6 +27,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
     final appState = Provider.of<ThemeModel>(parentContext, listen: false);
     final pageState =
         Provider.of<PageHolderProviderModel>(parentContext, listen: false);
+    final taskListState = Provider.of<TaskListHolderProvider>(parentContext, listen: false);
     return ChangeNotifierProvider<InitialTaskTitleProviderModel>(
       create: (_) => InitialTaskTitleProviderModel(),
       child: Builder(

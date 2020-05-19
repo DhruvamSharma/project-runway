@@ -29,6 +29,7 @@ class UserEntryRoute extends StatelessWidget {
                 controller: _pageController,
                 physics: NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
+                pageSnapping: true,
                 children: <Widget>[
                   Container(
                     child: AppIntroWidget(),
@@ -269,6 +270,7 @@ class UserEntryProviderHolder extends ChangeNotifier {
   String userPhotoUrl;
   String emailId;
   String userId;
+  double score;
   DateTime createdDate = DateTime.now();
   bool isVerified = false;
   int pageNumber = 0;
