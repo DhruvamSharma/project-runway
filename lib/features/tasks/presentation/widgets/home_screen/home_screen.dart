@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:project_runway/core/common_colors.dart';
@@ -8,6 +10,8 @@ import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
+import 'package:project_runway/features/login/data/models/user_model.dart';
+import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 import 'package:project_runway/features/login/presentation/pages/profile_route.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
@@ -16,7 +20,11 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = "${APP_NAME}_v1_task_home-screen";
+  final UserEntity user;
 
+  HomeScreen()
+      : user = UserModel.fromJson(
+            json.decode(sharedPreferences.getString(USER_MODEL_KEY)));
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -89,8 +97,8 @@ class _HomeScreenState extends State<HomeScreen>
               alignment: Alignment.topCenter,
               child: GestureDetector(
                 onTap: () {
-//                  if (!sharedPreferences.containsKey(REFRESH_KEY))
-                  openSecretPuzzleDoor(state);
+                  if (!sharedPreferences.containsKey(REFRESH_KEY) && widget.user.score == null)
+                    openSecretPuzzleDoor(state);
                 },
                 child: Text(
                   APP_NAME.toUpperCase(),

@@ -19,7 +19,7 @@ class UserEntryRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = Provider.of<ThemeModel>(context, listen: false);
     return ChangeNotifierProvider<UserEntryProviderHolder>(
-      create: (_) => UserEntryProviderHolder(),
+      create: (_) => UserEntryProviderHolder(controller: _pageController),
       child: Builder(
         builder: (providerContext) => Scaffold(
           key: _scaffoldKey,
@@ -29,6 +29,7 @@ class UserEntryRoute extends StatelessWidget {
                 controller: _pageController,
                 physics: NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
+                pageSnapping: true,
                 children: <Widget>[
                   Container(
                     child: AppIntroWidget(),
@@ -121,7 +122,10 @@ class UserEntryRoute extends StatelessWidget {
                         Provider.of<UserEntryProviderHolder>(
                               providerContext,
                             ).pageNumber !=
-                            0)
+                            0 && Provider.of<UserEntryProviderHolder>(
+                      providerContext,
+                    ).pageNumber !=
+                        2)
                       Align(
                         alignment: Alignment.bottomRight,
                         child: Padding(
@@ -187,10 +191,10 @@ class UserEntryRoute extends StatelessWidget {
 
       if (_pageController.page.toInt() == 2 &&
           Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
-              .isVerified !=
+              .googleId !=
               null &&
           Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
-              .isVerified) {
+              .googleId.isNotEmpty) {
         _pageController.animateToPage(
           buildPageNumber(providerContext),
           duration: Duration(milliseconds: 400),
@@ -214,11 +218,11 @@ class UserEntryRoute extends StatelessWidget {
 
       if (_pageController.page.toInt() == 2 &&
           (Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
-              .isVerified ==
+              .googleId ==
               null ||
-              !Provider.of<UserEntryProviderHolder>(providerContext,
+              Provider.of<UserEntryProviderHolder>(providerContext,
                   listen: false)
-                  .isVerified)) {
+                  .googleId.isEmpty)) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text(
             "Please login to use full suite of tools",
@@ -266,16 +270,21 @@ class UserEntryProviderHolder extends ChangeNotifier {
   String userPhotoUrl;
   String emailId;
   String userId;
+  double score;
   DateTime createdDate = DateTime.now();
   bool isVerified = false;
   int pageNumber = 0;
   bool showSkipButton = true;
   bool isForwardButtonDisabled = false;
   bool isNewUser = true;
+  final PageController controller;
+
   void assignUserName(String userName) {
     this.userName = userName;
     notifyListeners();
   }
+
+  UserEntryProviderHolder({@required this.controller});
 
   void assignPageNumber(int pageNumber) {
     this.pageNumber = pageNumber;
@@ -289,6 +298,13 @@ class UserEntryProviderHolder extends ChangeNotifier {
 
   void assignSkipButtonVisibility(bool showOrSkip) {
     this.showSkipButton = showOrSkip;
+    notifyListeners();
+  }
+
+  void animatedToNextPage() {
+    print("here");
+    controller.animateToPage(3, duration: Duration(milliseconds: 400),
+      curve: Curves.easeOutCubic,);
     notifyListeners();
   }
 }

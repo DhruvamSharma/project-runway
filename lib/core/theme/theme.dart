@@ -39,7 +39,7 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
 ThemeData lightTheme = ThemeData.light().copyWith(
   primaryColor: CommonColors.primarySwatch,
   accentColor: CommonColors.scaffoldColor,
-  brightness: Brightness.light,
+  brightness: Brightness.dark,
   iconTheme: IconThemeData(color: Colors.black26),
   primaryIconTheme: IconThemeData(color: Colors.black26),
   accentIconTheme: IconThemeData(color: Colors.black26),
