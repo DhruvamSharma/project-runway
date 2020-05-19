@@ -26,7 +26,7 @@ class CommonTextStyles {
           ? CommonColors.taskTextColorLightTheme
           : CommonColors.taskTextColor,
       fontSize: 28,
-      letterSpacing: 5,
+      letterSpacing: 3,
     );
   }
 
@@ -48,7 +48,7 @@ class CommonTextStyles {
           ? CommonColors.taskBadgeTextColorLightTheme
           : CommonColors.taskBadgeTextColor,
       fontSize: 10,
-      letterSpacing: 4,
+      letterSpacing: 3,
     );
   }
 
@@ -70,7 +70,7 @@ class CommonTextStyles {
           ? CommonColors.taskTextColorLightTheme
           : CommonColors.taskTextColor,
       fontSize: 20,
-      letterSpacing: 5,
+      letterSpacing: 2,
     );
   }
 

@@ -20,3 +20,4 @@ const String FIRST_HOME_ENTRY = "home_entry";
 
 // secrets
 const String REFRESH_KEY = "refresh_w5bmD85rLtxWDynzgi9Sp9F75jAv";
+const String PUZZLE_SOLVED = "puzzle_solved";

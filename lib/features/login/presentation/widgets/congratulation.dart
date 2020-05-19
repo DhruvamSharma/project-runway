@@ -118,7 +118,7 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
       gender: null,
       userPhotoUrl: userEntryState.userPhotoUrl,
       createdAt: userEntryState.createdDate,
-      score: null,
+      score: userEntryState.score,
       isVerified: userEntryState.isVerified,
       isDeleted: false,
       isLoggedIn: true,

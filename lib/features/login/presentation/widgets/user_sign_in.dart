@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:project_runway/core/auth_service.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
@@ -20,14 +21,8 @@ class UserSignInWidget extends StatefulWidget {
 }
 
 class _UserSignInWidgetState extends State<UserSignInWidget> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
   bool isFindingUser = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
+  bool isSigningInAnonymously = false;
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +43,20 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
               });
               if (state is ErrorFindUserBlocState) {
                 userEntryState.isNewUser = true;
+                userEntryState.animatedToNextPage();
               }
 
-              if (state is LoadedFindBlocState &&
-                  state.user != null &&
-                  !state.user.isDeleted) {
-                userEntryState.disableForwardButton(false);
-                // save the user id if the user is not new
-                sharedPreferences.setString(USER_KEY, state.user.userId);
-                userEntryState.isNewUser = false;
-                userEntryState.createdDate = state.user.createdAt;
-                userEntryState.userId = state.user.userId;
+              if (state is LoadedFindBlocState) {
+                if (state.user != null && !state.user.isDeleted) {
+                  userEntryState.disableForwardButton(false);
+                  // save the user id if the user is not new
+                  sharedPreferences.setString(USER_KEY, state.user.userId);
+                  userEntryState.isNewUser = false;
+                  userEntryState.createdDate = state.user.createdAt;
+                  userEntryState.userId = state.user.userId;
+                  userEntryState.score = state.user.score;
+                }
+                userEntryState.animatedToNextPage();
               }
             },
             child: Column(
@@ -82,6 +80,62 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                       horizontal: CommonDimens.MARGIN_20,
                     ),
                     child: LinearProgressIndicator(),
+                  ),
+                if (!isFindingUser)
+                  Padding(
+                    padding: const EdgeInsets.all(
+                      CommonDimens.MARGIN_20 / 2,
+                    ),
+                    child: FlatButton(
+                        onPressed: () async {
+                          // start showing a loader
+                          setState(() {
+                            isSigningInAnonymously = true;
+                          });
+                          // login the user anonymously so that the
+                          // user can still user firebase products
+                          final firebaseUser =
+                              await AuthService.signInAnonymously();
+                          if (firebaseUser != null) {
+                            userEntryState.disableForwardButton(false);
+                            userEntryState.googleId = firebaseUser.uid;
+                            userEntryState.isVerified = false;
+
+                            userEntryState.animatedToNextPage();
+                          } else {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                "Sorry, a problem occurred, please try again",
+                                style:
+                                    CommonTextStyles.scaffoldTextStyle(context),
+                              ),
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor:
+                                  appState.currentTheme == lightTheme
+                                      ? CommonColors.scaffoldColor
+                                      : CommonColors.accentColor,
+                            ));
+                          }
+                          // stop showing a loader
+                          setState(() {
+                            isSigningInAnonymously = false;
+                          });
+                        },
+                        child: Text("Skip",
+                            style: CommonTextStyles.taskTextStyle(context))),
+                  ),
+                if (isSigningInAnonymously)
+                  Padding(
+                    padding: const EdgeInsets.all(CommonDimens.MARGIN_40),
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: CommonDimens.MARGIN_20,
+                        ),
+                        child: LinearProgressIndicator(),
+                      ),
+                    ),
                   ),
               ],
             ),
@@ -133,15 +187,18 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                     height: 20,
                     width: 20,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: CommonDimens.MARGIN_20,
-                    ),
-                    child: Text(
-                      "Signed in with Google",
-                      style: CommonTextStyles.badgeTextStyle(context).copyWith(
-                        color: appState.currentTheme.scaffoldBackgroundColor,
-                        fontSize: 16,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: CommonDimens.MARGIN_20,
+                      ),
+                      child: Text(
+                        "Signed in with Google",
+                        style:
+                            CommonTextStyles.badgeTextStyle(context).copyWith(
+                          color: appState.currentTheme.scaffoldBackgroundColor,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   )
@@ -158,7 +215,8 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
             setState(() {
               isFindingUser = true;
             });
-            final firebaseUser = await signInWithGoogle(blocContext);
+            await AuthService.signOutOfGoogle();
+            final firebaseUser = await AuthService.signInWithGoogle();
             if (firebaseUser != null) {
               userEntryState.disableForwardButton(true);
               userEntryState.userPhotoUrl = firebaseUser.photoUrl;
@@ -229,36 +287,5 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
         milliseconds: 300,
       ),
     );
-  }
-
-  Future<FirebaseUser> signInWithGoogle(BuildContext context) async {
-    // show the sign in dialogBox
-    final GoogleSignInAccount googleSignInAccount =
-        await _googleSignIn.signIn();
-    GoogleSignInAuthentication googleSignInAuthentication;
-    if (googleSignInAccount != null) {
-      googleSignInAuthentication = await googleSignInAccount.authentication;
-    } else {
-      return null;
-    }
-
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      idToken: googleSignInAuthentication.idToken,
-      accessToken: googleSignInAuthentication.accessToken,
-    );
-    final AuthResult authResult = await _auth.signInWithCredential(credential);
-    final FirebaseUser firebaseUser = authResult.user;
-
-    assert(!firebaseUser.isAnonymous);
-    assert(await firebaseUser.getIdToken() != null);
-
-    final FirebaseUser currentUser = await _auth.currentUser();
-    assert(firebaseUser.uid == currentUser.uid);
-
-    return firebaseUser;
-  }
-
-  void signOutOfGoogle() async {
-    await _googleSignIn.signOut();
   }
 }

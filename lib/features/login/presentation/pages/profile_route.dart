@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:project_runway/core/auth_service.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
@@ -50,7 +52,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
       create: (_) => sl<LoginBloc>(),
       child: Builder(
         builder: (blocContext) => BlocListener<LoginBloc, LoginBlocState>(
-          listener: (_, state) {
+          listener: (_, state) async {
             isLoading = false;
             if (state is ErrorLoginBlocState) {
               _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -59,9 +61,34 @@ class _ProfileRouteState extends State<ProfileRoute> {
                   style: CommonTextStyles.scaffoldTextStyle(context),
                 ),
                 behavior: SnackBarBehavior.floating,
-                backgroundColor: appState
-                            .currentTheme ==
-                        lightTheme
+                backgroundColor: appState.currentTheme == lightTheme
+                    ? CommonColors.scaffoldColor
+                    : CommonColors.accentColor,
+              ));
+            }
+
+            if (state is LoadedLoginBlocState) {
+              // check if the user returned is logged in
+              // and if not, log the user out of the app
+              if (!state.user.isLoggedIn) {
+                // clear local data
+                await sharedPreferences.clear();
+                // log out of google
+                await AuthService.signOutOfGoogle();
+                // pop the profile route
+                Navigator.pop(context);
+                // pop the home route
+                Navigator.pop(context);
+                Navigator.pushNamed(context, UserEntryRoute.routeName);
+              }
+              // show successful message
+              _scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text(
+                  "Linking account successful. Now you can use full suite of tools",
+                  style: CommonTextStyles.scaffoldTextStyle(context),
+                ),
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: appState.currentTheme == lightTheme
                     ? CommonColors.scaffoldColor
                     : CommonColors.accentColor,
               ));
@@ -95,118 +122,164 @@ class _ProfileRouteState extends State<ProfileRoute> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_80 * 2,
+                    top: CommonDimens.MARGIN_80,
                     bottom: CommonDimens.MARGIN_80,
                   ),
                   child: SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_40,
-                          ),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.airplanemode_active,
-                              color: appState.currentTheme.accentColor,
-                              size: 30,
-                            ),
-                            title: Text(
-                              "See your weekly stats and how you perform",
-                              style: CommonTextStyles.taskTextStyle(context),
-                            ),
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, StatsScreen.routeName);
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
-                          ),
-                          child: Divider(
-                            color: appState.currentTheme == lightTheme
-                                ? CommonColors.dateTextColorLightTheme
-                                : CommonColors.dateTextColor,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
-                          ),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.lightbulb_outline,
-                              color: appState.currentTheme.accentColor,
-                              size: 30,
-                            ),
-                            title: Text(
-                              "Want to use light theme",
-                              style: CommonTextStyles.taskTextStyle(context),
-                            ),
-                            trailing: Checkbox(
-                              value: appState.currentTheme == lightTheme,
-                              checkColor: appState.currentTheme.accentColor,
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.padded,
-                              activeColor: CommonColors.toggleableActiveColor,
-                              onChanged: (value) {
-                                appState.toggleTheme();
-                              },
-                            ),
-                            onTap: () {
-                              appState.refreshApp();
-                              appState.toggleTheme();
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
-                          ),
-                          child: Divider(
-                            color: appState.currentTheme == lightTheme
-                                ? CommonColors.dateTextColorLightTheme
-                                : CommonColors.dateTextColor,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
-                          ),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.cached,
-                              color: appState.currentTheme.accentColor,
-                              size: 30,
-                            ),
-                            title: Text(
-                              "View the app tutorial again",
-                              style: CommonTextStyles.taskTextStyle(context),
-                            ),
-                            onTap: () {
-                            Navigator.pushNamed(context, AppIntroWidget.routeName);
-                            },
-                          ),
-                        ),
-                        if (sharedPreferences.containsKey(REFRESH_KEY))
+                        if (!widget.user.isVerified)
                           Padding(
                             padding: const EdgeInsets.only(
                               top: CommonDimens.MARGIN_20,
                             ),
-                            child: Divider(
-                              color: appState.currentTheme == lightTheme
-                                  ? CommonColors.dateTextColorLightTheme
-                                  : CommonColors.dateTextColor,
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(
+                                CommonDimens.MARGIN_20,
+                              ),
+                              leading: Icon(
+                                Icons.link,
+                                color: appState.currentTheme.accentColor,
+                                size: 30,
+                              ),
+                              title: Text(
+                                "Link your Google Account to use the full suite of features",
+                                style: CommonTextStyles.taskTextStyle(context),
+                              ),
+                              onTap: () async {
+                                await AuthService.signOutOfGoogle();
+                                FirebaseUser firebaseUser = await AuthService
+                                    .linkAnonymousAccountWithGoogleAuth();
+                                if (firebaseUser != null) {
+                                  // build the UI again and hide
+                                  // the Link with Google option
+                                  setState(() {
+                                    widget.user.isVerified = true;
+                                  });
+                                  // Login the user
+                                  BlocProvider.of<LoginBloc>(blocContext)
+                                      .add(LoginUserEvent(user: widget.user));
+                                } else {
+                                  // show successful message
+                                  _scaffoldKey.currentState
+                                      .showSnackBar(SnackBar(
+                                    content: Text(
+                                      "Linking the accounts failed. Either"
+                                      " you don't have a stable internet"
+                                      " connection or the account is"
+                                      " already in use",
+                                      style: CommonTextStyles.scaffoldTextStyle(
+                                          context),
+                                    ),
+                                    behavior: SnackBarBehavior.floating,
+                                    backgroundColor:
+                                        appState.currentTheme == lightTheme
+                                            ? CommonColors.scaffoldColor
+                                            : CommonColors.accentColor,
+                                  ));
+                                }
+                              },
                             ),
                           ),
-                        if (sharedPreferences.containsKey(REFRESH_KEY))
+                        if (!widget.user.isVerified)
+                          Divider(
+                            color: appState.currentTheme == lightTheme
+                                ? CommonColors.dateTextColorLightTheme
+                                : CommonColors.dateTextColor,
+                          ),
+                        ListTile(
+                          contentPadding: const EdgeInsets.all(
+                            CommonDimens.MARGIN_20,
+                          ),
+                          leading: Icon(
+                            Icons.airplanemode_active,
+                            color: appState.currentTheme.accentColor,
+                            size: 30,
+                          ),
+                          title: Text(
+                            "See your weekly stats and how you perform",
+                            style: CommonTextStyles.taskTextStyle(context),
+                          ),
+                          onTap: () {
+                            Navigator.pushNamed(context, StatsScreen.routeName);
+                          },
+                        ),
+                        Divider(
+                          color: appState.currentTheme == lightTheme
+                              ? CommonColors.dateTextColorLightTheme
+                              : CommonColors.dateTextColor,
+                        ),
+                        ListTile(
+                          contentPadding: const EdgeInsets.all(
+                            CommonDimens.MARGIN_20,
+                          ),
+                          leading: Icon(
+                            Icons.lightbulb_outline,
+                            color: appState.currentTheme.accentColor,
+                            size: 30,
+                          ),
+                          title: Text(
+                            "Want to use light theme",
+                            style: CommonTextStyles.taskTextStyle(context),
+                          ),
+                          trailing: Checkbox(
+                            value: appState.currentTheme == lightTheme,
+                            checkColor: appState.currentTheme.accentColor,
+                            materialTapTargetSize: MaterialTapTargetSize.padded,
+                            activeColor: CommonColors.toggleableActiveColor,
+                            onChanged: (value) {
+                              appState.toggleTheme();
+                            },
+                          ),
+                          onTap: () {
+                            if (appState.currentTheme == lightTheme) {
+                              SystemChrome.setSystemUIOverlayStyle(
+                                  SystemUiOverlayStyle(
+                                statusBarColor: Colors.black87,
+                              ));
+                            } else {
+                              SystemChrome.setSystemUIOverlayStyle(
+                                  SystemUiOverlayStyle(
+                                statusBarColor: Colors.white,
+                              ));
+                            }
+                            appState.toggleTheme();
+                          },
+                        ),
+                        Divider(
+                          color: appState.currentTheme == lightTheme
+                              ? CommonColors.dateTextColorLightTheme
+                              : CommonColors.dateTextColor,
+                        ),
+                        ListTile(
+                          contentPadding: const EdgeInsets.all(
+                            CommonDimens.MARGIN_20,
+                          ),
+                          leading: Icon(
+                            Icons.cached,
+                            color: appState.currentTheme.accentColor,
+                            size: 30,
+                          ),
+                          title: Text(
+                            "View the app tutorial again",
+                            style: CommonTextStyles.taskTextStyle(context),
+                          ),
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, AppIntroWidget.routeName);
+                          },
+                        ),
+                        if (sharedPreferences.containsKey(REFRESH_KEY) ||
+                            widget.user.score != null)
+                          Divider(
+                            color: appState.currentTheme == lightTheme
+                                ? CommonColors.dateTextColorLightTheme
+                                : CommonColors.dateTextColor,
+                          ),
+                        if (sharedPreferences.containsKey(REFRESH_KEY) ||
+                            widget.user.score != null)
                           Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8.0,
-                              bottom: CommonDimens.MARGIN_20,
-                            ),
+                            padding: const EdgeInsets.only(left: 8.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -236,7 +309,8 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                         CommonTextStyles.taskTextStyle(context),
                                   ),
                                   onTap: () {
-                                    Navigator.pushNamed(context, SecretPuzzleWidget.routeName);
+                                    Navigator.pushNamed(
+                                        context, SecretPuzzleWidget.routeName);
                                   },
                                 ),
                               ],
@@ -258,15 +332,10 @@ class _ProfileRouteState extends State<ProfileRoute> {
                         style: CommonTextStyles.taskTextStyle(context),
                       ),
                       onPressed: () async {
-                        // clear local data
-                        await sharedPreferences.clear();
-                        // log out of google
-                        signOutOfGoogle();
-                        // pop the profile route
-                        Navigator.pop(context);
-                        // pop the home route
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, UserEntryRoute.routeName);
+                        // Log out the user
+                        widget.user.isLoggedIn = false;
+                        BlocProvider.of<LoginBloc>(blocContext)
+                            .add(LoginUserEvent(user: widget.user));
                       },
                     ),
                   ),
@@ -277,36 +346,5 @@ class _ProfileRouteState extends State<ProfileRoute> {
         ),
       ),
     );
-  }
-
-  Future<FirebaseUser> signInWithGoogle(BuildContext context) async {
-    // show the sign in dialogBox
-    final GoogleSignInAccount googleSignInAccount =
-        await _googleSignIn.signIn();
-    GoogleSignInAuthentication googleSignInAuthentication;
-    if (googleSignInAccount != null) {
-      googleSignInAuthentication = await googleSignInAccount.authentication;
-    } else {
-      return null;
-    }
-
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      idToken: googleSignInAuthentication.idToken,
-      accessToken: googleSignInAuthentication.accessToken,
-    );
-    final AuthResult authResult = await _auth.signInWithCredential(credential);
-    final FirebaseUser firebaseUser = authResult.user;
-
-    assert(!firebaseUser.isAnonymous);
-    assert(await firebaseUser.getIdToken() != null);
-
-    final FirebaseUser currentUser = await _auth.currentUser();
-    assert(firebaseUser.uid == currentUser.uid);
-
-    return firebaseUser;
-  }
-
-  void signOutOfGoogle() async {
-    await _googleSignIn.signOut();
   }
 }

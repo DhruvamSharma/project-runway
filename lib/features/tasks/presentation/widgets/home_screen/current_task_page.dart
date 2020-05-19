@@ -153,6 +153,10 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                       : CommonColors.accentColor,
                 ));
               }
+
+              if (state is ErrorCreateScreenCreateTaskState) {
+                print(state.message);
+              }
             },
             child: isLoadingTasks
                 ? buildLoadingAnimation(appState)
@@ -328,7 +332,7 @@ class TaskListHolderProvider extends ChangeNotifier {
   }
 
   void insertTaskToList(TaskEntity taskEntity) {
-    this.taskList.insert(0, taskEntity);
+    taskList.insert(0, taskEntity);
     listState.currentState.insertItem(0);
     notifyListeners();
   }
@@ -356,12 +360,6 @@ class TaskListHolderProvider extends ChangeNotifier {
       });
       this.taskList.removeAt(indexToRemove);
     }
-    notifyListeners();
-  }
-
-  void addTaskToList(TaskEntity taskEntity) {
-    this.taskList.add(taskEntity);
-    listState.currentState.insertItem(0);
     notifyListeners();
   }
 
