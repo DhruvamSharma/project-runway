@@ -39,7 +39,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<ThemeModel>(context, listen: false);
-    final taskDetailState = Provider.of<TaskDetailProviderModel>(context, listen: false);;
+    final taskDetailState = Provider.of<TaskDetailProviderModel>(context, listen: false);
     return Builder(
       builder: (newContext) => Padding(
         padding: const EdgeInsets.all(

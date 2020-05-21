@@ -17,3 +17,8 @@ const int TASK_MEASUREMENT_DIVISION_CONSTANT = 4;
 const int ADD_GOOGLE_SIGN_SCORE = 30;
 
 const int SOLVE_PUZZLE_POINTS = 50;
+
+
+// Notifications
+const String TASK_CHANNEL_ID = "TASK_NOTIFICATION";
+const String TASK_CHANNEL_NAME = "TASK_CHANNEL";
