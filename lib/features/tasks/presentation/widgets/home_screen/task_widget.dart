@@ -143,19 +143,14 @@ class _TaskWidgetState extends State<TaskWidget> {
   }
 
   Function selectCheckBoxState(TaskHolderProviderModel taskState) {
-    // calculating if the task is for a previous day
-    if (taskState.taskEntity.runningDate.day < DateTime.now().day) {
-      return null;
-    } else {
-      return (completeStatus) {
-        // update the status
-        isCompleted = completeStatus;
-        // update the update time
-        taskState.taskEntity.lastUpdatedAt = DateTime.now();
-        BlocProvider.of<HomeScreenTaskBloc>(context)
-            .add(CompleteTaskEvent(task: taskState.taskEntity));
-      };
-    }
+    return (completeStatus) {
+      // update the status
+      isCompleted = completeStatus;
+      // update the update time
+      taskState.taskEntity.lastUpdatedAt = DateTime.now();
+      BlocProvider.of<HomeScreenTaskBloc>(context)
+          .add(CompleteTaskEvent(task: taskState.taskEntity));
+    };
   }
 
   TextStyle selectTaskStyle(TaskHolderProviderModel taskState) {

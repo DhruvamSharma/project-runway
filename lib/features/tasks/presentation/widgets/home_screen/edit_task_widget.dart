@@ -5,6 +5,8 @@ import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/date_time_parser.dart';
+import 'package:project_runway/core/notifications/local_notifications.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
@@ -39,7 +41,8 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<ThemeModel>(context, listen: false);
-    final taskDetailState = Provider.of<TaskDetailProviderModel>(context, listen: false);
+    final taskDetailState =
+        Provider.of<TaskDetailProviderModel>(context, listen: false);
     return Builder(
       builder: (newContext) => Padding(
         padding: const EdgeInsets.all(
@@ -61,8 +64,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       enabled: isEnabled,
                       initialText: widget.task.taskTitle,
                       onValueChange: (text) {
-                        taskDetailState
-                            .assignTaskTitle(text);
+                        taskDetailState.assignTaskTitle(text);
                       },
                       label: "Task Title",
                       isRequired: false,
@@ -79,8 +81,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       null,
                       initialText: widget.task.description,
                       onValueChange: (description) {
-                        taskDetailState
-                            .assignTaskDescription(description);
+                        taskDetailState.assignTaskDescription(description);
                       },
                       label: "Task Description",
                       enabled: isEnabled,
@@ -98,8 +99,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       null,
                       initialText: widget.task.tag,
                       onValueChange: (tag) {
-                        taskDetailState
-                            .assignTaskTag(tag);
+                        taskDetailState.assignTaskTag(tag);
                       },
                       label: "Tag",
                       enabled: isEnabled,
@@ -117,8 +117,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       1,
                       initialText: widget.task.urgency.toString(),
                       onValueChange: (urgency) {
-                        taskDetailState
-                            .assignTaskUrgency(urgency);
+                        taskDetailState.assignTaskUrgency(urgency);
                       },
                       label: "Urgency",
                       enabled: isEnabled,
@@ -129,14 +128,10 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                           "Urgency is a number from 0-9 that tells how urgent the task is.",
                       helperTextStyle:
                           CommonTextStyles.badgeTextStyle(context).copyWith(
-                        color: appState
-                            .currentTheme
-                            .accentColor,
+                        color: appState.currentTheme.accentColor,
                       ),
                       onSubmitted: (text) {},
-                      textFieldValue:
-                          taskDetailState
-                              .urgency,
+                      textFieldValue: taskDetailState.urgency,
                       type: TextInputType.phone,
                       textInputFormatter: [
                         LengthLimitingTextInputFormatter(1),
@@ -145,6 +140,29 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
                     ),
                   ),
+                  if (isEnabled)
+                    ListTile(
+                      contentPadding: const EdgeInsets.all(0),
+                      title: Text(
+                        "Noification Time",
+                        style: CommonTextStyles.taskTextStyle(context),
+                      ),
+                      trailing: Text(
+                        Provider.of<TaskDetailProviderModel>(newContext,
+                                        listen: true)
+                                    .notificationTime !=
+                                null
+                            ? beautifyTime(Provider.of<TaskDetailProviderModel>(
+                                    newContext,
+                                    listen: false)
+                                .notificationTime)
+                            : "None",
+                        style: CommonTextStyles.disabledTaskTextStyle(),
+                      ),
+                      onTap: () {
+                        selectTimeForNotification(newContext);
+                      },
+                    ),
                   if (isEnabled)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -157,16 +175,14 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                             ),
                             child: Container(
                               padding: const EdgeInsets.only(
-                                top: CommonDimens.MARGIN_80,
+                                top: CommonDimens.MARGIN_40,
                                 bottom: CommonDimens.MARGIN_20,
                               ),
                               alignment: Alignment.center,
                               child: IconButton(
                                   icon: Icon(
                                     Icons.delete_forever,
-                                    color: appState
-                                                .currentTheme ==
-                                            lightTheme
+                                    color: appState.currentTheme == lightTheme
                                         ? CommonColors.scaffoldColor
                                         : CommonColors.accentColor,
                                   ),
@@ -182,24 +198,27 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                           alignment: Alignment.center,
                           child: Padding(
                             padding: const EdgeInsets.only(
-                              top: CommonDimens.MARGIN_80,
+                              top: CommonDimens.MARGIN_40,
                               bottom: CommonDimens.MARGIN_20,
                             ),
                             child: OutlineButton(
                               onPressed: () {
                                 taskEntity.description =
-                                    taskDetailState
-                                        .description;
-                                taskEntity.urgency = buildUrgency(
-                                    taskDetailState
-                                        .urgency);
+                                    taskDetailState.description;
+                                taskEntity.urgency =
+                                    buildUrgency(taskDetailState.urgency);
                                 taskEntity.taskTitle =
-                                    taskDetailState
-                                        .taskTitle;
-                                taskEntity.tag =
-                                    taskDetailState
-                                        .tag;
+                                    taskDetailState.taskTitle;
+                                taskEntity.tag = taskDetailState.tag;
+                                taskEntity.notificationTime =
+                                    taskDetailState.notificationTime;
                                 taskEntity.lastUpdatedAt = DateTime.now();
+                                // schedule the notification
+                                scheduleNotification(
+                                  taskEntity.createdAt.toString(),
+                                  taskEntity.taskTitle,
+                                  taskDetailState.notificationTime,
+                                );
                                 Navigator.pop(context, taskEntity);
                               },
                               child: Text(
@@ -247,5 +266,52 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
       urgencyInt = DEFAULT_URGENCY;
     }
     return urgencyInt;
+  }
+
+  void selectTimeForNotification(
+    BuildContext newContext,
+  ) async {
+    TimeOfDay timeOfDay = await showTimePicker(
+        context: newContext,
+        initialTime: TimeOfDay.now(),
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              accentColor: Colors.amber,
+            ),
+            child: child,
+          );
+        });
+    if (timeOfDay != null) {
+      int nowTime = TimeOfDay.now().minute + TimeOfDay.now().hour * 60;
+      int selectedTime = timeOfDay.minute + timeOfDay.hour * 60;
+      if (selectedTime - nowTime <= 0) {
+        Scaffold.of(newContext).showSnackBar(SnackBar(
+          content: Text(
+            "Sorry, you cannot select this time",
+            style: CommonTextStyles.scaffoldTextStyle(newContext),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor:
+              Provider.of<ThemeModel>(newContext, listen: false).currentTheme ==
+                      lightTheme
+                  ? CommonColors.scaffoldColor
+                  : CommonColors.accentColor,
+        ));
+      } else {
+        // create properly formatted time
+        DateTime scheduledTime = DateTime(
+          taskEntity.runningDate.year,
+          taskEntity.runningDate.month,
+          taskEntity.runningDate.day,
+          timeOfDay.hour,
+          timeOfDay.minute,
+        );
+        print(scheduledTime);
+        // update the notification
+        Provider.of<TaskDetailProviderModel>(newContext, listen: false)
+            .assignNotificationTime(scheduledTime);
+      }
+    }
   }
 }

@@ -6,6 +6,7 @@ import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/notifications/local_notifications.dart';
 import 'package:project_runway/core/theme/theme.dart';
@@ -187,7 +188,16 @@ class CreateTaskPage extends StatelessWidget {
                                 style: CommonTextStyles.taskTextStyle(context),
                               ),
                               trailing: Text(
-                                "None",
+                                Provider.of<TaskDetailProviderModel>(newContext,
+                                                listen: true)
+                                            .notificationTime !=
+                                        null
+                                    ? beautifyTime(
+                                        Provider.of<TaskDetailProviderModel>(
+                                                newContext,
+                                                listen: false)
+                                            .notificationTime)
+                                    : "None",
                                 style: CommonTextStyles.disabledTaskTextStyle(),
                               ),
                               onTap: () {
@@ -233,6 +243,7 @@ class CreateTaskPage extends StatelessWidget {
         Provider.of<TaskDetailProviderModel>(newContext, listen: false);
     if (totalTasksCreated <= TOTAL_TASK_CREATION_LIMIT) {
       if (state.taskTitle != null && state.taskTitle.isNotEmpty) {
+        DateTime createdAt = DateTime.now();
         final task = TaskEntity(
           userId: "Dhruvam",
           taskId: "hello",
@@ -241,7 +252,7 @@ class CreateTaskPage extends StatelessWidget {
           urgency: buildUrgency(state.urgency),
           tag: state.tag,
           notificationTime: state.notificationTime,
-          createdAt: DateTime.now(),
+          createdAt: createdAt,
           runningDate: runningDate,
           lastUpdatedAt: DateTime.now(),
           isSynced: false,
@@ -253,7 +264,7 @@ class CreateTaskPage extends StatelessWidget {
         // schedule the notification
         if (state.notificationTime != null) {
           scheduleNotification(
-            Uuid().v1(),
+            createdAt.toString(),
             Provider.of<TaskDetailProviderModel>(newContext, listen: false)
                 .taskTitle,
             state.notificationTime,
@@ -339,6 +350,7 @@ class CreateTaskPage extends StatelessWidget {
           timeOfDay.hour,
           timeOfDay.minute,
         );
+        print(scheduledTime);
         // update the notification
         Provider.of<TaskDetailProviderModel>(newContext, listen: false)
             .assignNotificationTime(scheduledTime);
