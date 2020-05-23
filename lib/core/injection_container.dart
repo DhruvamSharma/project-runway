@@ -12,7 +12,10 @@ import 'package:project_runway/features/stats/data/data_sources/stats_remote_dat
 import 'package:project_runway/features/stats/data/repositories/stats_repository_impl.dart';
 import 'package:project_runway/features/stats/domain/repositories/stats_repository.dart';
 import 'package:project_runway/features/stats/domain/use_cases/add_score_use_case.dart';
+import 'package:project_runway/features/stats/domain/use_cases/get_puzzle_solved_list_use_case.dart';
+import 'package:project_runway/features/stats/domain/use_cases/get_puzzle_use_case.dart';
 import 'package:project_runway/features/stats/domain/use_cases/get_stats_table_use_case.dart';
+import 'package:project_runway/features/stats/domain/use_cases/set_puzzle_solution_use_case.dart';
 import 'package:project_runway/features/stats/presentation/manager/stats_bloc.dart';
 import 'package:project_runway/features/tasks/data/data_sources/task_local_data_source.dart';
 import 'package:project_runway/features/tasks/data/data_sources/task_remote_data_source.dart';
@@ -54,12 +57,18 @@ Future<void> serviceLocatorInit() async {
 void statsInjection() {
   // bloc
   sl.registerFactory(() => StatsBloc(
+        getPuzzleSolvedListUseCase: sl(),
+        setPuzzleSolutionUseCase: sl(),
+        getPuzzleUseCase: sl(),
         statsTableUseCase: sl(),
         addScoreUseCase: sl(),
       ));
   // use case
   sl.registerLazySingleton(() => GetStatsTableUseCase(repository: sl()));
   sl.registerLazySingleton(() => AddScoreUseCase(repository: sl()));
+  sl.registerLazySingleton(() => GetPuzzleUseCase(repository: sl()));
+  sl.registerLazySingleton(() => SetPuzzleSolutionUseCase(repository: sl()));
+  sl.registerLazySingleton(() => GetPuzzleSolvedListUseCase(repository: sl()));
   // repository
   sl.registerLazySingleton<StatsRepository>(() => StatsRepositoryImpl(
         networkInfo: sl(),

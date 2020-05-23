@@ -4,6 +4,8 @@ const String USER_NOT_FOUND_ERROR = "Sorry, the data has been corrupted";
 const String SAVING_ERROR = "Sorry, could not save your data locally";
 const String NO_INTERNET = "Sorry, you don't have a stable internet connection";
 const String FIREBASE_ERROR = "Sorry, some database error occurred";
+const String NO_NEW_PUZZLE_ERROR = "Sorry, no new puzzle for now";
+const String NO_PUZZLE_SOLVED_ERROR = "Sorry, you haven' solved any puzzle";
 const String REFRESH_TEXT = "Refreshed the app";
 
 const int DEFAULT_URGENCY = 4;
@@ -17,3 +19,10 @@ const int TASK_MEASUREMENT_DIVISION_CONSTANT = 4;
 const int ADD_GOOGLE_SIGN_SCORE = 30;
 
 const int SOLVE_PUZZLE_POINTS = 50;
+
+const int PUZZLE_ID_INCREMENT_NUMBER = 13;
+
+
+// Notifications
+const String TASK_CHANNEL_ID = "TASK_NOTIFICATION";
+const String TASK_CHANNEL_NAME = "TASK_CHANNEL";

@@ -6,13 +6,16 @@ import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/notifications/local_notifications.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class CreateTaskPage extends StatelessWidget {
   static const String routeName = "${APP_NAME}_v1_task_create-screen";
@@ -93,7 +96,8 @@ class CreateTaskPage extends StatelessWidget {
                                 initialText: initialTaskTitle,
                                 onValueChange: (text) {
                                   Provider.of<TaskDetailProviderModel>(
-                                          newContext, listen: false)
+                                          newContext,
+                                          listen: false)
                                       .assignTaskTitle(text);
                                 },
                                 label: "Task Title",
@@ -112,7 +116,8 @@ class CreateTaskPage extends StatelessWidget {
                                 null,
                                 onValueChange: (description) {
                                   Provider.of<TaskDetailProviderModel>(
-                                          newContext, listen: false)
+                                          newContext,
+                                          listen: false)
                                       .assignTaskDescription(description);
                                 },
                                 label: "Task Description",
@@ -131,7 +136,8 @@ class CreateTaskPage extends StatelessWidget {
                                 null,
                                 onValueChange: (tag) {
                                   Provider.of<TaskDetailProviderModel>(
-                                          newContext, listen: false)
+                                          newContext,
+                                          listen: false)
                                       .assignTaskTag(tag);
                                 },
                                 label: "Tag",
@@ -150,7 +156,8 @@ class CreateTaskPage extends StatelessWidget {
                                 1,
                                 onValueChange: (urgency) {
                                   Provider.of<TaskDetailProviderModel>(
-                                          newContext, listen: false)
+                                          newContext,
+                                          listen: false)
                                       .assignTaskUrgency(urgency);
                                 },
                                 label: "Urgency",
@@ -158,11 +165,18 @@ class CreateTaskPage extends StatelessWidget {
                                     bottom: CommonDimens.MARGIN_20 / 2),
                                 isRequired: false,
                                 helperText:
-                                    "Urgency is a number from 0-9 that tells how urgent the task is.",
+                                    "1 is most important and 9 is least",
+                                helperTextStyle:
+                                    CommonTextStyles.badgeTextStyle(context)
+                                        .copyWith(
+                                  color: appState.currentTheme.accentColor,
+                                  fontSize: 14,
+                                ),
                                 onSubmitted: (text) {},
                                 textFieldValue:
                                     Provider.of<TaskDetailProviderModel>(
-                                            newContext, listen: false)
+                                            newContext,
+                                            listen: false)
                                         .urgency,
                                 type: TextInputType.phone,
                                 textInputFormatter: [
@@ -173,23 +187,56 @@ class CreateTaskPage extends StatelessWidget {
                                     CommonTextStyles.errorFieldTextStyle(),
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: CommonDimens.MARGIN_20),
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.all(0),
+                                title: Text(
+                                  "Noification Time",
+                                  style: CommonTextStyles.taskTextStyle(context)
+                                      .copyWith(
+                                    color: appState.currentTheme.accentColor
+                                        .withOpacity(0.5),
+                                  ),
+                                ),
+                                trailing: Text(
+                                  Provider.of<TaskDetailProviderModel>(
+                                                  newContext,
+                                                  listen: true)
+                                              .notificationTime !=
+                                          null
+                                      ? beautifyTime(
+                                          Provider.of<TaskDetailProviderModel>(
+                                                  newContext,
+                                                  listen: false)
+                                              .notificationTime)
+                                      : "None",
+                                  style:
+                                      CommonTextStyles.disabledTaskTextStyle(),
+                                ),
+                                onTap: () {
+                                  selectTimeForNotification(newContext);
+                                },
+                              ),
+                            ),
                             Container(
-                              color: appState
-                                  .currentTheme
-                                  .scaffoldBackgroundColor,
+                              color:
+                                  appState.currentTheme.scaffoldBackgroundColor,
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   top: CommonDimens.MARGIN_80,
                                   bottom: CommonDimens.MARGIN_20,
                                 ),
-                                child: OutlineButton(
+                                child: MaterialButton(
+                                  color: appState.currentTheme.accentColor,
                                   onPressed: () {
                                     createTask(newContext, appState);
                                   },
                                   child: Text(
                                     "Create",
-                                    style:
-                                        CommonTextStyles.taskTextStyle(context),
+                                    style: CommonTextStyles.scaffoldTextStyle(
+                                        context),
                                   ),
                                 ),
                               ),
@@ -209,9 +256,11 @@ class CreateTaskPage extends StatelessWidget {
   }
 
   void createTask(BuildContext newContext, ThemeModel appState) {
-    final state = Provider.of<TaskDetailProviderModel>(newContext, listen: false);
+    final state =
+        Provider.of<TaskDetailProviderModel>(newContext, listen: false);
     if (totalTasksCreated <= TOTAL_TASK_CREATION_LIMIT) {
       if (state.taskTitle != null && state.taskTitle.isNotEmpty) {
+        DateTime createdAt = DateTime.now();
         final task = TaskEntity(
           userId: "Dhruvam",
           taskId: "hello",
@@ -219,8 +268,8 @@ class CreateTaskPage extends StatelessWidget {
           description: state.description,
           urgency: buildUrgency(state.urgency),
           tag: state.tag,
-          notificationTime: null,
-          createdAt: DateTime.now(),
+          notificationTime: state.notificationTime,
+          createdAt: createdAt,
           runningDate: runningDate,
           lastUpdatedAt: DateTime.now(),
           isSynced: false,
@@ -228,6 +277,16 @@ class CreateTaskPage extends StatelessWidget {
           isMovable: false,
           isCompleted: false,
         );
+
+        // schedule the notification
+        if (state.notificationTime != null) {
+          scheduleNotification(
+            createdAt.toString(),
+            Provider.of<TaskDetailProviderModel>(newContext, listen: false)
+                .taskTitle,
+            state.notificationTime,
+          );
+        }
 
         BlocProvider.of<HomeScreenTaskBloc>(newContext)
             .add(CreateTaskEvent(task: task));
@@ -239,8 +298,7 @@ class CreateTaskPage extends StatelessWidget {
               style: CommonTextStyles.scaffoldTextStyle(newContext),
             ),
             behavior: SnackBarBehavior.floating,
-            backgroundColor:
-            appState.currentTheme == lightTheme
+            backgroundColor: appState.currentTheme == lightTheme
                 ? CommonColors.scaffoldColor
                 : CommonColors.accentColor,
           ),
@@ -254,8 +312,7 @@ class CreateTaskPage extends StatelessWidget {
             style: CommonTextStyles.scaffoldTextStyle(newContext),
           ),
           behavior: SnackBarBehavior.floating,
-          backgroundColor:
-          appState.currentTheme == lightTheme
+          backgroundColor: appState.currentTheme == lightTheme
               ? CommonColors.scaffoldColor
               : CommonColors.accentColor,
         ),
@@ -272,6 +329,51 @@ class CreateTaskPage extends StatelessWidget {
     }
     return urgencyInt;
   }
+
+  void selectTimeForNotification(BuildContext newContext) async {
+    TimeOfDay timeOfDay = await showTimePicker(
+        context: newContext,
+        initialTime: TimeOfDay.now(),
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              accentColor: Colors.amber,
+            ),
+            child: child,
+          );
+        });
+    if (timeOfDay != null) {
+      int nowTime = TimeOfDay.now().minute + TimeOfDay.now().hour * 60;
+      int selectedTime = timeOfDay.minute + timeOfDay.hour * 60;
+      if (selectedTime - nowTime <= 0) {
+        Scaffold.of(newContext).showSnackBar(SnackBar(
+          content: Text(
+            "Sorry, you cannot select this time",
+            style: CommonTextStyles.scaffoldTextStyle(newContext),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor:
+              Provider.of<ThemeModel>(newContext, listen: false).currentTheme ==
+                      lightTheme
+                  ? CommonColors.scaffoldColor
+                  : CommonColors.accentColor,
+        ));
+      } else {
+        // create properly formatted time
+        DateTime scheduledTime = DateTime(
+          runningDate.year,
+          runningDate.month,
+          runningDate.day,
+          timeOfDay.hour,
+          timeOfDay.minute,
+        );
+        print(scheduledTime);
+        // update the notification
+        Provider.of<TaskDetailProviderModel>(newContext, listen: false)
+            .assignNotificationTime(scheduledTime);
+      }
+    }
+  }
 }
 
 class TaskDetailProviderModel extends ChangeNotifier {
@@ -279,16 +381,23 @@ class TaskDetailProviderModel extends ChangeNotifier {
   String urgency;
   String description;
   String tag;
+  DateTime notificationTime;
 
   TaskDetailProviderModel({
     this.taskTitle,
     this.urgency,
     this.tag,
     this.description,
+    this.notificationTime,
   });
 
   assignTaskTitle(String title) {
     taskTitle = title;
+    notifyListeners();
+  }
+
+  assignNotificationTime(DateTime time) {
+    notificationTime = time;
     notifyListeners();
   }
 

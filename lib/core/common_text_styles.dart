@@ -11,18 +11,20 @@ class CommonTextStyles {
   static TextStyle headerTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
+      color: Provider.of<ThemeModel>(context, listen: false).currentTheme ==
+              lightTheme
           ? CommonColors.headerTextColorLightTheme
           : CommonColors.headerTextColor,
       fontSize: 40,
-      letterSpacing: 30,
+      letterSpacing: 25,
     );
   }
 
   static TextStyle loginTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context, listen: false).currentTheme == lightTheme
+      color: Provider.of<ThemeModel>(context, listen: false).currentTheme ==
+              lightTheme
           ? CommonColors.taskTextColorLightTheme
           : CommonColors.taskTextColor,
       fontSize: 28,
@@ -33,9 +35,12 @@ class CommonTextStyles {
   static TextStyle dateTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context,).currentTheme == lightTheme
+      color: Provider.of<ThemeModel>(
+                context,
+              ).currentTheme ==
+              lightTheme
           ? CommonColors.dateTextColorLightTheme
-          : CommonColors.dateTextColor,
+          : CommonColors.accentColor.withOpacity(0.5),
       fontSize: 16,
       letterSpacing: 10,
     );
@@ -44,10 +49,13 @@ class CommonTextStyles {
   static TextStyle badgeTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context,).currentTheme == lightTheme
+      color: Provider.of<ThemeModel>(
+                context,
+              ).currentTheme ==
+              lightTheme
           ? CommonColors.taskBadgeTextColorLightTheme
           : CommonColors.taskBadgeTextColor,
-      fontSize: 10,
+      fontSize: 12,
       letterSpacing: 3,
     );
   }
@@ -55,9 +63,12 @@ class CommonTextStyles {
   static TextStyle rotatedDesignTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context,).currentTheme == lightTheme
-          ? CommonColors.rotatedDesignTextColorLightTheme
-          : CommonColors.rotatedDesignTextColor,
+      color: Provider.of<ThemeModel>(
+                context,
+              ).currentTheme ==
+              lightTheme
+          ? CommonColors.rotatedDesignTextColorLightTheme.withOpacity(0.02)
+          : CommonColors.rotatedDesignTextColor.withOpacity(0.2),
       fontSize: 40,
       letterSpacing: 30,
     );
@@ -66,7 +77,10 @@ class CommonTextStyles {
   static TextStyle taskTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context,).currentTheme == lightTheme
+      color: Provider.of<ThemeModel>(
+                context,
+              ).currentTheme ==
+              lightTheme
           ? CommonColors.taskTextColorLightTheme
           : CommonColors.taskTextColor,
       fontSize: 20,
@@ -77,7 +91,8 @@ class CommonTextStyles {
   static TextStyle scaffoldTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
       height: 1.5,
-      color: Provider.of<ThemeModel>(context, listen: false).currentTheme != lightTheme
+      color: Provider.of<ThemeModel>(context, listen: false).currentTheme !=
+              lightTheme
           ? CommonColors.taskTextColorLightTheme
           : CommonColors.taskTextColor,
       fontSize: 14,

@@ -271,6 +271,7 @@ class UserEntryProviderHolder extends ChangeNotifier {
   String emailId;
   String userId;
   double score;
+  int age = 0;
   DateTime createdDate = DateTime.now();
   bool isVerified = false;
   int pageNumber = 0;

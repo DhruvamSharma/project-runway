@@ -48,8 +48,7 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
                   style: CommonTextStyles.scaffoldTextStyle(context),
                 ),
                 behavior: SnackBarBehavior.floating,
-                backgroundColor:
-                appState.currentTheme == lightTheme
+                backgroundColor: appState.currentTheme == lightTheme
                     ? CommonColors.scaffoldColor
                     : CommonColors.accentColor,
               ));
@@ -86,7 +85,10 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
                               .add(LoginUserEvent(user: user));
                         }
                       },
-                      child: Text("Let's Begin", style: CommonTextStyles.taskTextStyle(context),),
+                      child: Text(
+                        "Let's Begin",
+                        style: CommonTextStyles.taskTextStyle(context),
+                      ),
                     ),
                   ),
                 ),
@@ -108,13 +110,14 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
     );
   }
 
-  UserEntity createUser(BuildContext context, UserEntryProviderHolder userEntryState) {
+  UserEntity createUser(
+      BuildContext context, UserEntryProviderHolder userEntryState) {
     return UserEntity(
       userId: sharedPreferences.getString(USER_KEY),
       googleId: userEntryState.googleId,
       userName: userEntryState.userName,
       phoneNumber: null,
-      age: null,
+      age: userEntryState.age,
       gender: null,
       userPhotoUrl: userEntryState.userPhotoUrl,
       createdAt: userEntryState.createdDate,
