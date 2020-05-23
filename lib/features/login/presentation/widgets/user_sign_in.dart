@@ -52,6 +52,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                   // save the user id if the user is not new
                   sharedPreferences.setString(USER_KEY, state.user.userId);
                   userEntryState.isNewUser = false;
+                  userEntryState.age = state.user.age;
                   userEntryState.createdDate = state.user.createdAt;
                   userEntryState.userId = state.user.userId;
                   userEntryState.score = state.user.score;

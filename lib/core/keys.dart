@@ -4,6 +4,9 @@ const String TASK_COLLECTION = "task_Em79HKFgAku7wgbY2RDqYCtGQ4Cq";
 const String USER_COLLECTION = "user_d2YTiJ8weMKxSuBL3kYXS5bTBx4E";
 const String STATS_COLLECTION = "stats_iVB4V29fa68Mn63THMZpcVAg4ZxP";
 
+const String PUZZLE_COLLECTION = "puzzle_HcSKJx9bmnS7njJK9P6aKEPiWnGd";
+const String USER_PUZZLE_COLLECTION = "user_puzzle_pFwMbHDQqF5ZHBac8hKigbRGEuSq";
+
 const String STATS_BREAK_KEY = "&&";
 
 const String THEME_KEY = "theme_gRzv36kpwhKUiAES6e2f7LbnU6Ak";
@@ -16,7 +19,6 @@ const String HOME_ROUTE_KEY = "home";
 
 // First entries
 const String FIRST_HOME_ENTRY = "home_entry";
-
 
 // secrets
 const String REFRESH_KEY = "refresh_w5bmD85rLtxWDynzgi9Sp9F75jAv";

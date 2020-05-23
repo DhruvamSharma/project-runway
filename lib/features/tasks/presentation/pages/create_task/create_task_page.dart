@@ -165,7 +165,13 @@ class CreateTaskPage extends StatelessWidget {
                                     bottom: CommonDimens.MARGIN_20 / 2),
                                 isRequired: false,
                                 helperText:
-                                    "Urgency is a number from 0-9 that tells how urgent the task is.",
+                                    "1 is most important and 9 is least",
+                                helperTextStyle:
+                                    CommonTextStyles.badgeTextStyle(context)
+                                        .copyWith(
+                                  color: appState.currentTheme.accentColor,
+                                  fontSize: 14,
+                                ),
                                 onSubmitted: (text) {},
                                 textFieldValue:
                                     Provider.of<TaskDetailProviderModel>(
@@ -181,28 +187,38 @@ class CreateTaskPage extends StatelessWidget {
                                     CommonTextStyles.errorFieldTextStyle(),
                               ),
                             ),
-                            ListTile(
-                              contentPadding: const EdgeInsets.all(0),
-                              title: Text(
-                                "Noification Time",
-                                style: CommonTextStyles.taskTextStyle(context),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: CommonDimens.MARGIN_20),
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.all(0),
+                                title: Text(
+                                  "Noification Time",
+                                  style: CommonTextStyles.taskTextStyle(context)
+                                      .copyWith(
+                                    color: appState.currentTheme.accentColor
+                                        .withOpacity(0.5),
+                                  ),
+                                ),
+                                trailing: Text(
+                                  Provider.of<TaskDetailProviderModel>(
+                                                  newContext,
+                                                  listen: true)
+                                              .notificationTime !=
+                                          null
+                                      ? beautifyTime(
+                                          Provider.of<TaskDetailProviderModel>(
+                                                  newContext,
+                                                  listen: false)
+                                              .notificationTime)
+                                      : "None",
+                                  style:
+                                      CommonTextStyles.disabledTaskTextStyle(),
+                                ),
+                                onTap: () {
+                                  selectTimeForNotification(newContext);
+                                },
                               ),
-                              trailing: Text(
-                                Provider.of<TaskDetailProviderModel>(newContext,
-                                                listen: true)
-                                            .notificationTime !=
-                                        null
-                                    ? beautifyTime(
-                                        Provider.of<TaskDetailProviderModel>(
-                                                newContext,
-                                                listen: false)
-                                            .notificationTime)
-                                    : "None",
-                                style: CommonTextStyles.disabledTaskTextStyle(),
-                              ),
-                              onTap: () {
-                                selectTimeForNotification(newContext);
-                              },
                             ),
                             Container(
                               color:
@@ -212,14 +228,15 @@ class CreateTaskPage extends StatelessWidget {
                                   top: CommonDimens.MARGIN_80,
                                   bottom: CommonDimens.MARGIN_20,
                                 ),
-                                child: OutlineButton(
+                                child: MaterialButton(
+                                  color: appState.currentTheme.accentColor,
                                   onPressed: () {
                                     createTask(newContext, appState);
                                   },
                                   child: Text(
                                     "Create",
-                                    style:
-                                        CommonTextStyles.taskTextStyle(context),
+                                    style: CommonTextStyles.scaffoldTextStyle(
+                                        context),
                                   ),
                                 ),
                               ),

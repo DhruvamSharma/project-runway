@@ -27,7 +27,8 @@ class CreateTaskShortcutWidget extends StatelessWidget {
     final appState = Provider.of<ThemeModel>(parentContext, listen: false);
     final pageState =
         Provider.of<PageHolderProviderModel>(parentContext, listen: false);
-    final taskListState = Provider.of<TaskListHolderProvider>(parentContext, listen: false);
+    final taskListState =
+        Provider.of<TaskListHolderProvider>(parentContext, listen: false);
     return ChangeNotifierProvider<InitialTaskTitleProviderModel>(
       create: (_) => InitialTaskTitleProviderModel(),
       child: Builder(
@@ -70,7 +71,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                           context,
                           listen: false)
                       .taskTitle,
-                  label: "Task Title",
+                  label: buildLabelForTaskField(pageState),
                   isRequired: false,
                 ),
               ),
@@ -115,7 +116,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                           Scaffold.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                "Sorry, you cannot create any more tasks",
+                                "You cannot create task for yesterday",
                                 style:
                                     CommonTextStyles.scaffoldTextStyle(context),
                               ),
@@ -160,7 +161,8 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                                     Provider.of<InitialTaskTitleProviderModel>(
                                             context,
                                             listen: false)
-                                        .taskTitle;
+                                        .taskTitle
+                                        .trim();
                                 // check if the task is entered in the field or not
                                 if (initialTitle != null &&
                                     initialTitle.isNotEmpty) {
@@ -233,6 +235,17 @@ class CreateTaskShortcutWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String buildLabelForTaskField(PageHolderProviderModel pageState) {
+    int pageNumber = pageState.pageNumber;
+    if (pageNumber == 0) {
+      return "Cannot create for yesterday";
+    } else if (pageNumber == 1) {
+      return "Today's Task Title";
+    } else {
+      return "Tomorrow's Task Title";
+    }
   }
 
   TaskEntity createTaskArgs(
