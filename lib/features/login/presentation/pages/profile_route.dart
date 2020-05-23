@@ -54,6 +54,26 @@ class _ProfileRouteState extends State<ProfileRoute> {
         builder: (blocContext) => BlocListener<LoginBloc, LoginBlocState>(
           listener: (_, state) async {
             isLoading = false;
+
+            if (state is LoadedFindBlocState) {
+              state.user.isLoggedIn = false;
+              BlocProvider.of<LoginBloc>(blocContext)
+                  .add(LoginUserEvent(user: state.user));
+            }
+
+            if (state is ErrorFindUserBlocState) {
+              _scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text(
+                  "Sorry, a problem occurred",
+                  style: CommonTextStyles.scaffoldTextStyle(context),
+                ),
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: appState.currentTheme == lightTheme
+                    ? CommonColors.scaffoldColor
+                    : CommonColors.accentColor,
+              ));
+            }
+
             if (state is ErrorLoginBlocState) {
               _scaffoldKey.currentState.showSnackBar(SnackBar(
                 content: Text(
@@ -332,10 +352,9 @@ class _ProfileRouteState extends State<ProfileRoute> {
                         style: CommonTextStyles.taskTextStyle(context),
                       ),
                       onPressed: () async {
-                        // Log out the user
-                        widget.user.isLoggedIn = false;
-                        BlocProvider.of<LoginBloc>(blocContext)
-                            .add(LoginUserEvent(user: widget.user));
+                        BlocProvider.of<LoginBloc>(blocContext).add(
+                            CheckIfUserExistsEvent(
+                                googleId: widget.user.googleId));
                       },
                     ),
                   ),

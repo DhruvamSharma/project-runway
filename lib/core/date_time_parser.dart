@@ -39,6 +39,16 @@ String beautifyDate(DateTime runningDate) {
   return beautifiedDate;
 }
 
+beautifyTime(DateTime notificationTime) {
+  int hour = notificationTime.hour;
+  String timeAsPmOrAm = "AM";
+  if (notificationTime.hour > 12) {
+    hour = notificationTime.hour - 12;
+    timeAsPmOrAm = "PM";
+  }
+  return "${hour.toString().padLeft(2, "0")}:${notificationTime.minute.toString().padLeft(2, "0")} $timeAsPmOrAm";
+}
+
 String _monthTranslator(int month) {
   switch(month) {
     case 1:

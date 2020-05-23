@@ -32,35 +32,42 @@ class StatsScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: CommonColors.appBarColor,
         ),
-        body: Stack(
-          children: <Widget>[
-            Align(
-              alignment: Alignment.center,
-              child: RotatedBox(
-                quarterTurns: 3,
-                child: Text(
-                  APP_NAME.toUpperCase(),
-                  style: CommonTextStyles.rotatedDesignTextStyle(context),
-                  textAlign: TextAlign.center,
+        body: SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
+              Align(
+                alignment: Alignment.center,
+                child: RotatedBox(
+                  quarterTurns: 3,
+                  child: Text(
+                    APP_NAME.toUpperCase(),
+                    style: CommonTextStyles.rotatedDesignTextStyle(context),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Text(
-                "Stats".toUpperCase(),
-                style: CommonTextStyles.headerTextStyle(context),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            if (user.isVerified)
-            Center(
-              child: StatsWidget(),
-            ),
 
-            if (!user.isVerified)
-              UserNotVerifiedWidget(),
-          ],
+              if (user.isVerified)
+              Column(
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      "Stats".toUpperCase(),
+                      style: CommonTextStyles.headerTextStyle(context),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Center(
+                    child: StatsWidget(),
+                  ),
+                ],
+              ),
+
+              if (!user.isVerified)
+                UserNotVerifiedWidget(),
+            ],
+          ),
         ),
       ),
     );

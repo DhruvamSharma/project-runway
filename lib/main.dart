@@ -3,6 +3,7 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/notifications/one_signal.dart';
@@ -12,10 +13,14 @@ import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
 import 'package:provider/provider.dart';
 
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // initialising one signal
   await oneSignalInit();
+  // initialising local notifications
+  await
   // initialising get_it
   await serviceLocatorInit();
   // To turn off landscape mode

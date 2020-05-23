@@ -97,8 +97,8 @@ class _HomeScreenState extends State<HomeScreen>
               alignment: Alignment.topCenter,
               child: GestureDetector(
                 onTap: () {
-                  if (!sharedPreferences.containsKey(REFRESH_KEY) && widget.user.score == null)
-                    openSecretPuzzleDoor(state);
+                  if (!sharedPreferences.containsKey(REFRESH_KEY) &&
+                      widget.user.score == null) openSecretPuzzleDoor(state);
                 },
                 child: Text(
                   APP_NAME.toUpperCase(),

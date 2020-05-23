@@ -24,7 +24,9 @@ class SecretPuzzleWidget extends StatefulWidget {
   static const String routeName = "${APP_NAME}_v1_user_secret-puzzle";
   final UserEntity user;
 
-  SecretPuzzleWidget(): user = UserModel.fromJson(json.decode(sharedPreferences.getString(USER_MODEL_KEY)));
+  SecretPuzzleWidget()
+      : user = UserModel.fromJson(
+            json.decode(sharedPreferences.getString(USER_MODEL_KEY)));
 
   @override
   _SecretPuzzleWidgetState createState() => _SecretPuzzleWidgetState();
@@ -76,9 +78,11 @@ class _SecretPuzzleWidgetState extends State<SecretPuzzleWidget> {
                       ),
                       AnimatedCrossFade(
                         duration: Duration(milliseconds: 500),
-                        crossFadeState: (sharedPreferences.containsKey(PUZZLE_SOLVED) || widget.user.score != null)
-                            ? CrossFadeState.showSecond
-                            : CrossFadeState.showFirst,
+                        crossFadeState:
+                            (sharedPreferences.containsKey(PUZZLE_SOLVED) ||
+                                    widget.user.score != null)
+                                ? CrossFadeState.showSecond
+                                : CrossFadeState.showFirst,
                         secondChild: Container(
                           child: Column(
                             children: <Widget>[
@@ -90,7 +94,8 @@ class _SecretPuzzleWidgetState extends State<SecretPuzzleWidget> {
                                 child: Text(
                                   "Congratulations, You've won $SOLVE_PUZZLE_POINTS points,"
                                   " head over to see your updated stats",
-                                  style: CommonTextStyles.taskTextStyle(context),
+                                  style:
+                                      CommonTextStyles.taskTextStyle(context),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -148,7 +153,8 @@ class _SecretPuzzleWidgetState extends State<SecretPuzzleWidget> {
                                 imageUrl: appState.currentTheme != lightTheme
                                     ? "https://imgur.com/ugK9wk9.png"
                                     : "https://imgur.com/iYd1xS1.png",
-                                progressIndicatorBuilder: (_, string, progress) {
+                                progressIndicatorBuilder:
+                                    (_, string, progress) {
                                   return Padding(
                                     padding: const EdgeInsets.only(
                                         top: CommonDimens.MARGIN_80),
@@ -165,53 +171,66 @@ class _SecretPuzzleWidgetState extends State<SecretPuzzleWidget> {
                     ],
                   ),
                 ),
-                if (!sharedPreferences.containsKey(PUZZLE_SOLVED) && widget.user.score == null)
+                if (!sharedPreferences.containsKey(PUZZLE_SOLVED) &&
+                    widget.user.score == null)
                   Align(
                     alignment: Alignment.bottomRight,
                     child: Padding(
-                      padding: const EdgeInsets.only(right: CommonDimens.MARGIN_20, bottom: CommonDimens.MARGIN_20,),
+                      padding: const EdgeInsets.only(
+                        right: CommonDimens.MARGIN_20,
+                        bottom: CommonDimens.MARGIN_20,
+                      ),
                       child: FloatingActionButton.extended(
                         onPressed: () {
                           // check for nullability
-                          if (puzzleSolution != null && puzzleSolution.isNotEmpty) {
+                          if (puzzleSolution != null &&
+                              puzzleSolution.isNotEmpty) {
                             if (int.parse(puzzleSolution) == 29) {
                               _scaffoldKey.currentState.removeCurrentSnackBar();
                               _scaffoldKey.currentState.showSnackBar(
                                 SnackBar(
                                   content: Text(
                                     "Congratulation, your answer is correct",
-                                    style: CommonTextStyles.scaffoldTextStyle(context),
+                                    style: CommonTextStyles.scaffoldTextStyle(
+                                        context),
                                   ),
                                   behavior: SnackBarBehavior.floating,
-                                  backgroundColor: appState.currentTheme == lightTheme
-                                      ? CommonColors.scaffoldColor
-                                      : CommonColors.accentColor,
+                                  backgroundColor:
+                                      appState.currentTheme == lightTheme
+                                          ? CommonColors.scaffoldColor
+                                          : CommonColors.accentColor,
                                 ),
                               );
                               setState(() {
-                                sharedPreferences.setString(PUZZLE_SOLVED, "solved");
+                                sharedPreferences.setString(
+                                    PUZZLE_SOLVED, "solved");
                                 if (widget.user.score != null) {
-                                  widget.user.score += SOLVE_PUZZLE_POINTS.toDouble();
+                                  widget.user.score +=
+                                      SOLVE_PUZZLE_POINTS.toDouble();
                                 } else {
-                                  widget.user.score = SOLVE_PUZZLE_POINTS.toDouble();
+                                  widget.user.score =
+                                      SOLVE_PUZZLE_POINTS.toDouble();
                                 }
                               });
 
-                              BlocProvider.of<StatsBloc>(blocContext).add(AddScoreEvent(score: SOLVE_PUZZLE_POINTS));
-                              BlocProvider.of<LoginBloc>(blocContext).add(LoginUserEvent(user: widget.user));
-
+                              BlocProvider.of<StatsBloc>(blocContext).add(
+                                  AddScoreEvent(score: SOLVE_PUZZLE_POINTS));
+                              BlocProvider.of<LoginBloc>(blocContext)
+                                  .add(LoginUserEvent(user: widget.user));
                             } else {
                               _scaffoldKey.currentState.removeCurrentSnackBar();
                               _scaffoldKey.currentState.showSnackBar(
                                 SnackBar(
                                   content: Text(
                                     "Oops, wrong answer, try again",
-                                    style: CommonTextStyles.scaffoldTextStyle(context),
+                                    style: CommonTextStyles.scaffoldTextStyle(
+                                        context),
                                   ),
                                   behavior: SnackBarBehavior.floating,
-                                  backgroundColor: appState.currentTheme == lightTheme
-                                      ? CommonColors.scaffoldColor
-                                      : CommonColors.accentColor,
+                                  backgroundColor:
+                                      appState.currentTheme == lightTheme
+                                          ? CommonColors.scaffoldColor
+                                          : CommonColors.accentColor,
                                 ),
                               );
                             }
@@ -221,12 +240,14 @@ class _SecretPuzzleWidgetState extends State<SecretPuzzleWidget> {
                               SnackBar(
                                 content: Text(
                                   "Please enter your answer",
-                                  style: CommonTextStyles.scaffoldTextStyle(context),
+                                  style: CommonTextStyles.scaffoldTextStyle(
+                                      context),
                                 ),
                                 behavior: SnackBarBehavior.floating,
-                                backgroundColor: appState.currentTheme == lightTheme
-                                    ? CommonColors.scaffoldColor
-                                    : CommonColors.accentColor,
+                                backgroundColor:
+                                    appState.currentTheme == lightTheme
+                                        ? CommonColors.scaffoldColor
+                                        : CommonColors.accentColor,
                               ),
                             );
                           }

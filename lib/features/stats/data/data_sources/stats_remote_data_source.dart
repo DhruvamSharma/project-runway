@@ -4,6 +4,7 @@ import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/errors/exceptions.dart';
 import 'package:project_runway/core/keys.dart';
 import 'package:project_runway/features/stats/data/models/managed_stats_model.dart';
+import 'package:project_runway/features/stats/data/models/puzzle_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class StatsRemoteDataSource {
@@ -13,6 +14,10 @@ abstract class StatsRemoteDataSource {
   void completeTaskAndUpdateScore(
       DateTime runningDate, bool isCompleted, int urgency);
   Future<bool> addScore(int score);
+  Future<PuzzleModel> getPuzzle(int puzzleId);
+  Future<UserPuzzleModel> setPuzzleSolution(UserPuzzleModel userPuzzleModel);
+  Future<UserPuzzleModel> getPuzzleSolution(UserPuzzleModel userPuzzleModel);
+  Future<List<UserPuzzleModel>> getPuzzleSolvedList(String userId);
 }
 
 class StatsRemoteDataSourceImpl implements StatsRemoteDataSource {
@@ -176,6 +181,88 @@ class StatsRemoteDataSourceImpl implements StatsRemoteDataSource {
           .setData(statsJson);
     } catch (ex) {
       // Do nothing
+    }
+  }
+
+  @override
+  Future<PuzzleModel> getPuzzle(int puzzleId) async {
+    try {
+      // get the puzzle required
+      // userScore = puzzleId
+      final firestoreResponse = await firestore
+          .collection(PUZZLE_COLLECTION)
+          .where("puzzleId", isEqualTo: puzzleId)
+          .getDocuments();
+
+      // take out the puzzle if present
+      if (firestoreResponse.documents.length > 0) {
+        // model the response
+        final puzzleModel =
+            PuzzleModel.fromJson(firestoreResponse.documents[0].data);
+        return puzzleModel;
+      } else {
+        // throw exception if no puzzle for that puzzle id found
+        throw ServerException(message: NO_NEW_PUZZLE_ERROR);
+      }
+    } on ServerException catch (ex) {
+      throw ServerException(message: ex.message);
+    } catch (ex) {
+      throw ServerException(message: FIREBASE_ERROR);
+    }
+  }
+
+  @override
+  Future<UserPuzzleModel> getPuzzleSolution(UserPuzzleModel userPuzzleModel) {
+    // TODO: implement getPuzzleSolution
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<UserPuzzleModel>> getPuzzleSolvedList(String userId) async {
+    try {
+      // get the puzzle solved solution
+      // for the user with latest puzzles
+      // of only last 7 puzzles so that it doesn't
+      // take too much time nor consume database read-writes
+      final firestoreResponse = await firestore
+          .collection(USER_PUZZLE_COLLECTION)
+          .where("userId", isEqualTo: userId)
+          .orderBy("puzzleId", descending: true)
+          .limit(7)
+          .getDocuments();
+      // check if user has solved any puzzle
+      if (firestoreResponse.documents.length > 0) {
+        List<UserPuzzleModel> solvedPuzzleList = List();
+        for (int i = 0; i < firestoreResponse.documents.length; i++) {
+          // model the response
+          final userPuzzleModel =
+              UserPuzzleModel.fromJson(firestoreResponse.documents[i].data);
+          solvedPuzzleList.add(userPuzzleModel);
+        }
+        return solvedPuzzleList;
+      } else {
+        // throw exception if the user hasn't solved any puzzle
+        throw ServerException(message: NO_PUZZLE_SOLVED_ERROR);
+      }
+    } on ServerException catch (ex) {
+      throw ServerException(message: ex.message);
+    } catch (ex) {
+      throw ServerException(message: FIREBASE_ERROR);
+    }
+  }
+
+  @override
+  Future<UserPuzzleModel> setPuzzleSolution(
+      UserPuzzleModel userPuzzleModel) async {
+    try {
+      // add data if the user solves the puzzle
+      await firestore
+          .collection(USER_PUZZLE_COLLECTION)
+          .add(userPuzzleModel.toJson());
+
+      return userPuzzleModel;
+    } catch (ex) {
+      throw ServerException(message: FIREBASE_ERROR);
     }
   }
 }
