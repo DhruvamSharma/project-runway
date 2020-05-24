@@ -17,7 +17,6 @@ import 'package:project_runway/features/stats/domain/use_cases/get_puzzle_use_ca
 import 'package:project_runway/features/stats/domain/use_cases/get_stats_table_use_case.dart';
 import 'package:project_runway/features/stats/domain/use_cases/set_puzzle_solution_use_case.dart';
 import 'package:project_runway/features/stats/presentation/manager/stats_bloc.dart';
-import 'package:project_runway/features/tasks/data/data_sources/task_local_data_source.dart';
 import 'package:project_runway/features/tasks/data/data_sources/task_remote_data_source.dart';
 import 'package:project_runway/features/tasks/data/repositories/task_repository_impl.dart';
 import 'package:project_runway/features/tasks/domain/repositories/task_repository.dart';
@@ -127,7 +126,6 @@ void taskInjection() {
   // repository
   sl.registerLazySingleton<TaskRepository>(() => TaskRepositoryImpl(
         remoteDataSource: sl(),
-        localDataSource: sl(),
         networkInfo: sl(),
         statsRemoteDataSource: sl(),
       ));
@@ -135,8 +133,5 @@ void taskInjection() {
   sl.registerLazySingleton<TaskRemoteDataSource>(() => TaskRemoteDataSourceImpl(
         sharedPreferences: sl(),
         firestore: sl(),
-      ));
-  sl.registerLazySingleton<TaskLocalDataSource>(() => TaskLocalDataSourceImpl(
-        sharedPreferences: sl(),
       ));
 }

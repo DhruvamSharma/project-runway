@@ -104,37 +104,12 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
               }
 
               if (state is LoadedHomeScreenCompleteTaskState) {
-//                for (int i = 0;
-//                    i <
-//                        Provider.of<TaskListHolderProvider>(providerContext,
-//                                listen: false)
-//                            .taskList
-//                            .length;
-//                    i++) {
-//                  // make the mutable list task complete or incomplete as requested
-//                  if (Provider.of<TaskListHolderProvider>(providerContext,
-//                              listen: false)
-//                          .taskList[i]
-//                          .taskId ==
-//                      state.taskEntity.taskId) {
-//                    Provider.of<TaskListHolderProvider>(providerContext,
-//                            listen: false)
-//                        .taskList[i]
-//                        .isCompleted = !Provider.of<TaskListHolderProvider>(
-//                            providerContext,
-//                            listen: false)
-//                        .taskList[i]
-//                        .isCompleted;
-//                    break;
-//                  }
-//                }
-//
-//                setState(() {
-//                  Provider.of<TaskListHolderProvider>(providerContext,
-//                          listen: false)
-//                      .taskList
-//                      .sort((a, b) => compareListItems(a, b));
-//                });
+                setState(() {
+                  Provider.of<TaskListHolderProvider>(providerContext,
+                          listen: false)
+                      .taskList
+                      .sort((a, b) => compareListItems(a, b));
+                });
               }
               if (state is ErrorHomeScreenCompleteTaskState) {
                 Scaffold.of(context).removeCurrentSnackBar();
