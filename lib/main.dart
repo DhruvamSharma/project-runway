@@ -4,28 +4,28 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/notifications/local_notifications.dart';
 import 'package:project_runway/core/notifications/one_signal.dart';
 import 'package:project_runway/core/routes/routes_generator.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
 import 'package:provider/provider.dart';
-
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+import 'package:wiredash/wiredash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // initialising one signal
   await oneSignalInit();
   // initialising local notifications
-  await
+  await initLocalNotifications();
   // initialising get_it
   await serviceLocatorInit();
   // To turn off landscape mode
-  await SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   // Pass all uncaught errors from the framework to Crashlytics.
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
   runApp(
@@ -44,14 +44,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return Wiredash(
+      projectId: "runway-y27lisj",
+      secret: "xpbaeleqsl73ib10pz5ixnyz1en73d2q",
       navigatorKey: navigatorKey,
-      title: APP_NAME,
-      debugShowCheckedModeBanner: false,
-      theme: Provider.of<ThemeModel>(context).currentTheme,
-      initialRoute: UserEntryRoute.routeName,
-      onGenerateRoute: RouteGenerator.generateRoute,
-      navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        title: APP_NAME,
+        debugShowCheckedModeBanner: false,
+        theme: Provider.of<ThemeModel>(context).currentTheme,
+        initialRoute: UserEntryRoute.routeName,
+        onGenerateRoute: RouteGenerator.generateRoute,
+        navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
+      ),
     );
   }
 }

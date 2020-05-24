@@ -130,21 +130,21 @@ class _PuzzleStatsWidgetState extends State<PuzzleStatsWidget> {
       return [
         charts.Series<TimeSeriesSales, DateTime>(
           id: 'Puzzle Solved',
-          colorFn: (_, __) => charts.MaterialPalette.cyan.shadeDefault,
+          colorFn: (_, __) => charts.MaterialPalette.gray.shadeDefault,
           domainFn: (TimeSeriesSales sales, _) => sales.time,
           measureFn: (TimeSeriesSales sales, _) => sales.points,
           data: puzzleSolvedDateList,
         ),
         charts.Series<TimeSeriesSales, DateTime>(
           id: 'Puzzle Created',
-          colorFn: (_, __) => charts.MaterialPalette.indigo.shadeDefault,
+          colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
           domainFn: (TimeSeriesSales sales, _) => sales.time,
           measureFn: (TimeSeriesSales sales, _) => sales.points,
           data: puzzleCreatedDateList,
         ),
         charts.Series<TimeSeriesSales, DateTime>(
           id: '',
-          colorFn: (_, __) => charts.MaterialPalette.indigo.shadeDefault,
+          colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
           domainFn: (TimeSeriesSales sales, _) => sales.time,
           measureFn: (TimeSeriesSales sales, _) => sales.points,
           data: puzzleCreatedDateList,

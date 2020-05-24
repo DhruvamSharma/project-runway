@@ -61,7 +61,6 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   Future<Either<Failure, TaskEntity>> createTask(TaskEntity task) async {
     final taskModel = convertEntityToModel(task);
-    print(taskModel.taskId);
     try {
       final response = await localDataSource.createTask(taskModel);
       return Right(response);

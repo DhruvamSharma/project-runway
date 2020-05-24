@@ -27,6 +27,8 @@ import 'package:project_runway/features/stats/presentation/manager/stats_event.d
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/secret_puzzle_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:share/share.dart';
+import 'package:wiredash/wiredash.dart';
 
 class ProfileRoute extends StatefulWidget {
   static const String routeName = "${APP_NAME}_v1_user_profile-screen";
@@ -95,11 +97,8 @@ class _ProfileRouteState extends State<ProfileRoute> {
                 await sharedPreferences.clear();
                 // log out of google
                 await AuthService.signOutOfGoogle();
-                // pop the profile route
-                Navigator.pop(context);
-                // pop the home route
-                Navigator.pop(context);
-                Navigator.pushNamed(context, UserEntryRoute.routeName);
+                Navigator.pushNamedAndRemoveUntil(
+                    context, UserEntryRoute.routeName, (route) => false);
               }
               // show successful message
               _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -142,8 +141,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_80,
-                    bottom: CommonDimens.MARGIN_80,
+                    top: CommonDimens.MARGIN_60 * 2,
                   ),
                   child: SingleChildScrollView(
                     child: Column(
@@ -244,7 +242,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                           ),
                           trailing: Checkbox(
                             value: appState.currentTheme == lightTheme,
-                            checkColor: appState.currentTheme.accentColor,
+                            checkColor: CommonColors.smallAccentColor,
                             materialTapTargetSize: MaterialTapTargetSize.padded,
                             activeColor: CommonColors.toggleableActiveColor,
                             onChanged: (value) {
@@ -276,6 +274,28 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             CommonDimens.MARGIN_20,
                           ),
                           leading: Icon(
+                            Icons.bug_report,
+                            color: appState.currentTheme.accentColor,
+                            size: 30,
+                          ),
+                          title: Text(
+                            "Report a bug, or request a feature",
+                            style: CommonTextStyles.taskTextStyle(context),
+                          ),
+                          onTap: () {
+                            Wiredash.of(context).show();
+                          },
+                        ),
+                        Divider(
+                          color: appState.currentTheme == lightTheme
+                              ? CommonColors.dateTextColorLightTheme
+                              : CommonColors.dateTextColor,
+                        ),
+                        ListTile(
+                          contentPadding: const EdgeInsets.all(
+                            CommonDimens.MARGIN_20,
+                          ),
+                          leading: Icon(
                             Icons.cached,
                             color: appState.currentTheme.accentColor,
                             size: 30,
@@ -289,6 +309,32 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                 context, AppIntroWidget.routeName);
                           },
                         ),
+                        Divider(
+                          color: appState.currentTheme == lightTheme
+                              ? CommonColors.dateTextColorLightTheme
+                              : CommonColors.dateTextColor,
+                        ),
+                        ListTile(
+                          contentPadding: const EdgeInsets.all(
+                            CommonDimens.MARGIN_20,
+                          ),
+                          leading: Icon(
+                            Icons.share,
+                            color: appState.currentTheme.accentColor,
+                            size: 30,
+                          ),
+                          title: Text(
+                            "Share the app",
+                            style: CommonTextStyles.taskTextStyle(context),
+                          ),
+                          onTap: () {
+                            Share.share(
+                              'Check out this great and simple To-Do app to manage productivity: https://play.google.com/store/apps/details?id=io.dhruvam.project_runway',
+                              subject:
+                                  'Look! A great and simple To Do app to manage productivity',
+                            );
+                          },
+                        ),
                         if (sharedPreferences.containsKey(REFRESH_KEY) ||
                             widget.user.score != null)
                           Divider(
@@ -299,7 +345,10 @@ class _ProfileRouteState extends State<ProfileRoute> {
                         if (sharedPreferences.containsKey(REFRESH_KEY) ||
                             widget.user.score != null)
                           Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
+                            padding: const EdgeInsets.only(
+                              left: 8.0,
+                              top: CommonDimens.MARGIN_20,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -307,55 +356,75 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                   margin: const EdgeInsets.only(
                                     left: CommonDimens.MARGIN_20 - 4,
                                   ),
-                                  color: appState.currentTheme.accentColor,
+                                  color: CommonColors.smallAccentColor,
                                   padding: const EdgeInsets.all(
                                     CommonDimens.MARGIN_20 / 8,
                                   ),
                                   child: Text(
                                     "Secret Puzzle",
-                                    style: CommonTextStyles.badgeTextStyle(
-                                        context),
+                                    style:
+                                        CommonTextStyles.badgeTextStyle(context)
+                                            .copyWith(
+                                                color:
+                                                    CommonColors.accentColor),
                                   ),
                                 ),
-                                ListTile(
-                                  leading: Icon(
-                                    Icons.all_inclusive,
-                                    color: appState.currentTheme.accentColor,
-                                    size: 30,
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: CommonDimens.MARGIN_20,
                                   ),
-                                  title: Text(
-                                    "Read the secret again",
-                                    style:
-                                        CommonTextStyles.taskTextStyle(context),
+                                  child: ListTile(
+                                    leading: Icon(
+                                      Icons.all_inclusive,
+                                      color: appState.currentTheme.accentColor,
+                                      size: 30,
+                                    ),
+                                    title: Text(
+                                      "Read the secret again",
+                                      style: CommonTextStyles.taskTextStyle(
+                                          context),
+                                    ),
+                                    onTap: () {
+                                      Navigator.pushNamed(context,
+                                          SecretPuzzleWidget.routeName);
+                                    },
                                   ),
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, SecretPuzzleWidget.routeName);
-                                  },
                                 ),
                               ],
                             ),
                           ),
+
+                        Divider(
+                          color: appState.currentTheme == lightTheme
+                              ? CommonColors.dateTextColorLightTheme
+                              : CommonColors.dateTextColor,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: CommonDimens.MARGIN_40,),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(
+                              CommonDimens.MARGIN_20,
+                            ),
+                            leading: Padding(
+                              padding: const EdgeInsets.only(left: 6.0, right: 10.0),
+                              child: Icon(
+                                Icons.error_outline,
+                                color: appState.currentTheme.accentColor,
+                                size: 30,
+                              ),
+                            ),
+                            title: Text(
+                              "Sign Out",
+                              style: CommonTextStyles.taskTextStyle(context),
+                            ),
+                            onTap: () {
+                              BlocProvider.of<LoginBloc>(blocContext).add(
+                                  CheckIfUserExistsEvent(
+                                      googleId: widget.user.googleId));
+                            },
+                          ),
+                        ),
                       ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: CommonDimens.MARGIN_20,
-                  ),
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: OutlineButton(
-                      child: Text(
-                        "Sign out",
-                        style: CommonTextStyles.taskTextStyle(context),
-                      ),
-                      onPressed: () async {
-                        BlocProvider.of<LoginBloc>(blocContext).add(
-                            CheckIfUserExistsEvent(
-                                googleId: widget.user.googleId));
-                      },
                     ),
                   ),
                 ),

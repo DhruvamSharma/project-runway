@@ -225,7 +225,7 @@ class CreateTaskPage extends StatelessWidget {
                                   appState.currentTheme.scaffoldBackgroundColor,
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                  top: CommonDimens.MARGIN_80,
+                                  top: CommonDimens.MARGIN_40,
                                   bottom: CommonDimens.MARGIN_20,
                                 ),
                                 child: MaterialButton(

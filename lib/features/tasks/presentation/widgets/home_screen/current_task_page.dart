@@ -73,6 +73,7 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
               if (state is LoadedHomeScreenAllTasksState) {
                 setState(() {
                   isLoadingTasks = false;
+                  _animationController.stop();
                 });
                 Provider.of<TaskListHolderProvider>(providerContext,
                         listen: false)
@@ -94,6 +95,7 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                 // stop loading
                 setState(() {
                   isLoadingTasks = false;
+                  _animationController.stop();
                 });
                 // give an empty list
                 Provider.of<TaskListHolderProvider>(providerContext,
@@ -101,44 +103,38 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                     .assignTaskList([]);
               }
 
-              if (state is LoadedCreateScreenCreateTaskState) {
-                Provider.of<TaskListHolderProvider>(providerContext,
-                        listen: false)
-                    .insertTaskToList(state.taskEntity);
-              }
-
               if (state is LoadedHomeScreenCompleteTaskState) {
-                for (int i = 0;
-                    i <
-                        Provider.of<TaskListHolderProvider>(providerContext,
-                                listen: false)
-                            .taskList
-                            .length;
-                    i++) {
-                  // make the mutable list task complete or incomplete as requested
-                  if (Provider.of<TaskListHolderProvider>(providerContext,
-                              listen: false)
-                          .taskList[i]
-                          .taskId ==
-                      state.taskEntity.taskId) {
-                    Provider.of<TaskListHolderProvider>(providerContext,
-                            listen: false)
-                        .taskList[i]
-                        .isCompleted = !Provider.of<TaskListHolderProvider>(
-                            providerContext,
-                            listen: false)
-                        .taskList[i]
-                        .isCompleted;
-                    break;
-                  }
-                }
-
-                setState(() {
-                  Provider.of<TaskListHolderProvider>(providerContext,
-                          listen: false)
-                      .taskList
-                      .sort((a, b) => compareListItems(a, b));
-                });
+//                for (int i = 0;
+//                    i <
+//                        Provider.of<TaskListHolderProvider>(providerContext,
+//                                listen: false)
+//                            .taskList
+//                            .length;
+//                    i++) {
+//                  // make the mutable list task complete or incomplete as requested
+//                  if (Provider.of<TaskListHolderProvider>(providerContext,
+//                              listen: false)
+//                          .taskList[i]
+//                          .taskId ==
+//                      state.taskEntity.taskId) {
+//                    Provider.of<TaskListHolderProvider>(providerContext,
+//                            listen: false)
+//                        .taskList[i]
+//                        .isCompleted = !Provider.of<TaskListHolderProvider>(
+//                            providerContext,
+//                            listen: false)
+//                        .taskList[i]
+//                        .isCompleted;
+//                    break;
+//                  }
+//                }
+//
+//                setState(() {
+//                  Provider.of<TaskListHolderProvider>(providerContext,
+//                          listen: false)
+//                      .taskList
+//                      .sort((a, b) => compareListItems(a, b));
+//                });
               }
               if (state is ErrorHomeScreenCompleteTaskState) {
                 Scaffold.of(context).removeCurrentSnackBar();
@@ -155,7 +151,7 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
               }
 
               if (state is ErrorCreateScreenCreateTaskState) {
-                print(state.message);
+//                print(state.message);
               }
             },
             child: isLoadingTasks
@@ -206,31 +202,36 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                                           listen: false)
                                       .taskList
                                       .isNotEmpty)
-                                    return SizeTransition(
-                                      sizeFactor: animation,
-                                      child: ChangeNotifierProvider<
-                                          TaskHolderProviderModel>(
-                                        key: ValueKey(Provider.of<
-                                                        TaskListHolderProvider>(
-                                                    providerContext,
-                                                    listen: false)
-                                                .taskList
-                                                .isEmpty
-                                            ? ""
-                                            : Provider.of<
-                                                        TaskListHolderProvider>(
-                                                    providerContext,
-                                                    listen: false)
-                                                .taskList[i]
-                                                .taskId),
-                                        create: (context) =>
-                                            TaskHolderProviderModel(
-                                                taskEntity: Provider.of<
-                                                            TaskListHolderProvider>(
-                                                        providerContext,
-                                                        listen: false)
-                                                    .taskList[i]),
-                                        child: TaskWidget(),
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: CommonDimens.MARGIN_20,
+                                      ),
+                                      child: SizeTransition(
+                                        sizeFactor: animation,
+                                        child: ChangeNotifierProvider<
+                                            TaskHolderProviderModel>(
+                                          key: ValueKey(Provider.of<
+                                                          TaskListHolderProvider>(
+                                                      providerContext,
+                                                      listen: false)
+                                                  .taskList
+                                                  .isEmpty
+                                              ? ""
+                                              : Provider.of<
+                                                          TaskListHolderProvider>(
+                                                      providerContext,
+                                                      listen: false)
+                                                  .taskList[i]
+                                                  .taskId),
+                                          create: (context) =>
+                                              TaskHolderProviderModel(
+                                                  taskEntity: Provider.of<
+                                                              TaskListHolderProvider>(
+                                                          providerContext,
+                                                          listen: false)
+                                                      .taskList[i]),
+                                          child: TaskWidget(),
+                                        ),
                                       ),
                                     );
                                   else
@@ -332,8 +333,13 @@ class TaskListHolderProvider extends ChangeNotifier {
   }
 
   void insertTaskToList(TaskEntity taskEntity) {
-    taskList.insert(0, taskEntity);
-    listState.currentState.insertItem(0);
+    TaskModel taskModel = convertTaskEntityToModel(taskEntity);
+    try {
+      taskList.insert(0, taskModel);
+      listState.currentState.insertItem(0);
+    } catch (Ex) {
+      print("intl: $Ex");
+    }
     notifyListeners();
   }
 
@@ -374,6 +380,25 @@ class TaskListHolderProvider extends ChangeNotifier {
           title: Text(text),
         ),
       ),
+    );
+  }
+
+  TaskModel convertTaskEntityToModel(TaskEntity taskEntity) {
+    return TaskModel(
+      userId: taskEntity.userId,
+      taskId: taskEntity.taskId,
+      taskTitle: taskEntity.taskTitle,
+      description: taskEntity.description,
+      urgency: taskEntity.urgency,
+      tag: taskEntity.tag,
+      notificationTime: taskEntity.notificationTime,
+      createdAt: taskEntity.createdAt,
+      runningDate: taskEntity.runningDate,
+      lastUpdatedAt: taskEntity.lastUpdatedAt,
+      isSynced: taskEntity.isSynced,
+      isDeleted: taskEntity.isDeleted,
+      isMovable: taskEntity.isMovable,
+      isCompleted: taskEntity.isCompleted,
     );
   }
 }

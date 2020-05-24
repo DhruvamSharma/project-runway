@@ -29,16 +29,18 @@ Future onDidReceiveLocalNotification(
 Future<void> scheduleNotification(
     String taskId, String taskTitle, DateTime scheduledNotificationTime) async {
   await initLocalNotifications();
-  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      TASK_CHANNEL_ID, TASK_CHANNEL_NAME, 'your other channel description');
-  var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-  NotificationDetails platformChannelSpecifics = NotificationDetails(
-      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-  await flutterLocalNotificationsPlugin.schedule(
-      0,
-      taskTitle,
-      "Let's strike this off from our list of work",
-      scheduledNotificationTime,
-      platformChannelSpecifics,
-      androidAllowWhileIdle: true);
+  if (taskId != null && taskTitle != null && scheduledNotificationTime != null) {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        TASK_CHANNEL_ID, TASK_CHANNEL_NAME, 'your other channel description');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.schedule(
+        0,
+        taskTitle,
+        "Let's strike this off from our list of work",
+        scheduledNotificationTime,
+        platformChannelSpecifics,
+        androidAllowWhileIdle: true);
+  }
 }

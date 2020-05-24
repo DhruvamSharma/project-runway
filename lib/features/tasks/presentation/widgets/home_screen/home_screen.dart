@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen>
                     radius: 10,
                     dotHeight: 7,
                     dotWidth: 7,
-                    activeDotColor: state.currentTheme.accentColor,
+                    activeDotColor: CommonColors.chartColor,
                   ),
                 ),
               ),

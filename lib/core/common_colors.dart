@@ -47,10 +47,16 @@ class CommonColors {
   // App bar colors
   static final Color appBarColor = Colors.transparent;
 
+  static final Color smallAccentColor = chartColor;
+
   // bottom sheet color dark theme
   static final Color bottomSheetColor = _getColor(0xff121111);
   // bottom sheet color light theme
   static final Color bottomSheetColorLightTheme = _getColor(0xffEBEAEA);
+
+  static final Color chartColor = _getColor(0xFF195153);
+
+  static final Color introColor = _getColor(0xFFC1C1C1);
 
   static Map<int, Color> _color = {
     50: Color.fromRGBO(136, 14, 79, .1),

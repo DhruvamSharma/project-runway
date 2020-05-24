@@ -92,7 +92,6 @@ class _TaskWidgetState extends State<TaskWidget> {
           if (taskEntity != null &&
               taskEntity is TaskEntity &&
               taskEntity.isDeleted) {
-//            taskEntity.isCompleted = isCompleted;
             BlocProvider.of<HomeScreenTaskBloc>(context)
                 .add(DeleteTaskEvent(task: taskEntity));
             taskListState.deleteTaskItemFromList(taskEntity);
@@ -142,12 +141,15 @@ class _TaskWidgetState extends State<TaskWidget> {
     );
   }
 
-  Function selectCheckBoxState(TaskHolderProviderModel taskState) {
+  Function selectCheckBoxState(
+    TaskHolderProviderModel taskState,
+  ) {
     return (completeStatus) {
       // update the status
       isCompleted = completeStatus;
       // update the update time
       taskState.taskEntity.lastUpdatedAt = DateTime.now();
+      taskState.taskEntity.isCompleted = isCompleted;
       BlocProvider.of<HomeScreenTaskBloc>(context)
           .add(CompleteTaskEvent(task: taskState.taskEntity));
     };

@@ -137,7 +137,7 @@ class UserEntryRoute extends StatelessWidget {
                               onForwardClick(providerContext);
                             },
                             mini: true,
-                            child: Icon(Icons.arrow_downward),
+                            child: Icon(Icons.arrow_downward, color: CommonColors.accentColor,),
                           ),
                         ),
                       )

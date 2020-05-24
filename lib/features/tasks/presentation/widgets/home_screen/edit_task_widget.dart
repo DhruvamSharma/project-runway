@@ -45,215 +45,224 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
         Provider.of<TaskDetailProviderModel>(context, listen: false);
     return Builder(
       builder: (newContext) => Padding(
-        padding: const EdgeInsets.all(
-          CommonDimens.MARGIN_20,
+        padding: const EdgeInsets.only(
+          left: CommonDimens.MARGIN_20,
+          right: CommonDimens.MARGIN_20,
+          top: CommonDimens.MARGIN_20,
         ),
         child: Stack(
           children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_20,
-                  ),
-                  child: CustomTextField(
-                    null,
-                    null,
-                    enabled: isEnabled,
-                    initialText: widget.task.taskTitle,
-                    onValueChange: (text) {
-                      taskDetailState.assignTaskTitle(text);
-                    },
-                    label: "Task Title",
-                    isRequired: false,
-                    onSubmitted: (text) {},
-                    errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_20,
-                  ),
-                  child: CustomTextField(
-                    null,
-                    null,
-                    initialText: widget.task.description,
-                    onValueChange: (description) {
-                      taskDetailState.assignTaskDescription(description);
-                    },
-                    label: "Task Description",
-                    enabled: isEnabled,
-                    isRequired: false,
-                    onSubmitted: (text) {},
-                    errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_20,
-                  ),
-                  child: CustomTextField(
-                    null,
-                    null,
-                    initialText: widget.task.tag,
-                    onValueChange: (tag) {
-                      taskDetailState.assignTaskTag(tag);
-                    },
-                    label: "Tag",
-                    enabled: isEnabled,
-                    isRequired: false,
-                    onSubmitted: (text) {},
-                    errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_20,
-                  ),
-                  child: CustomTextField(
-                    1,
-                    1,
-                    initialText: widget.task.urgency.toString(),
-                    onValueChange: (urgency) {
-                      taskDetailState.assignTaskUrgency(urgency);
-                    },
-                    label: "Urgency",
-                    enabled: isEnabled,
-                    labelPadding: const EdgeInsets.only(
-                        bottom: CommonDimens.MARGIN_20 / 2),
-                    isRequired: false,
-                    helperText: "1 is most important and 9 is least",
-                    helperTextStyle:
-                        CommonTextStyles.badgeTextStyle(context).copyWith(
-                      color: appState.currentTheme.accentColor,
-                      fontSize: 14,
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_20,
                     ),
-                    onSubmitted: (text) {},
-                    textFieldValue: taskDetailState.urgency,
-                    type: TextInputType.phone,
-                    textInputFormatter: [
-                      LengthLimitingTextInputFormatter(1),
-                      WhitelistingTextInputFormatter.digitsOnly,
-                    ],
-                    errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
+                    child: CustomTextField(
+                      null,
+                      null,
+                      enabled: isEnabled,
+                      initialText: widget.task.taskTitle,
+                      onValueChange: (text) {
+                        taskDetailState.assignTaskTitle(text);
+                      },
+                      label: "Task Title",
+                      isRequired: false,
+                      onSubmitted: (text) {},
+                      errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
+                    ),
                   ),
-                ),
-                if (isEnabled)
-                  ListTile(
-                    contentPadding: const EdgeInsets.all(0),
-                    title: Text(
-                      "Noification Time",
-                      style: CommonTextStyles.taskTextStyle(context).copyWith(
-                        color:
-                            appState.currentTheme.accentColor.withOpacity(0.5),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_20,
+                    ),
+                    child: CustomTextField(
+                      null,
+                      null,
+                      initialText: widget.task.description,
+                      onValueChange: (description) {
+                        taskDetailState.assignTaskDescription(description);
+                      },
+                      label: "Task Description",
+                      enabled: isEnabled,
+                      isRequired: false,
+                      onSubmitted: (text) {},
+                      errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_20,
+                    ),
+                    child: CustomTextField(
+                      null,
+                      null,
+                      initialText: widget.task.tag,
+                      onValueChange: (tag) {
+                        taskDetailState.assignTaskTag(tag);
+                      },
+                      label: "Tag",
+                      enabled: isEnabled,
+                      isRequired: false,
+                      onSubmitted: (text) {},
+                      errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_20,
+                    ),
+                    child: CustomTextField(
+                      1,
+                      1,
+                      initialText: widget.task.urgency.toString(),
+                      onValueChange: (urgency) {
+                        taskDetailState.assignTaskUrgency(urgency);
+                      },
+                      label: "Urgency",
+                      enabled: isEnabled,
+                      labelPadding: const EdgeInsets.only(
+                          bottom: CommonDimens.MARGIN_20 / 2),
+                      isRequired: false,
+                      helperText: "1 is most important and 9 is least",
+                      helperTextStyle:
+                          CommonTextStyles.badgeTextStyle(context).copyWith(
+                        color: appState.currentTheme.accentColor,
+                        fontSize: 14,
+                      ),
+                      onSubmitted: (text) {},
+                      textFieldValue: taskDetailState.urgency,
+                      type: TextInputType.phone,
+                      textInputFormatter: [
+                        LengthLimitingTextInputFormatter(1),
+                        WhitelistingTextInputFormatter.digitsOnly,
+                      ],
+                      errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
+                    ),
+                  ),
+                  if (isEnabled)
+                    Container(
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.only(top: 10),
+                        title: Text(
+                          "Noification Time",
+                          style:
+                              CommonTextStyles.taskTextStyle(context).copyWith(
+                            color: appState.currentTheme.accentColor
+                                .withOpacity(0.5),
+                          ),
+                        ),
+                        trailing: Text(
+                          Provider.of<TaskDetailProviderModel>(newContext,
+                                          listen: true)
+                                      .notificationTime !=
+                                  null
+                              ? beautifyTime(
+                                  Provider.of<TaskDetailProviderModel>(
+                                          newContext,
+                                          listen: false)
+                                      .notificationTime)
+                              : "None",
+                          style: CommonTextStyles.disabledTaskTextStyle(),
+                        ),
+                        onTap: () {
+                          selectTimeForNotification(newContext);
+                        },
                       ),
                     ),
-                    trailing: Text(
-                      Provider.of<TaskDetailProviderModel>(newContext,
-                                      listen: true)
-                                  .notificationTime !=
-                              null
-                          ? beautifyTime(Provider.of<TaskDetailProviderModel>(
-                                  newContext,
-                                  listen: false)
-                              .notificationTime)
-                          : "None",
-                      style: CommonTextStyles.disabledTaskTextStyle(),
-                    ),
-                    onTap: () {
-                      selectTimeForNotification(newContext);
-                    },
-                  ),
-                if (isEnabled)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
+                  if (isEnabled)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: CommonDimens.MARGIN_20,
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.only(
+                                top: CommonDimens.MARGIN_20 / 2,
+                                bottom: CommonDimens.MARGIN_20,
+                              ),
+                              alignment: Alignment.center,
+                              child: FlatButton(
+                                  child: Text(
+                                    isEnabled ? "Delete" : "Go Back",
+                                    style:
+                                        CommonTextStyles.taskTextStyle(context),
+                                  ),
+                                  onPressed: () {
+                                    taskEntity.isDeleted = true;
+                                    Navigator.pop(context, taskEntity);
+                                  }),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(
                             left: CommonDimens.MARGIN_20,
                           ),
-                          child: Container(
+                          alignment: Alignment.center,
+                          child: Padding(
                             padding: const EdgeInsets.only(
-                              top: CommonDimens.MARGIN_20,
+                              top: CommonDimens.MARGIN_20 / 2,
                               bottom: CommonDimens.MARGIN_20,
                             ),
-                            alignment: Alignment.center,
-                            child: FlatButton(
-                                child: Text(
-                                  isEnabled ? "Delete" : "Go Back",
-                                  style:
-                                      CommonTextStyles.taskTextStyle(context),
-                                ),
-                                onPressed: () {
-                                  taskEntity.isDeleted = true;
-                                  Navigator.pop(context, taskEntity);
-                                }),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(
-                          left: CommonDimens.MARGIN_20,
-                        ),
-                        alignment: Alignment.center,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
-                            bottom: CommonDimens.MARGIN_20,
-                          ),
-                          child: MaterialButton(
-                            color: appState.currentTheme.accentColor,
-                            onPressed: () {
-                              taskEntity.description =
-                                  taskDetailState.description;
-                              taskEntity.urgency =
-                                  buildUrgency(taskDetailState.urgency);
-                              taskEntity.taskTitle = taskDetailState.taskTitle;
-                              taskEntity.tag = taskDetailState.tag;
-                              taskEntity.notificationTime =
-                                  taskDetailState.notificationTime;
-                              taskEntity.lastUpdatedAt = DateTime.now();
-                              // schedule the notification
-                              scheduleNotification(
-                                taskEntity.createdAt.toString(),
-                                taskEntity.taskTitle,
-                                taskDetailState.notificationTime,
-                              );
-                              Navigator.pop(context, taskEntity);
-                            },
-                            child: Text(
-                              isEnabled ? "Update" : "Go Back",
-                              style:
-                                  CommonTextStyles.scaffoldTextStyle(context),
+                            child: MaterialButton(
+                              color: appState.currentTheme.accentColor,
+                              onPressed: () {
+                                taskEntity.description =
+                                    taskDetailState.description;
+                                taskEntity.urgency =
+                                    buildUrgency(taskDetailState.urgency);
+                                taskEntity.taskTitle =
+                                    taskDetailState.taskTitle;
+                                taskEntity.tag = taskDetailState.tag;
+                                taskEntity.notificationTime =
+                                    taskDetailState.notificationTime;
+                                taskEntity.lastUpdatedAt = DateTime.now();
+                                // schedule the notification
+                                scheduleNotification(
+                                  taskEntity.createdAt.toString(),
+                                  taskEntity.taskTitle,
+                                  taskDetailState.notificationTime,
+                                );
+                                Navigator.pop(context, taskEntity);
+                              },
+                              child: Text(
+                                isEnabled ? "Update" : "Go Back",
+                                style:
+                                    CommonTextStyles.scaffoldTextStyle(context),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                if (!isEnabled)
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: CommonDimens.MARGIN_60,
-                      ),
-                      child: OutlineButton(
-                        onPressed: () {
-                          Navigator.pop(
-                            context,
-                          );
-                        },
-                        child: Text(
-                          "Go Back",
-                          style: CommonTextStyles.taskTextStyle(context),
+                      ],
+                    ),
+                  if (!isEnabled)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_60,
+                        ),
+                        child: OutlineButton(
+                          onPressed: () {
+                            Navigator.pop(
+                              context,
+                            );
+                          },
+                          child: Text(
+                            "Go Back",
+                            style: CommonTextStyles.taskTextStyle(context),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
             Align(
               alignment: Alignment.topRight,

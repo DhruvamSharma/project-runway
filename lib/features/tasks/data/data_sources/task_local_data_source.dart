@@ -35,7 +35,6 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
   Future<TaskModel> createTask(TaskModel taskModel) {
     try {
       final taskListKey = dateToStringParser(taskModel.runningDate);
-      print(taskListKey);
       final taskListString = sharedPreferences.getString(taskListKey);
       TaskListModel taskListModel;
       if (taskListString == null) {

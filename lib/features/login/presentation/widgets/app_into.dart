@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/constants.dart';
@@ -13,126 +14,234 @@ class AppIntroWidget extends StatelessWidget {
   final PageController _controller = PageController();
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<ThemeModel>(context, listen: false);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(
-          "Runway".toUpperCase(),
-          style: CommonTextStyles.headerTextStyle(context),
-          textAlign: TextAlign.center,
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(
+          top: CommonDimens.MARGIN_60,
         ),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: CommonDimens.MARGIN_60,
-          ),
+        child: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              SizedBox(
-                height: MediaQuery.of(context).size.width,
-                child: PageView(
-                  controller: _controller,
-                  physics: BouncingScrollPhysics(),
-                  children: <Widget>[
-                    Center(
-                        child: Column(
-                      children: <Widget>[
-                        Image.asset(
-                          appState.currentTheme == lightTheme
-                              ? "assets/intro_pedestal_light.png"
-                              : "assets/intro_pedestal_dark.png",
-                          height: 200,
-                        ),
-                        Text(
-                          "Productivity",
-                          style: CommonTextStyles.loginTextStyle(context),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Create the runway for improved productivity",
-                            style: CommonTextStyles.taskTextStyle(context),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    )),
-                    Center(
-                        child: Column(
-                      children: <Widget>[
-                        Image.asset(
-                          appState.currentTheme == lightTheme
-                              ? "assets/intro_graph_light.png"
-                              : "assets/intro_graph_dark.png",
-                          height: 200,
-                        ),
-                        Text(
-                          "Statistics",
-                          style: CommonTextStyles.loginTextStyle(context),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Visualize your growth better",
-                            style: CommonTextStyles.taskTextStyle(context),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    )),
-                    Center(
-                        child: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          height: 200,
-                          child: Center(
-                            child: Text(
-                              "3-7",
-                              style: CommonTextStyles.headerTextStyle(context)
-                                  .copyWith(
-                                fontSize: 90,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          "The 3-7 Rule",
-                          style: CommonTextStyles.loginTextStyle(context),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Create only 7 tasks per day and View only 3 day tasks",
-                            style: CommonTextStyles.taskTextStyle(context),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    )),
-                  ],
-                ),
+              Text(
+                "Runway".toUpperCase(),
+                style: CommonTextStyles.headerTextStyle(context),
+                textAlign: TextAlign.center,
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: SmoothPageIndicator(
-                    controller: _controller,
-                    count: 3,
-                    effect: ExpandingDotsEffect(
-                      radius: 10,
-                      dotHeight: 7,
-                      dotWidth: 7,
-                      activeDotColor: appState.currentTheme.accentColor,
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_20,
+                ),
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 400,
+                      child: PageView(
+                        controller: _controller,
+                        physics: BouncingScrollPhysics(),
+                        children: <Widget>[
+                          Center(
+                              child: SingleChildScrollView(
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: CommonDimens.MARGIN_20,
+                                  ),
+                                  child: Image.asset(
+                                    "assets/intro_pedestal.png",
+                                    height: 200,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: CommonDimens.MARGIN_20,
+                                  ),
+                                  child: Text(
+                                    "Foccused Approach",
+                                    style:
+                                        CommonTextStyles.loginTextStyle(context),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: CommonDimens.MARGIN_20,
+                                    left: CommonDimens.MARGIN_20 / 2,
+                                    right: CommonDimens.MARGIN_20 / 2,
+                                  ),
+                                  child: Text(
+                                    "Reward-based minimal design to enhance your decisiveness",
+                                    style:
+                                        CommonTextStyles.taskTextStyle(context),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
+                          Center(
+                              child: SingleChildScrollView(
+                            child: Column(
+                              children: <Widget>[
+                                Image.asset(
+                                  "assets/intro_graph.png",
+                                  height: 200,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: CommonDimens.MARGIN_20,
+                                  ),
+                                  child: Text(
+                                    "Visualise Growth",
+                                    style:
+                                        CommonTextStyles.loginTextStyle(context),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: CommonDimens.MARGIN_20,
+                                    left: CommonDimens.MARGIN_20 / 2,
+                                    right: CommonDimens.MARGIN_20 / 2,
+                                  ),
+                                  child: Text(
+                                    "Track your progress through exclusive statistics",
+                                    style:
+                                        CommonTextStyles.taskTextStyle(context),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
+                          Center(
+                              child: SingleChildScrollView(
+                            child: Column(
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 200,
+                                  child: Center(
+                                    child: RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: "3",
+                                            style: CommonTextStyles
+                                                    .loginTextStyle(context)
+                                                .copyWith(fontSize: 90)
+                                                .copyWith(
+                                                    color:
+                                                        CommonColors.introColor),
+                                          ),
+                                          TextSpan(
+                                            text: " : ",
+                                            style: CommonTextStyles
+                                                    .loginTextStyle(context)
+                                                .copyWith(
+                                                    fontSize: 90,
+                                                    color:
+                                                        CommonColors.chartColor),
+                                          ),
+                                          TextSpan(
+                                            text: "7",
+                                            style: CommonTextStyles
+                                                    .loginTextStyle(context)
+                                                .copyWith(fontSize: 90)
+                                                .copyWith(
+                                                    color:
+                                                        CommonColors.introColor),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: CommonDimens.MARGIN_20,
+                                  ),
+                                  child: Text(
+                                    "3:7 Rule",
+                                    style:
+                                        CommonTextStyles.loginTextStyle(context),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: CommonDimens.MARGIN_20,
+                                    left: CommonDimens.MARGIN_20 / 2,
+                                    right: CommonDimens.MARGIN_20 / 2,
+                                  ),
+                                  child: Text(
+                                    "View 7 tasks for 3 days for focused prioritization of tasks",
+                                    style:
+                                        CommonTextStyles.taskTextStyle(context),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
+                          Center(
+                              child: Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: <Widget>[
+                                  Image.asset(
+                                    "assets/intro_puzzle.png",
+                                    height: 200,
+                                    width: MediaQuery.of(context).size.width,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: CommonDimens.MARGIN_20,
+                                    ),
+                                    child: Text(
+                                      "Secret Puzzles",
+                                      style: CommonTextStyles.loginTextStyle(
+                                          context),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: CommonDimens.MARGIN_20,
+                                      left: CommonDimens.MARGIN_20 / 2,
+                                      right: CommonDimens.MARGIN_20 / 2,
+                                    ),
+                                    child: Text(
+                                      "Exercise your intellectual efficiency through puzzles",
+                                      style:
+                                          CommonTextStyles.taskTextStyle(context),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )),
+                        ],
+                      ),
                     ),
-                  ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: SmoothPageIndicator(
+                        controller: _controller,
+                        count: 4,
+                        effect: ExpandingDotsEffect(
+                          radius: 10,
+                          dotHeight: 7,
+                          dotWidth: 7,
+                          activeDotColor: CommonColors.chartColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

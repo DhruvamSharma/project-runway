@@ -14,6 +14,7 @@ import 'package:project_runway/features/tasks/presentation/pages/create_task/cre
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/current_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class CreateTaskShortcutWidget extends StatelessWidget {
   final int totalTaskNumber;
@@ -107,9 +108,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                             ),
                           );
                           if (data != null && data is TaskEntity) {
-                            Provider.of<TaskListHolderProvider>(context,
-                                    listen: false)
-                                .insertTaskToList(data);
+                            taskListState.insertTaskToList(data);
                           }
                         } else {
                           Scaffold.of(context).removeCurrentSnackBar();
@@ -157,12 +156,18 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                             if (pageState.pageNumber != 0) {
                               if (totalTaskNumber <=
                                   TOTAL_TASK_CREATION_LIMIT) {
-                                String initialTitle =
-                                    Provider.of<InitialTaskTitleProviderModel>(
+                                String initialTitle;
+                                if (Provider.of<InitialTaskTitleProviderModel>(
                                             context,
                                             listen: false)
-                                        .taskTitle
-                                        .trim();
+                                        .taskTitle !=
+                                    null) {
+                                  initialTitle = Provider.of<
+                                              InitialTaskTitleProviderModel>(
+                                          context,
+                                          listen: false)
+                                      .taskTitle;
+                                }
                                 // check if the task is entered in the field or not
                                 if (initialTitle != null &&
                                     initialTitle.isNotEmpty) {
@@ -171,6 +176,12 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                                   // add to data base
                                   BlocProvider.of<HomeScreenTaskBloc>(context)
                                       .add(CreateTaskEvent(task: task));
+                                  // update the list
+                                  try {
+                                    taskListState.insertTaskToList(task);
+                                  } catch (ex) {
+                                    print(ex);
+                                  }
                                 } else {
                                   Scaffold.of(context).removeCurrentSnackBar();
                                   Scaffold.of(context).showSnackBar(
@@ -252,7 +263,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
       BuildContext context, PageHolderProviderModel pageState) {
     final task = TaskEntity(
       userId: "Dhruvam",
-      taskId: "hello",
+      taskId: Uuid().v1(),
       taskTitle:
           Provider.of<InitialTaskTitleProviderModel>(context, listen: false)
               .taskTitle,

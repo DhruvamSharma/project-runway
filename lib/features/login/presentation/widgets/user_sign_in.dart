@@ -80,7 +80,14 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                     padding: const EdgeInsets.symmetric(
                       horizontal: CommonDimens.MARGIN_20,
                     ),
-                    child: LinearProgressIndicator(),
+                    child: Theme(
+                      data: ThemeData.dark().copyWith(
+                        accentColor: CommonColors.chartColor,
+                      ),
+                      child: LinearProgressIndicator(
+                        backgroundColor: appState.currentTheme.accentColor,
+                      ),
+                    ),
                   ),
                 if (!isFindingUser)
                   Padding(
@@ -134,7 +141,14 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                         padding: const EdgeInsets.symmetric(
                           horizontal: CommonDimens.MARGIN_20,
                         ),
-                        child: LinearProgressIndicator(),
+                        child: Theme(
+                          data: ThemeData.dark().copyWith(
+                            accentColor: CommonColors.chartColor,
+                          ),
+                          child: LinearProgressIndicator(
+                            backgroundColor: appState.currentTheme.accentColor,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -164,19 +178,12 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
           horizontal: CommonDimens.MARGIN_20,
         ),
         child: Material(
-          color: appState.currentTheme.accentColor,
+          color: CommonColors.chartColor,
           borderRadius: BorderRadius.circular(5),
           child: InkWell(
             borderRadius: BorderRadius.circular(5),
             onTap: null,
             child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(5)),
-                border: Border.all(
-                  width: 1.0,
-                  color: CommonColors.disabledTaskTextColor,
-                ),
-              ),
               padding: const EdgeInsets.all(
                 CommonDimens.MARGIN_20 / 2,
               ),
@@ -197,7 +204,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                         "Signed in with Google",
                         style:
                             CommonTextStyles.badgeTextStyle(context).copyWith(
-                          color: appState.currentTheme.scaffoldBackgroundColor,
+                          color: CommonColors.accentColor,
                           fontSize: 16,
                         ),
                       ),
