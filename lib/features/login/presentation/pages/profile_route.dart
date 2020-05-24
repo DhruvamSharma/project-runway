@@ -42,10 +42,8 @@ class ProfileRoute extends StatefulWidget {
 }
 
 class _ProfileRouteState extends State<ProfileRoute> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isLoading = false;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   Widget build(BuildContext context) {
@@ -283,7 +281,22 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             style: CommonTextStyles.taskTextStyle(context),
                           ),
                           onTap: () {
-                            Wiredash.of(context).show();
+                            try {
+                              Wiredash.of(context).show();
+                            } catch (ex) {
+                              _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                content: Text(
+                                  "Sorry, a problem occurred, try again later",
+                                  style: CommonTextStyles.scaffoldTextStyle(
+                                      context),
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                                backgroundColor:
+                                    appState.currentTheme == lightTheme
+                                        ? CommonColors.scaffoldColor
+                                        : CommonColors.accentColor,
+                              ));
+                            }
                           },
                         ),
                         Divider(
@@ -393,20 +406,22 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               ],
                             ),
                           ),
-
                         Divider(
                           color: appState.currentTheme == lightTheme
                               ? CommonColors.dateTextColorLightTheme
                               : CommonColors.dateTextColor,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: CommonDimens.MARGIN_40,),
+                          padding: const EdgeInsets.only(
+                            bottom: CommonDimens.MARGIN_40,
+                          ),
                           child: ListTile(
                             contentPadding: const EdgeInsets.all(
                               CommonDimens.MARGIN_20,
                             ),
                             leading: Padding(
-                              padding: const EdgeInsets.only(left: 6.0, right: 10.0),
+                              padding:
+                                  const EdgeInsets.only(left: 6.0, right: 10.0),
                               child: Icon(
                                 Icons.error_outline,
                                 color: appState.currentTheme.accentColor,
