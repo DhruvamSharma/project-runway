@@ -10,6 +10,7 @@ import '../common_text_styles.dart';
 class CustomTextField extends StatefulWidget {
   final String label;
   final bool isRequired;
+  final bool autoFocus;
   final int minNumberRequired;
   final int maxNumberRequired;
   final Widget leadingIcon;
@@ -54,6 +55,7 @@ class CustomTextField extends StatefulWidget {
       this.textInputFormatter,
       this.labelPadding,
       this.prefixText,
+      this.autoFocus = false,
       this.prefixTextStyle,
       this.textFieldValue,
       this.onTapForFirstTime,
@@ -126,6 +128,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       },
       controller: _controller,
       focusNode: _focusNode,
+      autofocus: widget.autoFocus,
       cursorColor: borderColor,
       textAlign: TextAlign.left,
       enabled: widget.enabled,

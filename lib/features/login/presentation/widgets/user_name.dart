@@ -16,13 +16,11 @@ class UserNameWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-
           Text(
             "Your turn now, \nwhat's your name?".toUpperCase(),
             style: CommonTextStyles.taskTextStyle(context),
             textAlign: TextAlign.center,
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               top: CommonDimens.MARGIN_60,

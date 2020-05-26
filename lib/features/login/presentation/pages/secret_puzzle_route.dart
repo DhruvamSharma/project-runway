@@ -100,7 +100,7 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                       bottom: CommonDimens.MARGIN_40,
                     ),
                     child: Text(
-                      "Secret".toUpperCase(),
+                      "PUZZLE".toUpperCase(),
                       style: CommonTextStyles.headerTextStyle(context),
                       textAlign: TextAlign.center,
                     ),
@@ -114,7 +114,7 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                             right: CommonDimens.MARGIN_20,
                           ),
                           child: Text(
-                            "Here is your secret puzzle ${puzzle.puzzlePoints} points",
+                            "Here is your secret puzzle for ${puzzle.puzzlePoints} points",
                             style: CommonTextStyles.taskTextStyle(context),
                             textAlign: TextAlign.center,
                           ),
@@ -176,7 +176,7 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                               right: CommonDimens.MARGIN_20,
                             ),
                             child: Text(
-                              "Hey, you've solved the last puzzle. Look out for this place for more new puzzles",
+                              "Hey, you've solved your last puzzle. Look out for this place for more new puzzles",
                               style: CommonTextStyles.taskTextStyle(context),
                               textAlign: TextAlign.center,
                             ),
@@ -192,7 +192,23 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                           ),
                         ],
                       ),
-                    )
+                    ),
+                  if (puzzleFailure == NO_NEW_PUZZLE_ERROR || isSolved)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: CommonDimens.MARGIN_40,
+                      ),
+                      child: MaterialButton(
+                        color: appState.currentTheme.accentColor,
+                        child: Text(
+                          "Go Back",
+                          style: CommonTextStyles.scaffoldTextStyle(context),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
                 ],
               ),
             ),

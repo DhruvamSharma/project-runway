@@ -27,6 +27,7 @@ class EditTaskWidget extends StatefulWidget {
 class _EditTaskWidgetState extends State<EditTaskWidget> {
   bool isEnabled;
   TaskEntity taskEntity;
+  bool isNotificationTimeError = false;
   @override
   void initState() {
     taskEntity = widget.task;
@@ -168,9 +169,23 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                           style: CommonTextStyles.disabledTaskTextStyle(),
                         ),
                         onTap: () {
-                          selectTimeForNotification(newContext);
+                          selectTimeForNotification(
+                              newContext, widget.task.runningDate, () {
+                            setState(() {
+                              isNotificationTimeError = true;
+                            });
+                          }, () {
+                            setState(() {
+                              isNotificationTimeError = false;
+                            });
+                          });
                         },
                       ),
+                    ),
+                  if (isEnabled && isNotificationTimeError)
+                    Text(
+                      "You cannot select a time in the past",
+                      style: CommonTextStyles.errorFieldTextStyle(),
                     ),
                   if (isEnabled)
                     Row(
@@ -294,52 +309,5 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
       urgencyInt = DEFAULT_URGENCY;
     }
     return urgencyInt;
-  }
-
-  void selectTimeForNotification(
-    BuildContext newContext,
-  ) async {
-    TimeOfDay timeOfDay = await showTimePicker(
-        context: newContext,
-        initialTime: TimeOfDay.now(),
-        builder: (context, child) {
-          return Theme(
-            data: ThemeData.dark().copyWith(
-              accentColor: Colors.amber,
-            ),
-            child: child,
-          );
-        });
-    if (timeOfDay != null) {
-      int nowTime = TimeOfDay.now().minute + TimeOfDay.now().hour * 60;
-      int selectedTime = timeOfDay.minute + timeOfDay.hour * 60;
-      if (selectedTime - nowTime <= 0) {
-        Scaffold.of(newContext).showSnackBar(SnackBar(
-          content: Text(
-            "Sorry, you cannot select this time",
-            style: CommonTextStyles.scaffoldTextStyle(newContext),
-          ),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor:
-              Provider.of<ThemeModel>(newContext, listen: false).currentTheme ==
-                      lightTheme
-                  ? CommonColors.scaffoldColor
-                  : CommonColors.accentColor,
-        ));
-      } else {
-        // create properly formatted time
-        DateTime scheduledTime = DateTime(
-          taskEntity.runningDate.year,
-          taskEntity.runningDate.month,
-          taskEntity.runningDate.day,
-          timeOfDay.hour,
-          timeOfDay.minute,
-        );
-        print(scheduledTime);
-        // update the notification
-        Provider.of<TaskDetailProviderModel>(newContext, listen: false)
-            .assignNotificationTime(scheduledTime);
-      }
-    }
   }
 }

@@ -88,6 +88,15 @@ class CreateTaskPage extends StatelessWidget {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
+                                top: CommonDimens.MARGIN_20,
+                              ),
+                              child: Text(
+                                beautifyDate(runningDate ?? ""),
+                                style: CommonTextStyles.dateTextStyle(context),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
                                 top: CommonDimens.MARGIN_80,
                               ),
                               child: CustomTextField(
@@ -216,7 +225,24 @@ class CreateTaskPage extends StatelessWidget {
                                       CommonTextStyles.disabledTaskTextStyle(),
                                 ),
                                 onTap: () {
-                                  selectTimeForNotification(newContext);
+                                  try {
+                                    selectTimeForNotification(newContext, runningDate, () {
+                                      Scaffold.of(newContext).showSnackBar(SnackBar(
+                                        content: Text(
+                                          "Sorry, you cannot select this time",
+                                          style: CommonTextStyles.scaffoldTextStyle(newContext),
+                                        ),
+                                        behavior: SnackBarBehavior.floating,
+                                        backgroundColor:
+                                        Provider.of<ThemeModel>(newContext, listen: false).currentTheme ==
+                                            lightTheme
+                                            ? CommonColors.scaffoldColor
+                                            : CommonColors.accentColor,
+                                      ));
+                                    }, () {});
+                                  } catch (ex) {
+                                    // Do something
+                                  }
                                 },
                               ),
                             ),
@@ -328,51 +354,6 @@ class CreateTaskPage extends StatelessWidget {
       urgencyInt = DEFAULT_URGENCY;
     }
     return urgencyInt;
-  }
-
-  void selectTimeForNotification(BuildContext newContext) async {
-    TimeOfDay timeOfDay = await showTimePicker(
-        context: newContext,
-        initialTime: TimeOfDay.now(),
-        builder: (context, child) {
-          return Theme(
-            data: ThemeData.dark().copyWith(
-              accentColor: Colors.amber,
-            ),
-            child: child,
-          );
-        });
-    if (timeOfDay != null) {
-      int nowTime = TimeOfDay.now().minute + TimeOfDay.now().hour * 60;
-      int selectedTime = timeOfDay.minute + timeOfDay.hour * 60;
-      if (selectedTime - nowTime <= 0) {
-        Scaffold.of(newContext).showSnackBar(SnackBar(
-          content: Text(
-            "Sorry, you cannot select this time",
-            style: CommonTextStyles.scaffoldTextStyle(newContext),
-          ),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor:
-              Provider.of<ThemeModel>(newContext, listen: false).currentTheme ==
-                      lightTheme
-                  ? CommonColors.scaffoldColor
-                  : CommonColors.accentColor,
-        ));
-      } else {
-        // create properly formatted time
-        DateTime scheduledTime = DateTime(
-          runningDate.year,
-          runningDate.month,
-          runningDate.day,
-          timeOfDay.hour,
-          timeOfDay.minute,
-        );
-        print(scheduledTime);
-        // update the notification
-        Provider.of<TaskDetailProviderModel>(newContext, listen: false)
-            .assignNotificationTime(scheduledTime);
-      }
-    }
   }
 }
 

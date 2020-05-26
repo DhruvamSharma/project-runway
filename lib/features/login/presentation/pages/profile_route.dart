@@ -235,7 +235,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             size: 30,
                           ),
                           title: Text(
-                            "Want to use light theme",
+                            "Want to use light theme?",
                             style: CommonTextStyles.taskTextStyle(context),
                           ),
                           trailing: Checkbox(
@@ -342,7 +342,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                           ),
                           onTap: () {
                             Share.share(
-                              'Check out this great and simple To-Do app to manage productivity: https://play.google.com/store/apps/details?id=io.dhruvam.project_runway',
+                              'Check out this great and simple To-Do app to manage productivity:\nhttps://play.google.com/store/apps/details?id=io.dhruvam.project_runway',
                               subject:
                                   'Look! A great and simple To Do app to manage productivity',
                             );
@@ -393,7 +393,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                       size: 30,
                                     ),
                                     title: Text(
-                                      "Read the secret again",
+                                      "Read the secret puzzle",
                                       style: CommonTextStyles.taskTextStyle(
                                           context),
                                     ),
@@ -429,7 +429,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               ),
                             ),
                             title: Text(
-                              "Sign Out",
+                              "Log Out",
                               style: CommonTextStyles.taskTextStyle(context),
                             ),
                             onTap: () {
