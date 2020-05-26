@@ -235,7 +235,9 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             size: 30,
                           ),
                           title: Text(
-                            "Want to use light theme?",
+                            appState.currentTheme == lightTheme
+                                ? "Want to use dark theme?"
+                                : "Want to use light theme?",
                             style: CommonTextStyles.taskTextStyle(context),
                           ),
                           trailing: Checkbox(
