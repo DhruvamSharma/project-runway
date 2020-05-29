@@ -3,14 +3,11 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/notifications/local_notifications.dart';
 import 'package:project_runway/core/notifications/one_signal.dart';
 import 'package:project_runway/core/routes/routes_generator.dart';
-import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +40,20 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<ThemeModel>(context);
     return Wiredash(
+      theme: WiredashThemeData(
+        brightness: appState.currentTheme.brightness,
+        primaryColor: appState.currentTheme.primaryColor,
+        secondaryColor: appState.currentTheme.secondaryHeaderColor,
+        primaryTextColor: appState.currentTheme.scaffoldBackgroundColor,
+        secondaryBackgroundColor: appState.currentTheme.scaffoldBackgroundColor,
+        tertiaryTextColor: appState.currentTheme.accentColor,
+        primaryBackgroundColor: appState.currentTheme.accentColor,
+        secondaryTextColor: appState.currentTheme.scaffoldBackgroundColor,
+        backgroundColor: appState.currentTheme.scaffoldBackgroundColor,
+        dividerColor: appState.currentTheme.dividerColor,
+      ),
       projectId: "runway-y27lisj",
       secret: "xpbaeleqsl73ib10pz5ixnyz1en73d2q",
       navigatorKey: navigatorKey,
@@ -51,7 +61,7 @@ class MyApp extends StatelessWidget {
         navigatorKey: navigatorKey,
         title: APP_NAME,
         debugShowCheckedModeBanner: false,
-        theme: Provider.of<ThemeModel>(context).currentTheme,
+        theme: appState.currentTheme,
         initialRoute: UserEntryRoute.routeName,
         onGenerateRoute: RouteGenerator.generateRoute,
         navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],

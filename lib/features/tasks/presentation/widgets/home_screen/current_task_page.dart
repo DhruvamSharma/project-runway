@@ -411,7 +411,11 @@ int compareListItems(TaskEntity a, TaskEntity b) {
     } else if (a.urgency < b.urgency) {
       positiveOrNegativeIndex = -1;
     } else {
-      positiveOrNegativeIndex = 0;
+      if (a.createdAt.difference(b.createdAt).inMinutes > 0) {
+        positiveOrNegativeIndex = -1;
+      } else {
+        positiveOrNegativeIndex = 1;
+      }
     }
   }
   return positiveOrNegativeIndex;

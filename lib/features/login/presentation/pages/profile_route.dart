@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:package_info/package_info.dart';
 import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/auth_service.dart';
 import 'package:project_runway/core/common_colors.dart';
@@ -26,6 +28,7 @@ import 'package:project_runway/features/stats/presentation/pages/stats_screen.da
 import 'package:project_runway/features/tasks/presentation/widgets/secret_puzzle_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wiredash/wiredash.dart';
 
 class ProfileRoute extends StatefulWidget {
@@ -350,7 +353,66 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               : CommonColors.dateTextColor,
                         ),
                         CustomListTile(
-                          leadingIcon: Icons.error_outline,
+                          leadingIcon: Icons.info_outline,
+                          onTap: () async {
+                            PackageInfo packageInfo =
+                                await PackageInfo.fromPlatform();
+                            showAboutDialog(
+                              context: context,
+                              applicationIcon: CachedNetworkImage(
+                                imageUrl: "https://imgur.com/4QhWedx.png",
+                                width: 31,
+                                height: 31,
+                              ),
+                              applicationVersion: packageInfo.version,
+                              children: <Widget>[
+                                ListTile(
+                                  title: Text("Created By: Dhruvam"),
+                                ),
+                                ListTile(
+                                  onTap: () async {
+                                    String mediumLink =
+                                        "https://medium.com/@dhruvamsharma";
+                                    if (await canLaunch(mediumLink)) {
+                                      launch(mediumLink);
+                                    }
+                                  },
+                                  title: Text("Medium Blogs"),
+                                ),
+                                ListTile(
+                                  onTap: () async {
+                                    String githubLink =
+                                        "https://github.com/DhruvamSharma";
+                                    if (await canLaunch(githubLink)) {
+                                      launch(githubLink);
+                                    }
+                                  },
+                                  title: Text("Github Account"),
+                                ),
+                                ListTile(
+                                  onTap: () async {
+                                    String twitterLink =
+                                        "https://twitter.com/Dhruvam_Digest";
+                                    if (await canLaunch(twitterLink)) {
+                                      launch(twitterLink);
+                                    }
+                                  },
+                                  title: Text("Twitter Account"),
+                                ),
+                              ],
+                              applicationName: packageInfo.appName,
+                            );
+                          },
+                          appState: appState,
+                          text: "About Runway",
+                        ),
+                        Divider(
+                          color: appState.currentTheme == lightTheme
+                              ? CommonColors.dateTextColorLightTheme
+                              : CommonColors.dateTextColor,
+                        ),
+                        CustomListTile(
+                          leadingIcon: Icons.exit_to_app,
                           onTap: () {
                             AnalyticsUtils.sendAnalyticEvent(
                                 LOG_OUT,
