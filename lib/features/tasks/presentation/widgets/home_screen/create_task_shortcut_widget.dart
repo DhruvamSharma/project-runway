@@ -1,5 +1,7 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
@@ -14,14 +16,15 @@ import 'package:project_runway/features/tasks/presentation/pages/create_task/cre
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/current_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:provider/provider.dart';
+import 'package:share/share.dart';
 import 'package:uuid/uuid.dart';
 
 class CreateTaskShortcutWidget extends StatelessWidget {
   final int totalTaskNumber;
-
+  final FirebaseAnalytics firebaseAnalytics;
   CreateTaskShortcutWidget({
     @required this.totalTaskNumber,
-  });
+  }) : firebaseAnalytics = FirebaseAnalytics();
 
   @override
   Widget build(BuildContext parentContext) {
@@ -56,8 +59,8 @@ class CreateTaskShortcutWidget extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(
                   top: CommonDimens.MARGIN_40,
-                  left: CommonDimens.MARGIN_20,
-                  right: CommonDimens.MARGIN_20,
+                  left: CommonDimens.MARGIN_40,
+                  right: CommonDimens.MARGIN_40,
                 ),
                 child: CustomTextField(
                   null,
@@ -87,8 +90,54 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: CommonDimens.MARGIN_20,
+                      ),
+                      child: IconButton(
+                        highlightColor: Colors.transparent,
+                        tooltip: "Share List",
+                        icon: Icon(Icons.share),
+                        onPressed: () {
+                          try {
+                            AnalyticsUtils.sendAnalyticEvent(
+                                SHARE_LIST,
+                                {
+                                  "pageNumber": pageState.pageNumber,
+                                },
+                                "SHORTCUT_WIDGET");
+                            if (taskListState.taskList.length > 0) {
+                              Share.share(buildShareListText(taskListState));
+                            } else {
+                              Scaffold.of(context).removeCurrentSnackBar();
+                              Scaffold.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    "Oops, you cannot share an empty list",
+                                    style: CommonTextStyles.scaffoldTextStyle(
+                                        context),
+                                  ),
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor:
+                                      appState.currentTheme == lightTheme
+                                          ? CommonColors.scaffoldColor
+                                          : CommonColors.accentColor,
+                                ),
+                              );
+                            }
+                          } catch (ex) {}
+                        },
+                        visualDensity: VisualDensity.adaptivePlatformDensity,
+                      ),
+                    ),
                     OutlineButton(
                       onPressed: () async {
+                        AnalyticsUtils.sendAnalyticEvent(
+                            MORE_DETAILS,
+                            {
+                              "pageNumber": pageState.pageNumber,
+                            },
+                            "SHORTCUT_WIDGET");
                         if (pageState.pageNumber != 0) {
                           String taskTitle =
                               Provider.of<InitialTaskTitleProviderModel>(
@@ -144,6 +193,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                         left: CommonDimens.MARGIN_20,
                       ),
                       child: IconButton(
+                          tooltip: "Create Task",
                           icon: Icon(
                             Icons.send,
                             color: pageState.pageNumber == 0
@@ -152,6 +202,12 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                             semanticLabel: "Create Task",
                           ),
                           onPressed: () {
+                            AnalyticsUtils.sendAnalyticEvent(
+                                CREATE_TASK_SHORTCUT,
+                                {
+                                  "pageNumber": pageState.pageNumber,
+                                },
+                                "SHORTCUT_WIDGET");
                             // check if the user can create the task or not.
                             if (pageState.pageNumber != 0) {
                               if (totalTaskNumber <=
@@ -280,6 +336,17 @@ class CreateTaskShortcutWidget extends StatelessWidget {
       isCompleted: false,
     );
     return task;
+  }
+
+  String buildShareListText(TaskListHolderProvider taskListState) {
+    String taskListString = "Here is a list I've prepared\n";
+    for (int i = 0; i < taskListState.taskList.length; i++) {
+      taskListString += "${i + 1}. ${taskListState.taskList[i].taskTitle}";
+      if (i != taskListState.taskList.length - 1) {
+        taskListString += "\n";
+      }
+    }
+    return taskListString;
   }
 }
 

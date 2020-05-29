@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
@@ -257,6 +258,13 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                           } else {
                             widget.user.age += puzzle.puzzlePoints;
                           }
+                          AnalyticsUtils.sendAnalyticEvent(
+                              LEVEL_UP,
+                              {
+                                "userLevel": widget.user.age,
+                              },
+                              "SECRET_PUZLE");
+
                           setPuzzleSolution();
                           BlocProvider.of<LoginBloc>(context)
                               .add(LoginUserEvent(user: widget.user));

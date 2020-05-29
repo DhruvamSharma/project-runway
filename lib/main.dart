@@ -40,7 +40,6 @@ GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
 class MyApp extends StatelessWidget {
   final FirebaseAnalytics analytics = FirebaseAnalytics();
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

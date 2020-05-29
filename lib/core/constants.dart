@@ -27,3 +27,23 @@ const int PUZZLE_ID_INCREMENT_NUMBER = 13;
 // Notifications
 const String TASK_CHANNEL_ID = "TASK_NOTIFICATION";
 const String TASK_CHANNEL_NAME = "TASK_CHANNEL";
+
+
+
+// EVENT NAMES
+const String SIGN_IN = "sign_in";
+const String FOUND_PUZZLE = "found_puzzle";
+const String SHARE_LIST = "sharing_task_list";
+const String OPEN_SETTINGS = "open_settings";
+const String MORE_DETAILS = "more_detail_button";
+const String LINK_ACCOUNT = "link_account";
+const String SEE_STATS_IN_SETTINGS = "see_stats_in_setting";
+const String SEE_STATS_IN_HOME = "see_stats_in_home";
+const String THEME_CHANGE = "theme_change";
+const String BUG_REPORT = "report_bug";
+const String VIEW_APP_TUTORIAL = "view_app_tutorial";
+const String SHARE_APP = "share_app";
+const String READ_PUZZLE = "read_puzzle";
+const String LOG_OUT = "log_out";
+const String LEVEL_UP = "puzzle_level_up";
+const String CREATE_TASK_SHORTCUT = "create_task_through_shortcut";

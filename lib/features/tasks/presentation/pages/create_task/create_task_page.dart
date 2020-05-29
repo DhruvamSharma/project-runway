@@ -13,7 +13,6 @@ import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
-import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -202,7 +201,7 @@ class CreateTaskPage extends StatelessWidget {
                               child: ListTile(
                                 contentPadding: const EdgeInsets.all(0),
                                 title: Text(
-                                  "Noification Time",
+                                  "Notification Time",
                                   style: CommonTextStyles.taskTextStyle(context)
                                       .copyWith(
                                     color: appState.currentTheme.accentColor
@@ -226,18 +225,23 @@ class CreateTaskPage extends StatelessWidget {
                                 ),
                                 onTap: () {
                                   try {
-                                    selectTimeForNotification(newContext, runningDate, () {
-                                      Scaffold.of(newContext).showSnackBar(SnackBar(
+                                    selectTimeForNotification(
+                                        newContext, runningDate, () {
+                                      Scaffold.of(newContext)
+                                          .showSnackBar(SnackBar(
                                         content: Text(
                                           "Sorry, you cannot select this time",
-                                          style: CommonTextStyles.scaffoldTextStyle(newContext),
+                                          style: CommonTextStyles
+                                              .scaffoldTextStyle(newContext),
                                         ),
                                         behavior: SnackBarBehavior.floating,
                                         backgroundColor:
-                                        Provider.of<ThemeModel>(newContext, listen: false).currentTheme ==
-                                            lightTheme
-                                            ? CommonColors.scaffoldColor
-                                            : CommonColors.accentColor,
+                                            Provider.of<ThemeModel>(newContext,
+                                                            listen: false)
+                                                        .currentTheme ==
+                                                    lightTheme
+                                                ? CommonColors.scaffoldColor
+                                                : CommonColors.accentColor,
                                       ));
                                     }, () {});
                                   } catch (ex) {
@@ -289,7 +293,7 @@ class CreateTaskPage extends StatelessWidget {
         DateTime createdAt = DateTime.now();
         final task = TaskEntity(
           userId: "Dhruvam",
-          taskId: "hello",
+          taskId: Uuid().v1(),
           taskTitle: state.taskTitle,
           description: state.description,
           urgency: buildUrgency(state.urgency),

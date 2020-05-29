@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/auth_service.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
@@ -14,7 +14,6 @@ import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
-import 'package:project_runway/core/user_utility.dart';
 import 'package:project_runway/features/login/data/models/user_model.dart';
 import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 import 'package:project_runway/features/login/presentation/manager/bloc.dart';
@@ -22,8 +21,7 @@ import 'package:project_runway/features/login/presentation/manager/login_bloc_bl
 import 'package:project_runway/features/login/presentation/manager/login_bloc_event.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
 import 'package:project_runway/features/login/presentation/widgets/app_into.dart';
-import 'package:project_runway/features/stats/presentation/manager/bloc.dart';
-import 'package:project_runway/features/stats/presentation/manager/stats_event.dart';
+import 'package:project_runway/features/login/presentation/widgets/custom_list_tile.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/secret_puzzle_widget.dart';
 import 'package:provider/provider.dart';
@@ -145,57 +143,45 @@ class _ProfileRouteState extends State<ProfileRoute> {
                     child: Column(
                       children: <Widget>[
                         if (!widget.user.isVerified)
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: CommonDimens.MARGIN_20,
-                            ),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.all(
-                                CommonDimens.MARGIN_20,
-                              ),
-                              leading: Icon(
-                                Icons.link,
-                                color: appState.currentTheme.accentColor,
-                                size: 30,
-                              ),
-                              title: Text(
+                          CustomListTile(
+                            leadingIcon: Icons.link,
+                            onTap: () async {
+                              AnalyticsUtils.sendAnalyticEvent(
+                                  MORE_DETAILS, {}, "SETTING_SCREEN");
+                              await AuthService.signOutOfGoogle();
+                              FirebaseUser firebaseUser = await AuthService
+                                  .linkAnonymousAccountWithGoogleAuth();
+                              if (firebaseUser != null) {
+                                // build the UI again and hide
+                                // the Link with Google option
+                                setState(() {
+                                  widget.user.isVerified = true;
+                                });
+                                // Login the user
+                                BlocProvider.of<LoginBloc>(blocContext)
+                                    .add(LoginUserEvent(user: widget.user));
+                              } else {
+                                // show successful message
+                                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                  content: Text(
+                                    "Linking the accounts failed. Either"
+                                    " you don't have a stable internet"
+                                    " connection or the account is"
+                                    " already in use",
+                                    style: CommonTextStyles.scaffoldTextStyle(
+                                        context),
+                                  ),
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor:
+                                      appState.currentTheme == lightTheme
+                                          ? CommonColors.scaffoldColor
+                                          : CommonColors.accentColor,
+                                ));
+                              }
+                            },
+                            appState: appState,
+                            text:
                                 "Link your Google Account to use the full suite of features",
-                                style: CommonTextStyles.taskTextStyle(context),
-                              ),
-                              onTap: () async {
-                                await AuthService.signOutOfGoogle();
-                                FirebaseUser firebaseUser = await AuthService
-                                    .linkAnonymousAccountWithGoogleAuth();
-                                if (firebaseUser != null) {
-                                  // build the UI again and hide
-                                  // the Link with Google option
-                                  setState(() {
-                                    widget.user.isVerified = true;
-                                  });
-                                  // Login the user
-                                  BlocProvider.of<LoginBloc>(blocContext)
-                                      .add(LoginUserEvent(user: widget.user));
-                                } else {
-                                  // show successful message
-                                  _scaffoldKey.currentState
-                                      .showSnackBar(SnackBar(
-                                    content: Text(
-                                      "Linking the accounts failed. Either"
-                                      " you don't have a stable internet"
-                                      " connection or the account is"
-                                      " already in use",
-                                      style: CommonTextStyles.scaffoldTextStyle(
-                                          context),
-                                    ),
-                                    behavior: SnackBarBehavior.floating,
-                                    backgroundColor:
-                                        appState.currentTheme == lightTheme
-                                            ? CommonColors.scaffoldColor
-                                            : CommonColors.accentColor,
-                                  ));
-                                }
-                              },
-                            ),
                           ),
                         if (!widget.user.isVerified)
                           Divider(
@@ -203,52 +189,23 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                 ? CommonColors.dateTextColorLightTheme
                                 : CommonColors.dateTextColor,
                           ),
-                        ListTile(
-                          contentPadding: const EdgeInsets.all(
-                            CommonDimens.MARGIN_20,
-                          ),
-                          leading: Icon(
-                            Icons.airplanemode_active,
-                            color: appState.currentTheme.accentColor,
-                            size: 30,
-                          ),
-                          title: Text(
-                            "See your weekly stats and how you perform",
-                            style: CommonTextStyles.taskTextStyle(context),
-                          ),
+                        CustomListTile(
+                          leadingIcon: Icons.airplanemode_active,
                           onTap: () {
+                            AnalyticsUtils.sendAnalyticEvent(
+                                SEE_STATS_IN_SETTINGS, {}, "SETTING_SCREEN");
                             Navigator.pushNamed(context, StatsScreen.routeName);
                           },
+                          appState: appState,
+                          text: "See your weekly stats and how you perform",
                         ),
                         Divider(
                           color: appState.currentTheme == lightTheme
                               ? CommonColors.dateTextColorLightTheme
                               : CommonColors.dateTextColor,
                         ),
-                        ListTile(
-                          contentPadding: const EdgeInsets.all(
-                            CommonDimens.MARGIN_20,
-                          ),
-                          leading: Icon(
-                            Icons.lightbulb_outline,
-                            color: appState.currentTheme.accentColor,
-                            size: 30,
-                          ),
-                          title: Text(
-                            appState.currentTheme == lightTheme
-                                ? "Want to use dark theme?"
-                                : "Want to use light theme?",
-                            style: CommonTextStyles.taskTextStyle(context),
-                          ),
-                          trailing: Checkbox(
-                            value: appState.currentTheme == lightTheme,
-                            checkColor: CommonColors.smallAccentColor,
-                            materialTapTargetSize: MaterialTapTargetSize.padded,
-                            activeColor: CommonColors.toggleableActiveColor,
-                            onChanged: (value) {
-                              appState.toggleTheme();
-                            },
-                          ),
+                        CustomListTile(
+                          leadingIcon: Icons.lightbulb_outline,
                           onTap: () {
                             if (appState.currentTheme == lightTheme) {
                               SystemChrome.setSystemUIOverlayStyle(
@@ -262,28 +219,47 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               ));
                             }
                             appState.toggleTheme();
+                            AnalyticsUtils.sendAnalyticEvent(
+                                THEME_CHANGE,
+                                {
+                                  "changedToTheme":
+                                      appState.currentTheme == lightTheme
+                                          ? "light-theme"
+                                          : "dark-theme"
+                                },
+                                "SETTING_SCREEN");
                           },
+                          appState: appState,
+                          text: appState.currentTheme == lightTheme
+                              ? "Want to use dark theme?"
+                              : "Want to use light theme?",
+                          trailing: Theme(
+                            data: ThemeData(
+                                unselectedWidgetColor:
+                                    appState.currentTheme.accentColor),
+                            child: Checkbox(
+                              value: appState.currentTheme == lightTheme,
+                              checkColor: CommonColors.smallAccentColor,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.padded,
+                              activeColor: CommonColors.toggleableActiveColor,
+                              onChanged: (value) {
+                                appState.toggleTheme();
+                              },
+                            ),
+                          ),
                         ),
                         Divider(
                           color: appState.currentTheme == lightTheme
                               ? CommonColors.dateTextColorLightTheme
                               : CommonColors.dateTextColor,
                         ),
-                        ListTile(
-                          contentPadding: const EdgeInsets.all(
-                            CommonDimens.MARGIN_20,
-                          ),
-                          leading: Icon(
-                            Icons.bug_report,
-                            color: appState.currentTheme.accentColor,
-                            size: 30,
-                          ),
-                          title: Text(
-                            "Report a bug, or request a feature",
-                            style: CommonTextStyles.taskTextStyle(context),
-                          ),
+                        CustomListTile(
+                          leadingIcon: Icons.bug_report,
                           onTap: () {
                             try {
+                              AnalyticsUtils.sendAnalyticEvent(
+                                  BUG_REPORT, {}, "SETTING_SCREEN");
                               Wiredash.of(context).show();
                             } catch (ex) {
                               _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -300,55 +276,43 @@ class _ProfileRouteState extends State<ProfileRoute> {
                               ));
                             }
                           },
+                          appState: appState,
+                          text: "Report a bug, or request a feature",
                         ),
                         Divider(
                           color: appState.currentTheme == lightTheme
                               ? CommonColors.dateTextColorLightTheme
                               : CommonColors.dateTextColor,
                         ),
-                        ListTile(
-                          contentPadding: const EdgeInsets.all(
-                            CommonDimens.MARGIN_20,
-                          ),
-                          leading: Icon(
-                            Icons.cached,
-                            color: appState.currentTheme.accentColor,
-                            size: 30,
-                          ),
-                          title: Text(
-                            "View the app tutorial again",
-                            style: CommonTextStyles.taskTextStyle(context),
-                          ),
+                        CustomListTile(
+                          leadingIcon: Icons.cached,
                           onTap: () {
+                            AnalyticsUtils.sendAnalyticEvent(
+                                VIEW_APP_TUTORIAL, {}, "SETTING_SCREEN");
                             Navigator.pushNamed(
                                 context, AppIntroWidget.routeName);
                           },
+                          appState: appState,
+                          text: "View the app tutorial again",
                         ),
                         Divider(
                           color: appState.currentTheme == lightTheme
                               ? CommonColors.dateTextColorLightTheme
                               : CommonColors.dateTextColor,
                         ),
-                        ListTile(
-                          contentPadding: const EdgeInsets.all(
-                            CommonDimens.MARGIN_20,
-                          ),
-                          leading: Icon(
-                            Icons.share,
-                            color: appState.currentTheme.accentColor,
-                            size: 30,
-                          ),
-                          title: Text(
-                            "Share the app",
-                            style: CommonTextStyles.taskTextStyle(context),
-                          ),
+                        CustomListTile(
+                          leadingIcon: Icons.share,
                           onTap: () {
+                            AnalyticsUtils.sendAnalyticEvent(
+                                SHARE_APP, {}, "SETTING_SCREEN");
                             Share.share(
                               'Check out this great and simple To-Do app to manage productivity:\nhttps://play.google.com/store/apps/details?id=io.dhruvam.project_runway',
                               subject:
                                   'Look! A great and simple To Do app to manage productivity',
                             );
                           },
+                          appState: appState,
+                          text: "Share the app",
                         ),
                         if (sharedPreferences.containsKey(REFRESH_KEY) ||
                             widget.user.score != null)
@@ -359,87 +323,47 @@ class _ProfileRouteState extends State<ProfileRoute> {
                           ),
                         if (sharedPreferences.containsKey(REFRESH_KEY) ||
                             widget.user.score != null)
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 8.0,
-                              top: CommonDimens.MARGIN_20,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  margin: const EdgeInsets.only(
-                                    left: CommonDimens.MARGIN_20 - 4,
-                                  ),
-                                  color: CommonColors.smallAccentColor,
-                                  padding: const EdgeInsets.all(
-                                    CommonDimens.MARGIN_20 / 8,
-                                  ),
-                                  child: Text(
-                                    "Secret Puzzle",
-                                    style:
-                                        CommonTextStyles.badgeTextStyle(context)
-                                            .copyWith(
-                                                color:
-                                                    CommonColors.accentColor),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    bottom: CommonDimens.MARGIN_20,
-                                  ),
-                                  child: ListTile(
-                                    leading: Icon(
-                                      Icons.all_inclusive,
-                                      color: appState.currentTheme.accentColor,
-                                      size: 30,
-                                    ),
-                                    title: Text(
-                                      "Read the secret puzzle",
-                                      style: CommonTextStyles.taskTextStyle(
-                                          context),
-                                    ),
-                                    onTap: () {
-                                      Navigator.pushNamed(context,
-                                          SecretPuzzleWidget.routeName);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
+                          CustomListTile(
+                            leadingIcon: Icons.all_inclusive,
+                            onTap: () {
+                              double level = 0;
+                              try {
+                                level = widget.user.score / 13;
+                              } catch (ex) {
+                                // DO nothing
+                              }
+                              AnalyticsUtils.sendAnalyticEvent(
+                                  READ_PUZZLE,
+                                  {
+                                    "userLevel": level,
+                                  },
+                                  "SETTING_SCREEN");
+                              Navigator.pushNamed(
+                                  context, SecretPuzzleWidget.routeName);
+                            },
+                            appState: appState,
+                            text: "Read the secret puzzle",
                           ),
                         Divider(
                           color: appState.currentTheme == lightTheme
                               ? CommonColors.dateTextColorLightTheme
                               : CommonColors.dateTextColor,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: CommonDimens.MARGIN_40,
-                          ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(
-                              CommonDimens.MARGIN_20,
-                            ),
-                            leading: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 6.0, right: 10.0),
-                              child: Icon(
-                                Icons.error_outline,
-                                color: appState.currentTheme.accentColor,
-                                size: 30,
-                              ),
-                            ),
-                            title: Text(
-                              "Log Out",
-                              style: CommonTextStyles.taskTextStyle(context),
-                            ),
-                            onTap: () {
-                              BlocProvider.of<LoginBloc>(blocContext).add(
-                                  CheckIfUserExistsEvent(
-                                      googleId: widget.user.googleId));
-                            },
-                          ),
+                        CustomListTile(
+                          leadingIcon: Icons.error_outline,
+                          onTap: () {
+                            AnalyticsUtils.sendAnalyticEvent(
+                                LOG_OUT,
+                                {
+                                  "userScore": widget.user.age,
+                                },
+                                "SETTING_SCREEN");
+                            BlocProvider.of<LoginBloc>(blocContext).add(
+                                CheckIfUserExistsEvent(
+                                    googleId: widget.user.googleId));
+                          },
+                          appState: appState,
+                          text: "Log Out",
                         ),
                       ],
                     ),

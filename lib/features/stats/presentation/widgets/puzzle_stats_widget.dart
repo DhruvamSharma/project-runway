@@ -59,7 +59,7 @@ class _PuzzleStatsWidgetState extends State<PuzzleStatsWidget> {
             ));
         }
       },
-      child: (solvedPuzzleList != null && solvedPuzzleList.length > 2)
+      child: (solvedPuzzleList != null && solvedPuzzleList.length > 3)
           ? charts.TimeSeriesChart(
               seriesList(),
               animate: true,
