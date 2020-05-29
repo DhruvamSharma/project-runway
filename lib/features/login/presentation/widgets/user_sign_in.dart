@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/auth_service.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
@@ -80,7 +81,14 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                     padding: const EdgeInsets.symmetric(
                       horizontal: CommonDimens.MARGIN_20,
                     ),
-                    child: LinearProgressIndicator(),
+                    child: Theme(
+                      data: ThemeData.dark().copyWith(
+                        accentColor: CommonColors.chartColor,
+                      ),
+                      child: LinearProgressIndicator(
+                        backgroundColor: appState.currentTheme.accentColor,
+                      ),
+                    ),
                   ),
                 if (!isFindingUser)
                   Padding(
@@ -93,6 +101,8 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                           setState(() {
                             isSigningInAnonymously = true;
                           });
+                          AnalyticsUtils.sendAnalyticEvent(
+                              SIGN_IN, {"signIn": "ANONYMOUS"}, "SIGN_UP_USER");
                           // login the user anonymously so that the
                           // user can still user firebase products
                           final firebaseUser =
@@ -134,7 +144,14 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                         padding: const EdgeInsets.symmetric(
                           horizontal: CommonDimens.MARGIN_20,
                         ),
-                        child: LinearProgressIndicator(),
+                        child: Theme(
+                          data: ThemeData.dark().copyWith(
+                            accentColor: CommonColors.chartColor,
+                          ),
+                          child: LinearProgressIndicator(
+                            backgroundColor: appState.currentTheme.accentColor,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -164,19 +181,12 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
           horizontal: CommonDimens.MARGIN_20,
         ),
         child: Material(
-          color: appState.currentTheme.accentColor,
+          color: CommonColors.chartColor,
           borderRadius: BorderRadius.circular(5),
           child: InkWell(
             borderRadius: BorderRadius.circular(5),
             onTap: null,
             child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(5)),
-                border: Border.all(
-                  width: 1.0,
-                  color: CommonColors.disabledTaskTextColor,
-                ),
-              ),
               padding: const EdgeInsets.all(
                 CommonDimens.MARGIN_20 / 2,
               ),
@@ -197,7 +207,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                         "Signed in with Google",
                         style:
                             CommonTextStyles.badgeTextStyle(context).copyWith(
-                          color: appState.currentTheme.scaffoldBackgroundColor,
+                          color: CommonColors.accentColor,
                           fontSize: 16,
                         ),
                       ),
@@ -209,74 +219,83 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
           ),
         ),
       ),
-      secondChild: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () async {
-            setState(() {
-              isFindingUser = true;
-            });
-            await AuthService.signOutOfGoogle();
-            final firebaseUser = await AuthService.signInWithGoogle();
-            if (firebaseUser != null) {
-              userEntryState.disableForwardButton(true);
-              userEntryState.userPhotoUrl = firebaseUser.photoUrl;
-              userEntryState.googleId = firebaseUser.uid;
-              userEntryState.emailId = firebaseUser.email;
-              userEntryState.isVerified = true;
-              BlocProvider.of<LoginBloc>(blocContext)
-                  .add(CheckIfUserExistsEvent(googleId: firebaseUser.uid));
-            } else {
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(
-                  "Sorry, a problem occurred, please try again",
-                  style: CommonTextStyles.scaffoldTextStyle(context),
-                ),
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: appState.currentTheme == lightTheme
-                    ? CommonColors.scaffoldColor
-                    : CommonColors.accentColor,
-              ));
+      secondChild: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: CommonDimens.MARGIN_20,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(5),
+            onTap: () async {
               setState(() {
-                isFindingUser = false;
+                isFindingUser = true;
               });
-            }
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              border: Border.all(
-                width: 1.0,
-                color: CommonColors.disabledTaskTextColor,
-              ),
-            ),
-            padding: const EdgeInsets.all(
-              CommonDimens.MARGIN_20 / 2,
-            ),
-            margin: const EdgeInsets.symmetric(
-              horizontal: CommonDimens.MARGIN_20,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(
-                  "assets/google-logo-png-open-2000.png",
-                  height: 20,
-                  width: 20,
+              AnalyticsUtils.sendAnalyticEvent(
+                  SIGN_IN,
+                  {
+                    "signIn": "GOOGLE",
+                  },
+                  "SIGN_UP_USER");
+              await AuthService.signOutOfGoogle();
+              final firebaseUser = await AuthService.signInWithGoogle();
+              if (firebaseUser != null) {
+                userEntryState.disableForwardButton(true);
+                userEntryState.userPhotoUrl = firebaseUser.photoUrl;
+                userEntryState.googleId = firebaseUser.uid;
+                userEntryState.emailId = firebaseUser.email;
+                userEntryState.isVerified = true;
+                BlocProvider.of<LoginBloc>(blocContext)
+                    .add(CheckIfUserExistsEvent(googleId: firebaseUser.uid));
+              } else {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    "Sorry, a problem occurred, please try again",
+                    style: CommonTextStyles.scaffoldTextStyle(context),
+                  ),
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: appState.currentTheme == lightTheme
+                      ? CommonColors.scaffoldColor
+                      : CommonColors.accentColor,
+                ));
+                setState(() {
+                  isFindingUser = false;
+                });
+              }
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                border: Border.all(
+                  width: 1.0,
+                  color: CommonColors.disabledTaskTextColor,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: CommonDimens.MARGIN_20,
+              ),
+              padding: const EdgeInsets.all(
+                CommonDimens.MARGIN_20 / 2,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    "assets/google-logo-png-open-2000.png",
+                    height: 20,
+                    width: 20,
                   ),
-                  child: Text(
-                    "Sign in with Google",
-                    style: CommonTextStyles.badgeTextStyle(context).copyWith(
-                      color: appState.currentTheme.accentColor,
-                      fontSize: 16,
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: CommonDimens.MARGIN_20,
                     ),
-                  ),
-                )
-              ],
+                    child: Text(
+                      "Sign in with Google",
+                      style: CommonTextStyles.badgeTextStyle(context).copyWith(
+                        color: appState.currentTheme.accentColor,
+                        fontSize: 16,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),

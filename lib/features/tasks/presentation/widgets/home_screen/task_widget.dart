@@ -40,6 +40,7 @@ class _TaskWidgetState extends State<TaskWidget> {
     );
     return Material(
       child: InkWell(
+        highlightColor: Colors.transparent,
         onTap: () async {
           final taskEntity = await showCupertinoModalPopup(
             context: context,
@@ -92,7 +93,6 @@ class _TaskWidgetState extends State<TaskWidget> {
           if (taskEntity != null &&
               taskEntity is TaskEntity &&
               taskEntity.isDeleted) {
-//            taskEntity.isCompleted = isCompleted;
             BlocProvider.of<HomeScreenTaskBloc>(context)
                 .add(DeleteTaskEvent(task: taskEntity));
             taskListState.deleteTaskItemFromList(taskEntity);
@@ -126,12 +126,18 @@ class _TaskWidgetState extends State<TaskWidget> {
                       style: selectTaskStyle(taskState),
                     ),
                   ),
-                  Checkbox(
-                    value: isCompleted,
-                    checkColor: appState.currentTheme.accentColor,
-                    materialTapTargetSize: MaterialTapTargetSize.padded,
-                    activeColor: selectCheckStyleColor(taskState),
-                    onChanged: selectCheckBoxState(taskState),
+                  Theme(
+                    data: ThemeData(
+                        focusColor: Colors.amber,
+                        unselectedWidgetColor:
+                            appState.currentTheme.accentColor),
+                    child: Checkbox(
+                      value: isCompleted,
+                      checkColor: appState.currentTheme.accentColor,
+                      materialTapTargetSize: MaterialTapTargetSize.padded,
+                      activeColor: selectCheckStyleColor(taskState),
+                      onChanged: selectCheckBoxState(taskState),
+                    ),
                   ),
                 ],
               ),
@@ -142,12 +148,15 @@ class _TaskWidgetState extends State<TaskWidget> {
     );
   }
 
-  Function selectCheckBoxState(TaskHolderProviderModel taskState) {
+  Function selectCheckBoxState(
+    TaskHolderProviderModel taskState,
+  ) {
     return (completeStatus) {
       // update the status
       isCompleted = completeStatus;
       // update the update time
       taskState.taskEntity.lastUpdatedAt = DateTime.now();
+      taskState.taskEntity.isCompleted = isCompleted;
       BlocProvider.of<HomeScreenTaskBloc>(context)
           .add(CompleteTaskEvent(task: taskState.taskEntity));
     };

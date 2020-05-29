@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
@@ -58,11 +59,14 @@ class _HomeScreenState extends State<HomeScreen>
               radius: 15,
               backgroundColor: Colors.transparent,
               child: IconButton(
+                  tooltip: "Statistics",
                   icon: Icon(
                     Icons.airplanemode_active,
                     color: state.currentTheme.accentColor,
                   ),
                   onPressed: () {
+                    AnalyticsUtils.sendAnalyticEvent(
+                        SEE_STATS_IN_HOME, {}, "HOME_SCREEN");
                     Navigator.pushNamed(context, StatsScreen.routeName);
                   }),
             ),
@@ -70,11 +74,14 @@ class _HomeScreenState extends State<HomeScreen>
               padding: const EdgeInsets.symmetric(
                   horizontal: CommonDimens.MARGIN_20),
               child: IconButton(
+                  tooltip: "Settings",
                   icon: Icon(
                     Icons.settings,
                     color: state.currentTheme.accentColor,
                   ),
                   onPressed: () async {
+                    AnalyticsUtils.sendAnalyticEvent(
+                        OPEN_SETTINGS, {}, "HOME_SCREEN");
                     Navigator.pushNamed(context, ProfileRoute.routeName);
                   }),
             ),
@@ -98,28 +105,24 @@ class _HomeScreenState extends State<HomeScreen>
               child: GestureDetector(
                 onTap: () {
                   if (!sharedPreferences.containsKey(REFRESH_KEY) &&
-                      widget.user.score == null) openSecretPuzzleDoor(state);
+                      widget.user.score == null) {
+                    int days = 0;
+                    try {
+                      days = DateTime.now()
+                          .difference(widget.user.createdAt)
+                          .inDays;
+                    } catch (ex) {
+                      // Do nothing
+                    }
+                    AnalyticsUtils.sendAnalyticEvent(
+                        FOUND_PUZZLE, {"numberOfDays": days}, "HOME_SCREEN");
+                    openSecretPuzzleDoor(state);
+                  }
                 },
                 child: Text(
                   APP_NAME.toUpperCase(),
                   style: CommonTextStyles.headerTextStyle(context),
                   textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: SmoothPageIndicator(
-                  controller: _controller,
-                  count: 3,
-                  effect: ExpandingDotsEffect(
-                    radius: 10,
-                    dotHeight: 7,
-                    dotWidth: 7,
-                    activeDotColor: state.currentTheme.accentColor,
-                  ),
                 ),
               ),
             ),
@@ -145,6 +148,31 @@ class _HomeScreenState extends State<HomeScreen>
                     pageNumber: 2,
                   ),
                 ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: 30,
+                color: state.currentTheme.scaffoldBackgroundColor,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: CommonDimens.MARGIN_20,
+                  ),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SmoothPageIndicator(
+                      controller: _controller,
+                      count: 3,
+                      effect: ExpandingDotsEffect(
+                        radius: 10,
+                        dotHeight: 7,
+                        dotWidth: 7,
+                        activeDotColor: CommonColors.chartColor,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
@@ -220,6 +248,7 @@ class _HomeScreenState extends State<HomeScreen>
                                       .copyWith(),
                                 ),
                                 onPressed: () {
+                                  Navigator.pop(context);
                                   Navigator.pushNamed(
                                       context, ProfileRoute.routeName);
                                 },

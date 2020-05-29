@@ -58,7 +58,7 @@ class _StatsWidgetState extends State<StatsWidget> {
           if (state.message == NO_INTERNET)
             Scaffold.of(context).showSnackBar(SnackBar(
               content: Text(
-                "Sorry, you do not have an internet connection",
+                "Sorry, you do not have a stable internet connection",
                 style: CommonTextStyles.scaffoldTextStyle(context),
               ),
               behavior: SnackBarBehavior.floating,
@@ -109,11 +109,7 @@ class _StatsWidgetState extends State<StatsWidget> {
             ),
             if (isLoading)
               // Load a Lottie file from your assets
-              Lottie.asset(
-                appState.currentTheme == lightTheme
-                    ? 'assets/graph-statistics-solid.json'
-                    : "assets/lf30_editor_2qKBQS.json",
-              ),
+              Lottie.asset("assets/loading_stats_animation.json", height: 200),
             if (!isLoading)
               Padding(
                 padding: const EdgeInsets.only(
@@ -151,7 +147,7 @@ class _StatsWidgetState extends State<StatsWidget> {
                         // Optionally provide a measure formatter to format the measure value.
                         // If none is specified the value is formatted as a decimal.
                         measureFormatter: (num value) {
-                          return value == null ? '-' : '$value';
+                          return value == null ? '-' : '${value.toInt()}';
                         },
                       ),
                     ],
@@ -166,25 +162,49 @@ class _StatsWidgetState extends State<StatsWidget> {
                 height: 1,
               ),
             ),
-            Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_20,
+            if (!isLoading && userEntity.score != null && userEntity.score != 0)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_20,
+                        ),
+                        child: Text(
+                          "Puzzles Solved",
+                          style: CommonTextStyles.taskTextStyle(context),
+                        ),
+                      ),
+                      if (isLoading)
+                        ScoreWidget(0)
+                      else
+                        ScoreWidget(userEntity.score.toInt() ~/
+                            PUZZLE_ID_INCREMENT_NUMBER),
+                    ],
                   ),
-                  child: Text(
-                    "Puzzles Solved",
-                    style: CommonTextStyles.taskTextStyle(context),
-                  ),
-                ),
-                if (isLoading)
-                  ScoreWidget(0)
-                else
-                  ScoreWidget(
-                      userEntity.score.toInt() ~/ PUZZLE_ID_INCREMENT_NUMBER),
-              ],
-            ),
-            if (!isLoading)
+                  if (userEntity.age != null)
+                    Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: CommonDimens.MARGIN_20,
+                          ),
+                          child: Text(
+                            "Score earned",
+                            style: CommonTextStyles.taskTextStyle(context),
+                          ),
+                        ),
+                        if (isLoading)
+                          ScoreWidget(0)
+                        else
+                          ScoreWidget(userEntity.age),
+                      ],
+                    ),
+                ],
+              ),
+            if (!isLoading && userEntity.score != null && userEntity.score != 0)
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: CommonDimens.MARGIN_20,
@@ -221,13 +241,13 @@ class _StatsWidgetState extends State<StatsWidget> {
         createdTaskData.add(TaskAction(
             weekTranslator(dayOfTheWeek),
             statsTable.dayStats[dayOfTheWeek - 1].tasksCreated,
-            Colors.blueGrey));
+            CommonColors.chartColor));
 //        deletedTaskData.add(TaskAction(weekTranslator(dayOfTheWeek),
 //            statsTable.dayStats[dayOfTheWeek - 1].tasksDeleted, Colors.indigo));
         completedTaskData.add(TaskAction(
           weekTranslator(dayOfTheWeek),
           statsTable.dayStats[dayOfTheWeek - 1].tasksCompleted,
-          appState.currentTheme.accentColor,
+          CommonColors.introColor,
         ));
       }
     }

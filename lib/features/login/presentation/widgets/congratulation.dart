@@ -99,7 +99,14 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
                     ),
                     child: SizedBox(
                       width: 200,
-                      child: LinearProgressIndicator(),
+                      child: Theme(
+                        data: ThemeData.dark().copyWith(
+                          accentColor: CommonColors.chartColor,
+                        ),
+                        child: LinearProgressIndicator(
+                          backgroundColor: appState.currentTheme.accentColor,
+                        ),
+                      ),
                     ),
                   ),
               ],

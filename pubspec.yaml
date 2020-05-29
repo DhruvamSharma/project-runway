@@ -11,7 +11,7 @@ description: A clean TODO application
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.1.32+7
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
@@ -60,7 +60,15 @@ dependencies:
   firebase_analytics: ^5.0.11
   # caching images
   cached_network_image: ^2.2.0+1
+  # sending notifications from
+  # user's device and scheduling
   flutter_local_notifications: ^1.4.3
+  # share app
+  share: ^0.6.4+3
+  # performance monitoring
+  firebase_performance: ^0.3.1+8
+  # user feedback tool
+  wiredash: 0.0.1
 
 dev_dependencies:
   flutter_test:
@@ -81,17 +89,17 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/google-logo-png-open-2000.png
-    - assets/graph-statistics-solid.json
     - assets/lf30_editor_CH6Lht.json
     - assets/lf30_editor_tLnnBp.json
-    - assets/lf30_editor_2qKBQS.json
     - assets/hand_animation_dark.json
     - assets/hand_animation_light.json
-    - assets/intro_graph_light.png
-    - assets/intro_graph_dark.png
-    - assets/intro_pedestal_light.png
-    - assets/intro_pedestal_dark.png
+    - assets/intro_graph.png
+    - assets/intro_pedestal.png
+    - assets/intro_puzzle.png
     - assets/confetti_animation.json
+    - assets/no_new_puzzle_animation.json
+    - assets/loading_stats_animation.json
+    - assets/account_not_linked_animation.json
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
