@@ -1,13 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
-import 'package:project_runway/core/common_ui/custom_text_field.dart';
-import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
@@ -15,16 +12,11 @@ import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/data/models/task_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
-import 'package:project_runway/features/tasks/domain/entities/task_list_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
-import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
-import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/create_task_shortcut_widget.dart';
-import 'package:project_runway/features/tasks/presentation/widgets/home_screen/home_screen.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CurrentTaskPage extends StatefulWidget {
   @override
@@ -70,93 +62,7 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
         builder: (providerContext) {
           return BlocListener<HomeScreenTaskBloc, TaskBlocState>(
             listener: (_, state) async {
-              if (state is LoadedHomeScreenAllTasksState) {
-                setState(() {
-                  isLoadingTasks = false;
-                });
-                Provider.of<TaskListHolderProvider>(providerContext,
-                        listen: false)
-                    .assignTaskList(state.taskListEntity.taskList);
-              }
-
-              if (state is ErrorHomeScreenAllTasksState) {
-                // show error
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                    state.message,
-                    style: CommonTextStyles.scaffoldTextStyle(context),
-                  ),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: appState.currentTheme == lightTheme
-                      ? CommonColors.scaffoldColor
-                      : CommonColors.accentColor,
-                ));
-                // stop loading
-                setState(() {
-                  isLoadingTasks = false;
-                });
-                // give an empty list
-                Provider.of<TaskListHolderProvider>(providerContext,
-                        listen: false)
-                    .assignTaskList([]);
-              }
-
-              if (state is LoadedCreateScreenCreateTaskState) {
-                Provider.of<TaskListHolderProvider>(providerContext,
-                        listen: false)
-                    .insertTaskToList(state.taskEntity);
-              }
-
-              if (state is LoadedHomeScreenCompleteTaskState) {
-                for (int i = 0;
-                    i <
-                        Provider.of<TaskListHolderProvider>(providerContext,
-                                listen: false)
-                            .taskList
-                            .length;
-                    i++) {
-                  // make the mutable list task complete or incomplete as requested
-                  if (Provider.of<TaskListHolderProvider>(providerContext,
-                              listen: false)
-                          .taskList[i]
-                          .taskId ==
-                      state.taskEntity.taskId) {
-                    Provider.of<TaskListHolderProvider>(providerContext,
-                            listen: false)
-                        .taskList[i]
-                        .isCompleted = !Provider.of<TaskListHolderProvider>(
-                            providerContext,
-                            listen: false)
-                        .taskList[i]
-                        .isCompleted;
-                    break;
-                  }
-                }
-
-                setState(() {
-                  Provider.of<TaskListHolderProvider>(providerContext,
-                          listen: false)
-                      .taskList
-                      .sort((a, b) => compareListItems(a, b));
-                });
-              }
-              if (state is ErrorHomeScreenCompleteTaskState) {
-                Scaffold.of(context).removeCurrentSnackBar();
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                    state.message,
-                    style: CommonTextStyles.scaffoldTextStyle(context),
-                  ),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: appState.currentTheme == lightTheme
-                      ? CommonColors.scaffoldColor
-                      : CommonColors.accentColor,
-                ));
-              }
-
-              if (state is ErrorCreateScreenCreateTaskState) {
-                print(state.message);
-              }
+              listenForBlocEvents(providerContext, state, appState);
             },
             child: isLoadingTasks
                 ? buildLoadingAnimation(appState)
@@ -206,33 +112,8 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
                                           listen: false)
                                       .taskList
                                       .isNotEmpty)
-                                    return SizeTransition(
-                                      sizeFactor: animation,
-                                      child: ChangeNotifierProvider<
-                                          TaskHolderProviderModel>(
-                                        key: ValueKey(Provider.of<
-                                                        TaskListHolderProvider>(
-                                                    providerContext,
-                                                    listen: false)
-                                                .taskList
-                                                .isEmpty
-                                            ? ""
-                                            : Provider.of<
-                                                        TaskListHolderProvider>(
-                                                    providerContext,
-                                                    listen: false)
-                                                .taskList[i]
-                                                .taskId),
-                                        create: (context) =>
-                                            TaskHolderProviderModel(
-                                                taskEntity: Provider.of<
-                                                            TaskListHolderProvider>(
-                                                        providerContext,
-                                                        listen: false)
-                                                    .taskList[i]),
-                                        child: TaskWidget(),
-                                      ),
-                                    );
+                                    return buildTaskItem(
+                                        providerContext, animation, i);
                                   else
                                     return Container();
                                 },
@@ -252,6 +133,41 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
         },
       ),
     );
+  }
+
+  buildTaskItem(BuildContext providerContext, Animation animation, int i) {
+    try {
+      return Padding(
+        padding: const EdgeInsets.only(
+          top: CommonDimens.MARGIN_20,
+        ),
+        child: SizeTransition(
+          sizeFactor: animation,
+          child: ChangeNotifierProvider<TaskHolderProviderModel>(
+            key: ValueKey(Provider.of<TaskListHolderProvider>(providerContext,
+                        listen: false)
+                    .taskList
+                    .isEmpty
+                ? UniqueKey()
+                : Provider.of<TaskListHolderProvider>(providerContext,
+                        listen: false)
+                    .taskList[i]
+                    .taskId),
+            create: (context) => TaskHolderProviderModel(
+                taskEntity: Provider.of<TaskListHolderProvider>(providerContext,
+                        listen: false)
+                    .taskList[i]),
+            child: TaskWidget(),
+          ),
+        ),
+      );
+    } catch (ex) {
+      // fetch the tasks again, if any error occurs
+      AnalyticsUtils.sendAnalyticEvent(
+          "VIEW_LIST_ERROR", {"error": ex.toString()}, "Current_Task_List");
+      getAllTasks();
+      return Container();
+    }
   }
 
   Future<Null> getAllTasks() {
@@ -307,6 +223,68 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
       return Container();
     }
   }
+
+  void listenForBlocEvents(
+    BuildContext providerContext,
+    TaskBlocState state,
+    ThemeModel appState,
+  ) {
+    if (state is LoadedHomeScreenAllTasksState) {
+      setState(() {
+        isLoadingTasks = false;
+        _animationController.stop();
+      });
+      Provider.of<TaskListHolderProvider>(providerContext, listen: false)
+          .assignTaskList(state.taskListEntity.taskList);
+    }
+
+    if (state is ErrorHomeScreenAllTasksState) {
+      // show error
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(
+          state.message,
+          style: CommonTextStyles.scaffoldTextStyle(context),
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: appState.currentTheme == lightTheme
+            ? CommonColors.scaffoldColor
+            : CommonColors.accentColor,
+      ));
+      // stop loading
+      setState(() {
+        isLoadingTasks = false;
+        _animationController.stop();
+      });
+      // give an empty list
+      Provider.of<TaskListHolderProvider>(providerContext, listen: false)
+          .assignTaskList([]);
+    }
+
+    if (state is LoadedHomeScreenCompleteTaskState) {
+      setState(() {
+        Provider.of<TaskListHolderProvider>(providerContext, listen: false)
+            .taskList
+            .sort((a, b) => compareListItems(a, b));
+      });
+    }
+    if (state is ErrorHomeScreenCompleteTaskState) {
+      Scaffold.of(context).removeCurrentSnackBar();
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(
+          state.message,
+          style: CommonTextStyles.scaffoldTextStyle(context),
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: appState.currentTheme == lightTheme
+            ? CommonColors.scaffoldColor
+            : CommonColors.accentColor,
+      ));
+    }
+
+    if (state is ErrorCreateScreenCreateTaskState) {
+//                print(state.message);
+    }
+  }
 }
 
 class TaskHolderProviderModel extends ChangeNotifier {
@@ -332,8 +310,15 @@ class TaskListHolderProvider extends ChangeNotifier {
   }
 
   void insertTaskToList(TaskEntity taskEntity) {
-    taskList.insert(0, taskEntity);
-    listState.currentState.insertItem(0);
+    TaskModel taskModel = convertTaskEntityToModel(taskEntity);
+    try {
+      this.taskList.insert(0, taskModel);
+      this.listState.currentState.insertItem(0);
+    } catch (Ex) {
+      // Do nothing
+      AnalyticsUtils.sendAnalyticEvent(
+          "INSERT_LIST_ERROR", {}, "Current_Task_List");
+    }
     notifyListeners();
   }
 
@@ -376,9 +361,31 @@ class TaskListHolderProvider extends ChangeNotifier {
       ),
     );
   }
+
+  TaskModel convertTaskEntityToModel(TaskEntity taskEntity) {
+    return TaskModel(
+      userId: taskEntity.userId,
+      taskId: taskEntity.taskId,
+      taskTitle: taskEntity.taskTitle,
+      description: taskEntity.description,
+      urgency: taskEntity.urgency,
+      tag: taskEntity.tag,
+      notificationTime: taskEntity.notificationTime,
+      createdAt: taskEntity.createdAt,
+      runningDate: taskEntity.runningDate,
+      lastUpdatedAt: taskEntity.lastUpdatedAt,
+      isSynced: taskEntity.isSynced,
+      isDeleted: taskEntity.isDeleted,
+      isMovable: taskEntity.isMovable,
+      isCompleted: taskEntity.isCompleted,
+    );
+  }
 }
 
 int compareListItems(TaskEntity a, TaskEntity b) {
+//  if a < b, result should be < 0,
+//  if a = b, result should be = 0, and
+//  if a > b, result should be > 0.
   int positiveOrNegativeIndex = 0;
   if (a.isCompleted && !b.isCompleted) {
     positiveOrNegativeIndex = 1;
@@ -388,11 +395,21 @@ int compareListItems(TaskEntity a, TaskEntity b) {
     positiveOrNegativeIndex = -1;
   }
 
+  if (!a.isCompleted && !b.isCompleted) {
+    if (a.urgency > b.urgency) {
+      positiveOrNegativeIndex = 1;
+    } else if (a.urgency < b.urgency) {
+      positiveOrNegativeIndex = -1;
+    } else {
+      positiveOrNegativeIndex = 0;
+    }
+  }
+
   if (a.isCompleted && b.isCompleted) {
     if (a.urgency > b.urgency) {
-      positiveOrNegativeIndex = -1;
-    } else if (a.urgency < b.urgency) {
       positiveOrNegativeIndex = 1;
+    } else if (a.urgency < b.urgency) {
+      positiveOrNegativeIndex = -1;
     } else {
       positiveOrNegativeIndex = 0;
     }

@@ -13,7 +13,6 @@ import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
-import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -84,6 +83,15 @@ class CreateTaskPage extends StatelessWidget {
                                 style:
                                     CommonTextStyles.headerTextStyle(context),
                                 textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: CommonDimens.MARGIN_20,
+                              ),
+                              child: Text(
+                                beautifyDate(runningDate ?? ""),
+                                style: CommonTextStyles.dateTextStyle(context),
                               ),
                             ),
                             Padding(
@@ -193,7 +201,7 @@ class CreateTaskPage extends StatelessWidget {
                               child: ListTile(
                                 contentPadding: const EdgeInsets.all(0),
                                 title: Text(
-                                  "Noification Time",
+                                  "Notification Time",
                                   style: CommonTextStyles.taskTextStyle(context)
                                       .copyWith(
                                     color: appState.currentTheme.accentColor
@@ -216,7 +224,29 @@ class CreateTaskPage extends StatelessWidget {
                                       CommonTextStyles.disabledTaskTextStyle(),
                                 ),
                                 onTap: () {
-                                  selectTimeForNotification(newContext);
+                                  try {
+                                    selectTimeForNotification(
+                                        newContext, runningDate, () {
+                                      Scaffold.of(newContext)
+                                          .showSnackBar(SnackBar(
+                                        content: Text(
+                                          "Sorry, you cannot select this time",
+                                          style: CommonTextStyles
+                                              .scaffoldTextStyle(newContext),
+                                        ),
+                                        behavior: SnackBarBehavior.floating,
+                                        backgroundColor:
+                                            Provider.of<ThemeModel>(newContext,
+                                                            listen: false)
+                                                        .currentTheme ==
+                                                    lightTheme
+                                                ? CommonColors.scaffoldColor
+                                                : CommonColors.accentColor,
+                                      ));
+                                    }, () {});
+                                  } catch (ex) {
+                                    // Do something
+                                  }
                                 },
                               ),
                             ),
@@ -225,7 +255,7 @@ class CreateTaskPage extends StatelessWidget {
                                   appState.currentTheme.scaffoldBackgroundColor,
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                  top: CommonDimens.MARGIN_80,
+                                  top: CommonDimens.MARGIN_40,
                                   bottom: CommonDimens.MARGIN_20,
                                 ),
                                 child: MaterialButton(
@@ -263,7 +293,7 @@ class CreateTaskPage extends StatelessWidget {
         DateTime createdAt = DateTime.now();
         final task = TaskEntity(
           userId: "Dhruvam",
-          taskId: "hello",
+          taskId: Uuid().v1(),
           taskTitle: state.taskTitle,
           description: state.description,
           urgency: buildUrgency(state.urgency),
@@ -328,51 +358,6 @@ class CreateTaskPage extends StatelessWidget {
       urgencyInt = DEFAULT_URGENCY;
     }
     return urgencyInt;
-  }
-
-  void selectTimeForNotification(BuildContext newContext) async {
-    TimeOfDay timeOfDay = await showTimePicker(
-        context: newContext,
-        initialTime: TimeOfDay.now(),
-        builder: (context, child) {
-          return Theme(
-            data: ThemeData.dark().copyWith(
-              accentColor: Colors.amber,
-            ),
-            child: child,
-          );
-        });
-    if (timeOfDay != null) {
-      int nowTime = TimeOfDay.now().minute + TimeOfDay.now().hour * 60;
-      int selectedTime = timeOfDay.minute + timeOfDay.hour * 60;
-      if (selectedTime - nowTime <= 0) {
-        Scaffold.of(newContext).showSnackBar(SnackBar(
-          content: Text(
-            "Sorry, you cannot select this time",
-            style: CommonTextStyles.scaffoldTextStyle(newContext),
-          ),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor:
-              Provider.of<ThemeModel>(newContext, listen: false).currentTheme ==
-                      lightTheme
-                  ? CommonColors.scaffoldColor
-                  : CommonColors.accentColor,
-        ));
-      } else {
-        // create properly formatted time
-        DateTime scheduledTime = DateTime(
-          runningDate.year,
-          runningDate.month,
-          runningDate.day,
-          timeOfDay.hour,
-          timeOfDay.minute,
-        );
-        print(scheduledTime);
-        // update the notification
-        Provider.of<TaskDetailProviderModel>(newContext, listen: false)
-            .assignNotificationTime(scheduledTime);
-      }
-    }
   }
 }
 

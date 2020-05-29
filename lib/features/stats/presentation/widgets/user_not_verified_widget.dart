@@ -28,15 +28,19 @@ class _UserNotVerifiedWidgetState extends State<UserNotVerifiedWidget> {
             child: SizedBox(
               height: 300,
               child: AnimatedCrossFade(
-                firstChild: Center(child: Padding(
-                  padding: const EdgeInsets.only(top: CommonDimens.MARGIN_80 * 2, left: CommonDimens.MARGIN_40, right: CommonDimens.MARGIN_40,),
+                firstChild: Center(
+                    child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_80 * 2,
+                    left: CommonDimens.MARGIN_40,
+                    right: CommonDimens.MARGIN_40,
+                  ),
                   child: LinearProgressIndicator(),
                 )),
-                secondChild: Lottie.network(
-                    "https://assets9.lottiefiles.com/packages/lf20_v4d0iG.json",
+                secondChild: Lottie.asset(
+                    "assets/account_not_linked_animation.json",
                     fit: BoxFit.cover,
-                    height: 300,
-                    onLoaded: (composition) {
+                    height: 300, onLoaded: (composition) {
                   setState(() {
                     isLoadingAnimation = false;
                   });
@@ -55,10 +59,8 @@ class _UserNotVerifiedWidgetState extends State<UserNotVerifiedWidget> {
             ),
             child: Text(
               "Statistics tools not turned on",
-              style: CommonTextStyles.loginTextStyle(context).copyWith(
-                letterSpacing: 3,
-                fontWeight: FontWeight.w900
-              ),
+              style: CommonTextStyles.loginTextStyle(context)
+                  .copyWith(letterSpacing: 3, fontWeight: FontWeight.w900),
               textAlign: TextAlign.center,
             ),
           ),
@@ -74,23 +76,6 @@ class _UserNotVerifiedWidgetState extends State<UserNotVerifiedWidget> {
                 fontWeight: FontWeight.w200,
               ),
               textAlign: TextAlign.center,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(CommonDimens.MARGIN_40),
-            child: MaterialButton(
-              child: Center(
-                child: Text(
-                  "Go Back",
-                  style: CommonTextStyles.scaffoldTextStyle(context).copyWith(
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              color: appState.currentTheme.accentColor,
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
             ),
           ),
         ],

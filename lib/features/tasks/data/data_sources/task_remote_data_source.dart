@@ -45,16 +45,12 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       final task = _addUserId(taskModel);
       final syncedTask = markTaskAsSynced(task);
       // create the document
-      final uploadedDocument =
-          await firestore.collection(taskCollection).add(syncedTask.toJson());
-      // Do not wait for this to finish
-      // Update the task id into the database
       await firestore
           .collection(taskCollection)
-          .document(uploadedDocument.documentID)
-          .updateData({"taskId": uploadedDocument.documentID});
-      // add this taskId into the model
-      final response = _updateTaskId(task, uploadedDocument.documentID);
+          .document(syncedTask.taskId)
+          .setData(syncedTask.toJson());
+      // for the sake of consistency
+      final response = syncedTask;
       return response;
     } on Exception {
       throw ServerException(message: "Error occurred during task transaction");

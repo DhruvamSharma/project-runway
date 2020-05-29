@@ -26,7 +26,9 @@ class TaskBadge extends StatelessWidget {
       ),
       child: Text(
         taskState.taskEntity.tag,
-        style: CommonTextStyles.badgeTextStyle(context),
+        style: CommonTextStyles.badgeTextStyle(context).copyWith(
+          color: CommonColors.accentColor,
+        ),
       ),
     );
   }
@@ -36,9 +38,7 @@ class TaskBadge extends StatelessWidget {
     if (isCompleted) {
       badgeColor = CommonColors.disabledTaskTextColor;
     } else {
-      badgeColor = appState.currentTheme == lightTheme
-          ? CommonColors.taskBadgeColorLightTheme
-          : CommonColors.taskBadgeColor;
+      badgeColor = CommonColors.chartColor;
     }
 
     // calculating if the task is for a previous day

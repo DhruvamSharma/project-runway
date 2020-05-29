@@ -4,6 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
+import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
@@ -37,6 +39,8 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
   bool isLoading = true;
   String puzzleSolution;
   PuzzleModel puzzle;
+  String puzzleFailure;
+  bool isSolved = false;
   @override
   void initState() {
     int puzzleId;
@@ -71,8 +75,8 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
           if (state is ErrorGetPuzzleState) {
             setState(() {
               isLoading = false;
+              puzzleFailure = state.message;
             });
-            print("puzzle error ${state.message}");
           }
         },
         child: Stack(
@@ -97,12 +101,12 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                       bottom: CommonDimens.MARGIN_40,
                     ),
                     child: Text(
-                      "Secret".toUpperCase(),
+                      "PUZZLE".toUpperCase(),
                       style: CommonTextStyles.headerTextStyle(context),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  if (!isLoading && puzzle != null)
+                  if (!isLoading && puzzle != null && !isSolved)
                     Column(
                       children: <Widget>[
                         Padding(
@@ -111,7 +115,7 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                             right: CommonDimens.MARGIN_20,
                           ),
                           child: Text(
-                            "Here is your secret puzzle ${puzzle.puzzlePoints} points",
+                            "Here is your secret puzzle for ${puzzle.puzzlePoints} points",
                             style: CommonTextStyles.taskTextStyle(context),
                             textAlign: TextAlign.center,
                           ),
@@ -148,8 +152,14 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                               return Padding(
                                 padding: const EdgeInsets.only(
                                     top: CommonDimens.MARGIN_80),
-                                child: LinearProgressIndicator(
-                                  value: progress.progress,
+                                child: Theme(
+                                  data: ThemeData.dark().copyWith(
+                                    accentColor: CommonColors.chartColor,
+                                  ),
+                                  child: LinearProgressIndicator(
+                                    backgroundColor:
+                                        appState.currentTheme.accentColor,
+                                  ),
                                 ),
                               );
                             },
@@ -157,10 +167,53 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                         ),
                       ],
                     ),
+                  if (puzzleFailure == NO_NEW_PUZZLE_ERROR || isSolved)
+                    Container(
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: CommonDimens.MARGIN_20,
+                              right: CommonDimens.MARGIN_20,
+                            ),
+                            child: Text(
+                              "Hey, you've solved your last puzzle. Look out for this place for more new puzzles",
+                              style: CommonTextStyles.taskTextStyle(context),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: CommonDimens.MARGIN_40,
+                            ),
+                            child: Lottie.asset(
+                              "assets/no_new_puzzle_animation.json",
+                              height: 200,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (puzzleFailure == NO_NEW_PUZZLE_ERROR || isSolved)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: CommonDimens.MARGIN_40,
+                      ),
+                      child: MaterialButton(
+                        color: appState.currentTheme.accentColor,
+                        child: Text(
+                          "Go Back",
+                          style: CommonTextStyles.scaffoldTextStyle(context),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
                 ],
               ),
             ),
-            if (puzzle != null)
+            if (puzzle != null && !isSolved)
               Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
@@ -190,6 +243,7 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                             ),
                           );
                           setState(() {
+                            isSolved = true;
                             if (widget.user.score != null) {
                               widget.user.score += PUZZLE_ID_INCREMENT_NUMBER;
                             } else {
@@ -204,6 +258,13 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                           } else {
                             widget.user.age += puzzle.puzzlePoints;
                           }
+                          AnalyticsUtils.sendAnalyticEvent(
+                              LEVEL_UP,
+                              {
+                                "userLevel": widget.user.age,
+                              },
+                              "SECRET_PUZLE");
+
                           setPuzzleSolution();
                           BlocProvider.of<LoginBloc>(context)
                               .add(LoginUserEvent(user: widget.user));
@@ -241,8 +302,17 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                         );
                       }
                     },
-                    label: Text("Submit"),
-                    icon: Icon(Icons.all_inclusive),
+                    label: Text(
+                      "Submit",
+                      style:
+                          CommonTextStyles.scaffoldTextStyle(context).copyWith(
+                        color: CommonColors.accentColor,
+                      ),
+                    ),
+                    icon: Icon(
+                      Icons.all_inclusive,
+                      color: CommonColors.accentColor,
+                    ),
                   ),
                 ),
               ),
