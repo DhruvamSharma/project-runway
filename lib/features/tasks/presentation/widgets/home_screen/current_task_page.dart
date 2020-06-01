@@ -327,13 +327,12 @@ class TaskListHolderProvider extends ChangeNotifier {
     if (indexToRemove != -1) {
       String textForRemoveAnimation = taskEntity.taskTitle;
       listState.currentState.removeItem(indexToRemove, (context, animation) {
-        return _buildItem(context, 0, animation, textForRemoveAnimation);
+        return _buildItem(context, 0, animation, taskEntity);
       });
       this.taskList.removeAt(indexToRemove);
     } else {
       // when sometimes the object has changed due to some
       //modification as object now is not immutable
-      String textForRemoveAnimation = taskEntity.taskTitle;
       for (int i = 0; i < this.taskList.length; i++) {
         if (this.taskList[i].taskId == taskEntity.taskId) {
           indexToRemove = i;
@@ -341,7 +340,7 @@ class TaskListHolderProvider extends ChangeNotifier {
         }
       }
       listState.currentState.removeItem(indexToRemove, (context, animation) {
-        return _buildItem(context, 0, animation, textForRemoveAnimation);
+        return _buildItem(context, 0, animation, taskEntity);
       });
       this.taskList.removeAt(indexToRemove);
     }
@@ -349,14 +348,17 @@ class TaskListHolderProvider extends ChangeNotifier {
   }
 
   _buildItem(BuildContext context, int index, Animation<double> animation,
-      String text) {
+      TaskEntity task) {
     return SizeTransition(
       key: ValueKey<int>(index),
       axis: Axis.vertical,
       sizeFactor: animation,
       child: SizedBox(
         child: ListTile(
-          title: Text(text),
+          title: Text(
+            task.taskTitle,
+            style: selectTaskStyle(task, context, task.isCompleted),
+          ),
         ),
       ),
     );

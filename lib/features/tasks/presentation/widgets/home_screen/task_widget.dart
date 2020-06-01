@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
@@ -123,7 +124,8 @@ class _TaskWidgetState extends State<TaskWidget> {
                   Expanded(
                     child: Text(
                       taskState.taskEntity.taskTitle,
-                      style: selectTaskStyle(taskState),
+                      style: selectTaskStyle(
+                          taskState.taskEntity, context, isCompleted),
                     ),
                   ),
                   Theme(
@@ -162,28 +164,13 @@ class _TaskWidgetState extends State<TaskWidget> {
     };
   }
 
-  TextStyle selectTaskStyle(TaskHolderProviderModel taskState) {
-    TextStyle taskTextStyle;
-    // calculating if the task is completed
-    if (isCompleted) {
-      taskTextStyle = CommonTextStyles.disabledTaskTextStyle();
-    } else {
-      taskTextStyle = CommonTextStyles.taskTextStyle(context);
-    }
-    // calculating if the task is for a previous day
-    if (taskState.taskEntity.runningDate.day < DateTime.now().day) {
-      taskTextStyle = CommonTextStyles.disabledTaskTextStyle();
-    }
-    return taskTextStyle;
-  }
-
   Color selectCheckStyleColor(TaskHolderProviderModel taskState) {
     Color checkStyleActiveColor;
     // calculating if the task is for a previous day
-    if (taskState.taskEntity.runningDate.day < DateTime.now().day) {
+    if (checkIsTaskIsOfPast(taskState.taskEntity.runningDate)) {
       checkStyleActiveColor = Colors.grey;
     } else {
-      checkStyleActiveColor = CommonColors.toggleableActiveColor;
+      checkStyleActiveColor = Colors.grey;
     }
     return checkStyleActiveColor;
   }

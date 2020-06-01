@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/notifications/local_notifications.dart';
-import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
-import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:provider/provider.dart';
 
 class EditTaskWidget extends StatefulWidget {
@@ -31,10 +28,10 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
   @override
   void initState() {
     taskEntity = widget.task;
-    if (widget.task.runningDate.day < DateTime.now().day) {
+    if (checkIsTaskIsOfPast(widget.task.runningDate)) {
       isEnabled = false;
     } else {
-      isEnabled = true;
+      isEnabled = !taskEntity.isCompleted;
     }
     super.initState();
   }
@@ -143,139 +140,122 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                       errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
                     ),
                   ),
-                  if (isEnabled)
-                    Container(
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.only(top: 10),
-                        title: Text(
-                          "Noification Time",
-                          style:
-                              CommonTextStyles.taskTextStyle(context).copyWith(
-                            color: appState.currentTheme.accentColor
-                                .withOpacity(0.5),
-                          ),
+                  Container(
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.only(top: 10),
+                      title: Text(
+                        "Noification Time",
+                        style: CommonTextStyles.taskTextStyle(context).copyWith(
+                          color: appState.currentTheme.accentColor
+                              .withOpacity(0.5),
                         ),
-                        trailing: Text(
-                          Provider.of<TaskDetailProviderModel>(newContext,
-                                          listen: true)
-                                      .notificationTime !=
-                                  null
-                              ? beautifyTime(
-                                  Provider.of<TaskDetailProviderModel>(
-                                          newContext,
-                                          listen: false)
-                                      .notificationTime)
-                              : "None",
-                          style: CommonTextStyles.disabledTaskTextStyle(),
-                        ),
-                        onTap: () {
-                          selectTimeForNotification(
-                              newContext, widget.task.runningDate, () {
-                            setState(() {
-                              isNotificationTimeError = true;
-                            });
-                          }, () {
-                            setState(() {
-                              isNotificationTimeError = false;
-                            });
-                          });
-                        },
                       ),
+                      trailing: Text(
+                        Provider.of<TaskDetailProviderModel>(newContext,
+                                        listen: true)
+                                    .notificationTime !=
+                                null
+                            ? beautifyTime(Provider.of<TaskDetailProviderModel>(
+                                    newContext,
+                                    listen: false)
+                                .notificationTime)
+                            : "None",
+                        style: CommonTextStyles.disabledTaskTextStyle(),
+                      ),
+                      onTap: isEnabled
+                          ? () {
+                              selectTimeForNotification(
+                                  newContext, widget.task.runningDate, () {
+                                setState(() {
+                                  isNotificationTimeError = true;
+                                });
+                              }, () {
+                                setState(() {
+                                  isNotificationTimeError = false;
+                                });
+                              });
+                            }
+                          : null,
                     ),
+                  ),
                   if (isEnabled && isNotificationTimeError)
                     Text(
                       "You cannot select a time in the past",
                       style: CommonTextStyles.errorFieldTextStyle(),
                     ),
-                  if (isEnabled)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: CommonDimens.MARGIN_20,
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.only(
-                                top: CommonDimens.MARGIN_20 / 2,
-                                bottom: CommonDimens.MARGIN_20,
-                              ),
-                              alignment: Alignment.center,
-                              child: FlatButton(
-                                  child: Text(
-                                    isEnabled ? "Delete" : "Go Back",
-                                    style:
-                                        CommonTextStyles.taskTextStyle(context),
-                                  ),
-                                  onPressed: () {
-                                    taskEntity.isDeleted = true;
-                                    Navigator.pop(context, taskEntity);
-                                  }),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
                             left: CommonDimens.MARGIN_20,
                           ),
-                          alignment: Alignment.center,
-                          child: Padding(
+                          child: Container(
                             padding: const EdgeInsets.only(
                               top: CommonDimens.MARGIN_20 / 2,
                               bottom: CommonDimens.MARGIN_20,
                             ),
-                            child: MaterialButton(
-                              color: appState.currentTheme.accentColor,
-                              onPressed: () {
-                                taskEntity.description =
-                                    taskDetailState.description;
-                                taskEntity.urgency =
-                                    buildUrgency(taskDetailState.urgency);
-                                taskEntity.taskTitle =
-                                    taskDetailState.taskTitle;
-                                taskEntity.tag = taskDetailState.tag;
-                                taskEntity.notificationTime =
-                                    taskDetailState.notificationTime;
-                                taskEntity.lastUpdatedAt = DateTime.now();
-                                // schedule the notification
-                                scheduleNotification(
-                                  taskEntity.createdAt.toString(),
-                                  taskEntity.taskTitle,
-                                  taskDetailState.notificationTime,
-                                );
-                                Navigator.pop(context, taskEntity);
-                              },
-                              child: Text(
-                                isEnabled ? "Update" : "Go Back",
-                                style:
-                                    CommonTextStyles.scaffoldTextStyle(context),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  if (!isEnabled)
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: CommonDimens.MARGIN_60,
-                        ),
-                        child: OutlineButton(
-                          onPressed: () {
-                            Navigator.pop(
-                              context,
-                            );
-                          },
-                          child: Text(
-                            "Go Back",
-                            style: CommonTextStyles.taskTextStyle(context),
+                            alignment: Alignment.center,
+                            child: FlatButton(
+                                child: Text(
+                                  "Delete",
+                                  style:
+                                      CommonTextStyles.taskTextStyle(context),
+                                ),
+                                onPressed: () {
+                                  taskEntity.isDeleted = true;
+                                  Navigator.pop(context, taskEntity);
+                                }),
                           ),
                         ),
                       ),
-                    ),
+                      Container(
+                        margin: const EdgeInsets.only(
+                          left: CommonDimens.MARGIN_20,
+                        ),
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: CommonDimens.MARGIN_20 / 2,
+                            bottom: CommonDimens.MARGIN_20,
+                          ),
+                          child: MaterialButton(
+                            color: appState.currentTheme.accentColor,
+                            onPressed: isEnabled
+                                ? () {
+                                    taskEntity.description =
+                                        taskDetailState.description;
+                                    taskEntity.urgency =
+                                        buildUrgency(taskDetailState.urgency);
+                                    taskEntity.taskTitle =
+                                        taskDetailState.taskTitle;
+                                    taskEntity.tag = taskDetailState.tag;
+                                    taskEntity.notificationTime =
+                                        taskDetailState.notificationTime;
+                                    taskEntity.lastUpdatedAt = DateTime.now();
+                                    // schedule the notification
+                                    scheduleNotification(
+                                      taskEntity.createdAt.toString(),
+                                      taskEntity.taskTitle,
+                                      taskDetailState.notificationTime,
+                                    );
+                                    Navigator.pop(context, taskEntity);
+                                  }
+                                : () {
+                                    Navigator.pop(context);
+                                  },
+                            child: Text(
+                              isEnabled ? "Update" : "Go Back",
+                              style:
+                                  CommonTextStyles.scaffoldTextStyle(context),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

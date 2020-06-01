@@ -1,3 +1,29 @@
+bool checkIsTaskIsOfPast(DateTime runningDate) {
+  final now = DateTime.now();
+  final taskDateTime = runningDate;
+
+  // check for year
+  if (taskDateTime.year < now.year) {
+    return true;
+  } else if (taskDateTime.year > now.year) {
+    return false;
+  } else {
+    // check for month
+    if (taskDateTime.month < now.month) {
+      return true;
+    } else if (taskDateTime.month > now.month) {
+      return false;
+    } else {
+      // check for date
+      if (taskDateTime.day < now.day) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+}
+
 DateTime dateParser(String formattedString) {
   DateTime dateTime;
   try {
@@ -35,7 +61,8 @@ DateTime buildRunningDate(DateTime currentDate, int pageNumber) {
 
 String beautifyDate(DateTime runningDate) {
   String beautifiedDate;
-  beautifiedDate = "${runningDate.day} ${_monthTranslator(runningDate.month)} ${runningDate.year}";
+  beautifiedDate =
+      "${runningDate.day} ${_monthTranslator(runningDate.month)} ${runningDate.year}";
   return beautifiedDate;
 }
 
@@ -50,7 +77,7 @@ beautifyTime(DateTime notificationTime) {
 }
 
 String _monthTranslator(int month) {
-  switch(month) {
+  switch (month) {
     case 1:
       return "January";
     case 2:
@@ -81,7 +108,7 @@ String _monthTranslator(int month) {
 }
 
 String weekTranslator(int weekDay) {
-  switch(weekDay) {
+  switch (weekDay) {
     case 1:
       return "Mon";
     case 2:
