@@ -131,6 +131,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                       ),
                     ),
                     OutlineButton(
+                      highlightedBorderColor: CommonColors.chartColor,
                       onPressed: () async {
                         AnalyticsUtils.sendAnalyticEvent(
                             MORE_DETAILS,

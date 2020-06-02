@@ -162,6 +162,7 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
         ),
       );
     } catch (ex) {
+      print("list error");
       // fetch the tasks again, if any error occurs
       AnalyticsUtils.sendAnalyticEvent(
           "VIEW_LIST_ERROR", {"error": ex.toString()}, "Current_Task_List");
@@ -261,6 +262,10 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
     }
 
     if (state is LoadedHomeScreenCompleteTaskState) {
+      // update the task
+      Provider.of<TaskListHolderProvider>(providerContext, listen: false)
+          .updateItem(state.taskEntity);
+      // sort the task
       setState(() {
         Provider.of<TaskListHolderProvider>(providerContext, listen: false)
             .taskList
@@ -309,6 +314,18 @@ class TaskListHolderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateItem(TaskEntity task) {
+    // when sometimes the object has changed due to some
+    //modification as object now is not immutable
+    for (int i = 0; i < this.taskList.length; i++) {
+      if (this.taskList[i].taskId == task.taskId) {
+        this.taskList[i].isCompleted = task.isCompleted;
+        break;
+      }
+    }
+    notifyListeners();
+  }
+
   void insertTaskToList(TaskEntity taskEntity) {
     TaskModel taskModel = convertTaskEntityToModel(taskEntity);
     try {
@@ -325,15 +342,13 @@ class TaskListHolderProvider extends ChangeNotifier {
   void deleteTaskItemFromList(TaskEntity taskEntity) {
     int indexToRemove = this.taskList.indexOf(taskEntity);
     if (indexToRemove != -1) {
-      String textForRemoveAnimation = taskEntity.taskTitle;
       listState.currentState.removeItem(indexToRemove, (context, animation) {
-        return _buildItem(context, 0, animation, textForRemoveAnimation);
+        return _buildItem(context, 0, animation, taskEntity);
       });
       this.taskList.removeAt(indexToRemove);
     } else {
       // when sometimes the object has changed due to some
       //modification as object now is not immutable
-      String textForRemoveAnimation = taskEntity.taskTitle;
       for (int i = 0; i < this.taskList.length; i++) {
         if (this.taskList[i].taskId == taskEntity.taskId) {
           indexToRemove = i;
@@ -341,7 +356,7 @@ class TaskListHolderProvider extends ChangeNotifier {
         }
       }
       listState.currentState.removeItem(indexToRemove, (context, animation) {
-        return _buildItem(context, 0, animation, textForRemoveAnimation);
+        return _buildItem(context, 0, animation, taskEntity);
       });
       this.taskList.removeAt(indexToRemove);
     }
@@ -349,14 +364,17 @@ class TaskListHolderProvider extends ChangeNotifier {
   }
 
   _buildItem(BuildContext context, int index, Animation<double> animation,
-      String text) {
+      TaskEntity task) {
     return SizeTransition(
       key: ValueKey<int>(index),
       axis: Axis.vertical,
       sizeFactor: animation,
       child: SizedBox(
         child: ListTile(
-          title: Text(text),
+          title: Text(
+            task.taskTitle,
+            style: selectTaskStyle(task, context, task.isCompleted),
+          ),
         ),
       ),
     );
@@ -401,18 +419,16 @@ int compareListItems(TaskEntity a, TaskEntity b) {
     } else if (a.urgency < b.urgency) {
       positiveOrNegativeIndex = -1;
     } else {
-      positiveOrNegativeIndex = 0;
+      if (a.createdAt.difference(b.createdAt).inMinutes > 0) {
+        positiveOrNegativeIndex = -1;
+      } else {
+        positiveOrNegativeIndex = 1;
+      }
     }
   }
 
   if (a.isCompleted && b.isCompleted) {
-    if (a.urgency > b.urgency) {
-      positiveOrNegativeIndex = 1;
-    } else if (a.urgency < b.urgency) {
-      positiveOrNegativeIndex = -1;
-    } else {
-      positiveOrNegativeIndex = 0;
-    }
+    positiveOrNegativeIndex = -1;
   }
   return positiveOrNegativeIndex;
 }

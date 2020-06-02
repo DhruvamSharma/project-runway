@@ -3,7 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
+import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:provider/provider.dart';
+
+import 'date_time_parser.dart';
 
 class CommonTextStyles {
   static final TextStyle _googleFontStyle = GoogleFonts.baumans();
@@ -117,4 +120,20 @@ class CommonTextStyles {
       letterSpacing: 2,
     );
   }
+}
+
+TextStyle selectTaskStyle(
+    TaskEntity task, BuildContext context, bool isCompleted) {
+  TextStyle taskTextStyle;
+  // calculating if the task is completed
+  if (isCompleted) {
+    taskTextStyle = CommonTextStyles.disabledTaskTextStyle();
+  } else {
+    taskTextStyle = CommonTextStyles.taskTextStyle(context);
+  }
+  // calculating if the task is for a previous day
+  if (checkIsTaskIsOfPast(task.runningDate)) {
+    taskTextStyle = CommonTextStyles.disabledTaskTextStyle();
+  }
+  return taskTextStyle;
 }

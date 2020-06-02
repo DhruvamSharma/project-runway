@@ -11,7 +11,7 @@ description: A clean TODO application
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.1.32+7
+version: 1.1.35+10
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
@@ -69,6 +69,11 @@ dependencies:
   firebase_performance: ^0.3.1+8
   # user feedback tool
   wiredash: 0.0.1
+  # application info like version number
+  package_info: ^0.4.0+18
+  # url opening handler
+  url_launcher: ^5.4.10
+
 
 dev_dependencies:
   flutter_test:

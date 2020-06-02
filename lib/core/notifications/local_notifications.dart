@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:project_runway/core/constants.dart';
-import 'package:project_runway/core/keys.dart';
-import 'package:project_runway/core/theme/theme.dart';
-import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:provider/provider.dart';
-
-import '../common_colors.dart';
-import '../common_text_styles.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 Future<void> initLocalNotifications() async {
@@ -25,7 +19,6 @@ Future<void> initLocalNotifications() async {
 }
 
 Future selectNotification(String payload) {
-  print("payload receivde $payload");
   return null;
 }
 
@@ -37,7 +30,9 @@ Future onDidReceiveLocalNotification(
 Future<void> scheduleNotification(
     String taskId, String taskTitle, DateTime scheduledNotificationTime) async {
   await initLocalNotifications();
-  if (taskId != null && taskTitle != null && scheduledNotificationTime != null) {
+  if (taskId != null &&
+      taskTitle != null &&
+      scheduledNotificationTime != null) {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         TASK_CHANNEL_ID, TASK_CHANNEL_NAME, 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
@@ -53,7 +48,8 @@ Future<void> scheduleNotification(
   }
 }
 
-void selectTimeForNotification(BuildContext newContext, runningDate, Function onDateError, Function onSuccess) async {
+void selectTimeForNotification(BuildContext newContext, runningDate,
+    Function onDateError, Function onSuccess) async {
   TimeOfDay timeOfDay = await showTimePicker(
       context: newContext,
       initialTime: TimeOfDay.now(),
@@ -81,7 +77,8 @@ void selectTimeForNotification(BuildContext newContext, runningDate, Function on
   }
 }
 
-updateDateForNotification(BuildContext context, TimeOfDay timeOfDay, DateTime runningDate) {
+updateDateForNotification(
+    BuildContext context, TimeOfDay timeOfDay, DateTime runningDate) {
   // create properly formatted time
   try {
     DateTime scheduledTime = DateTime(
@@ -95,6 +92,6 @@ updateDateForNotification(BuildContext context, TimeOfDay timeOfDay, DateTime ru
     Provider.of<TaskDetailProviderModel>(context, listen: false)
         .assignNotificationTime(scheduledTime);
   } catch (ex) {
-    print ("ex: -- $ex");
+    print("ex: -- $ex");
   }
 }

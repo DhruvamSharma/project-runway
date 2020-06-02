@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/common_colors.dart';
@@ -9,7 +7,6 @@ import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
-import 'package:project_runway/features/login/data/models/user_model.dart';
 import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 import 'package:project_runway/features/login/presentation/manager/bloc.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
@@ -75,6 +72,7 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: OutlineButton(
+                      highlightedBorderColor: CommonColors.chartColor,
                       onPressed: () {
                         if (!isCreatingAccount) {
                           setState(() {
