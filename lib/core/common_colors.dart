@@ -4,7 +4,7 @@ class CommonColors {
   // Theme colors
   static final Color primarySwatch = chartColor;
   static final Color accentColor = _getColor(0xffFFFFFF);
-  static final Color scaffoldColor = _getColor(0xff080808);
+  static final Color scaffoldColor = bottomSheetColor;
   static final Color toggleableActiveColor = Colors.transparent;
   static final Color cursorColor = Colors.grey;
 

@@ -43,48 +43,44 @@ class _TaskWidgetState extends State<TaskWidget> {
       child: InkWell(
         highlightColor: Colors.transparent,
         onTap: () async {
-          final taskEntity = await showCupertinoModalPopup(
+          final taskEntity = await showModalBottomSheet(
             context: context,
+            isScrollControlled: true,
             builder: (_) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: appState.currentTheme == lightTheme
-                      ? CommonColors.bottomSheetColorLightTheme
-                      : CommonColors.bottomSheetColor,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
+              return SizedBox(
+                height: MediaQuery.of(_).size.height * 0.8,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: appState.currentTheme == lightTheme
+                        ? CommonColors.bottomSheetColorLightTheme
+                        : CommonColors.bottomSheetColor,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                    ),
                   ),
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: Theme(
-                    data: ThemeData.light()
-                        .copyWith(canvasColor: Colors.transparent),
-                    child: DraggableScrollableSheet(
-                      initialChildSize: 0.75,
-                      maxChildSize: 1.0,
-                      expand: false,
-                      builder: (_, controller) {
-                        return Container(
-                          color: Colors.transparent,
-                          child: Material(
-                            child:
-                                ChangeNotifierProvider<TaskDetailProviderModel>(
-                              create: (_) => TaskDetailProviderModel(
-                                taskTitle: taskState.taskEntity.taskTitle,
-                                tag: taskState.taskEntity.tag,
-                                description: taskState.taskEntity.description,
-                                urgency:
-                                    taskState.taskEntity.urgency.toString(),
-                                notificationTime:
-                                    taskState.taskEntity.notificationTime,
-                              ),
-                              child: EditTaskWidget(task: taskState.taskEntity),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Theme(
+                      data: ThemeData.light()
+                          .copyWith(canvasColor: Colors.transparent),
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Material(
+                          child:
+                              ChangeNotifierProvider<TaskDetailProviderModel>(
+                            create: (_) => TaskDetailProviderModel(
+                              taskTitle: taskState.taskEntity.taskTitle,
+                              tag: taskState.taskEntity.tag,
+                              description: taskState.taskEntity.description,
+                              urgency: taskState.taskEntity.urgency.toString(),
+                              notificationTime:
+                                  taskState.taskEntity.notificationTime,
                             ),
+                            child: EditTaskWidget(task: taskState.taskEntity),
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     ),
                   ),
                 ),
