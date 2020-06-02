@@ -36,14 +36,14 @@ class TaskBadge extends StatelessWidget {
       TaskHolderProviderModel taskState) {
     Color badgeColor;
     if (isCompleted) {
-      badgeColor = CommonColors.disabledTaskTextColor;
+      badgeColor = CommonColors.taskTextColor.withOpacity(0.38);
     } else {
       badgeColor = CommonColors.chartColor;
     }
 
     // calculating if the task is for a previous day
     if (checkIsTaskIsOfPast(taskState.taskEntity.runningDate)) {
-      badgeColor = CommonColors.disabledTaskTextColor;
+      badgeColor = CommonColors.taskTextColor.withOpacity(0.38);
     }
     return badgeColor;
   }

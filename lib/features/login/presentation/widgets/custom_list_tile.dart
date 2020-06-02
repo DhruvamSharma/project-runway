@@ -28,7 +28,7 @@ class CustomListTile extends StatelessWidget {
         ),
         leading: Icon(
           leadingIcon,
-          color: appState.currentTheme.accentColor,
+          color: appState.currentTheme.accentColor.withOpacity(0.87),
           size: 30,
         ),
         title: Text(

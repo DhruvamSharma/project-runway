@@ -104,6 +104,7 @@ class _TaskWidgetState extends State<TaskWidget> {
             top: CommonDimens.MARGIN_20,
             left: CommonDimens.MARGIN_20,
             right: CommonDimens.MARGIN_20,
+            bottom: CommonDimens.MARGIN_20,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +132,8 @@ class _TaskWidgetState extends State<TaskWidget> {
                             appState.currentTheme.accentColor),
                     child: Checkbox(
                       value: isCompleted,
-                      checkColor: appState.currentTheme.accentColor,
+                      checkColor:
+                          appState.currentTheme.accentColor.withOpacity(0.60),
                       materialTapTargetSize: MaterialTapTargetSize.padded,
                       activeColor: selectCheckStyleColor(taskState),
                       onChanged: selectCheckBoxState(taskState),
@@ -164,7 +166,7 @@ class _TaskWidgetState extends State<TaskWidget> {
     Color checkStyleActiveColor;
     // calculating if the task is for a previous day
     if (checkIsTaskIsOfPast(taskState.taskEntity.runningDate)) {
-      checkStyleActiveColor = Colors.grey;
+      checkStyleActiveColor = CommonColors.taskTextColor.withOpacity(0.38);
     } else {
       checkStyleActiveColor = Colors.grey;
     }

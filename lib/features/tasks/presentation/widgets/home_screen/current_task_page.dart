@@ -66,67 +66,73 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
             },
             child: isLoadingTasks
                 ? buildLoadingAnimation(appState)
-                : SingleChildScrollView(
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: CommonDimens.MARGIN_20,
+                : GlowingOverscrollIndicator(
+                    axisDirection: AxisDirection.down,
+                    color: CommonColors.chartColor,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: CommonDimens.MARGIN_20,
+                            ),
+                            child: Text(
+                              beautifyDate(pageState.runningDate ?? ""),
+                              style: CommonTextStyles.dateTextStyle(context),
+                            ),
                           ),
-                          child: Text(
-                            beautifyDate(pageState.runningDate ?? ""),
-                            style: CommonTextStyles.dateTextStyle(context),
-                          ),
-                        ),
-                        if (Provider.of<TaskListHolderProvider>(providerContext,
-                                    listen: false)
-                                .taskList !=
-                            null)
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              CreateTaskShortcutWidget(
-                                totalTaskNumber:
-                                    Provider.of<TaskListHolderProvider>(
-                                            providerContext,
-                                            listen: false)
-                                        .taskList
-                                        .length,
-                              ),
-                              AnimatedList(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: CommonDimens.MARGIN_20,
+                          if (Provider.of<TaskListHolderProvider>(
+                                      providerContext,
+                                      listen: false)
+                                  .taskList !=
+                              null)
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                CreateTaskShortcutWidget(
+                                  totalTaskNumber:
+                                      Provider.of<TaskListHolderProvider>(
+                                              providerContext,
+                                              listen: false)
+                                          .taskList
+                                          .length,
                                 ),
-                                key: animatedListStateKey,
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                initialItemCount:
-                                    Provider.of<TaskListHolderProvider>(
+                                AnimatedList(
+                                  key: animatedListStateKey,
+                                  shrinkWrap: true,
+                                  padding: const EdgeInsets.only(
+                                    top: CommonDimens.MARGIN_20,
+                                  ),
+                                  physics: NeverScrollableScrollPhysics(),
+                                  initialItemCount:
+                                      Provider.of<TaskListHolderProvider>(
+                                              providerContext,
+                                              listen: false)
+                                          .taskList
+                                          .length,
+                                  itemBuilder: (_, i, animation) {
+                                    if (Provider.of<TaskListHolderProvider>(
                                             providerContext,
                                             listen: false)
                                         .taskList
-                                        .length,
-                                itemBuilder: (_, i, animation) {
-                                  if (Provider.of<TaskListHolderProvider>(
-                                          providerContext,
-                                          listen: false)
-                                      .taskList
-                                      .isNotEmpty)
-                                    return buildTaskItem(
-                                        providerContext, animation, i);
-                                  else
-                                    return Container();
-                                },
-                              ),
-                            ],
-                          ),
-                        buildStarterPageViewHelper(
-                            providerContext,
-                            appState,
-                            pageState,
-                            Provider.of<TaskListHolderProvider>(providerContext,
-                                listen: false)),
-                      ],
+                                        .isNotEmpty)
+                                      return buildTaskItem(
+                                          providerContext, animation, i);
+                                    else
+                                      return Container();
+                                  },
+                                ),
+                              ],
+                            ),
+                          buildStarterPageViewHelper(
+                              providerContext,
+                              appState,
+                              pageState,
+                              Provider.of<TaskListHolderProvider>(
+                                  providerContext,
+                                  listen: false)),
+                        ],
+                      ),
                     ),
                   ),
           );
@@ -137,28 +143,23 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
 
   buildTaskItem(BuildContext providerContext, Animation animation, int i) {
     try {
-      return Padding(
-        padding: const EdgeInsets.only(
-          top: CommonDimens.MARGIN_20,
-        ),
-        child: SizeTransition(
-          sizeFactor: animation,
-          child: ChangeNotifierProvider<TaskHolderProviderModel>(
-            key: ValueKey(Provider.of<TaskListHolderProvider>(providerContext,
-                        listen: false)
-                    .taskList
-                    .isEmpty
-                ? UniqueKey()
-                : Provider.of<TaskListHolderProvider>(providerContext,
-                        listen: false)
-                    .taskList[i]
-                    .taskId),
-            create: (context) => TaskHolderProviderModel(
-                taskEntity: Provider.of<TaskListHolderProvider>(providerContext,
-                        listen: false)
-                    .taskList[i]),
-            child: TaskWidget(),
-          ),
+      return SizeTransition(
+        sizeFactor: animation,
+        child: ChangeNotifierProvider<TaskHolderProviderModel>(
+          key: ValueKey(Provider.of<TaskListHolderProvider>(providerContext,
+                      listen: false)
+                  .taskList
+                  .isEmpty
+              ? UniqueKey()
+              : Provider.of<TaskListHolderProvider>(providerContext,
+                      listen: false)
+                  .taskList[i]
+                  .taskId),
+          create: (context) => TaskHolderProviderModel(
+              taskEntity: Provider.of<TaskListHolderProvider>(providerContext,
+                      listen: false)
+                  .taskList[i]),
+          child: TaskWidget(),
         ),
       );
     } catch (ex) {

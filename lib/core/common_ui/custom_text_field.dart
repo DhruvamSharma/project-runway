@@ -201,6 +201,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
         color: Colors.grey,
       );
     }
+
+    if (widget.enabled != null && !widget.enabled) {
+      textStyle = textStyle.copyWith(
+        color: Colors.grey.withOpacity(0.38),
+      );
+    }
     return textStyle;
   }
 

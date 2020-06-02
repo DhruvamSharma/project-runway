@@ -3,9 +3,6 @@ import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/constants.dart';
-import 'package:project_runway/core/theme/theme.dart';
-import 'package:project_runway/core/theme/theme_model.dart';
-import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class AppIntroWidget extends StatelessWidget {
@@ -58,9 +55,9 @@ class AppIntroWidget extends StatelessWidget {
                                     top: CommonDimens.MARGIN_20,
                                   ),
                                   child: Text(
-                                    "Foccused Approach",
-                                    style:
-                                        CommonTextStyles.loginTextStyle(context),
+                                    "Focused Approach",
+                                    style: CommonTextStyles.loginTextStyle(
+                                        context),
                                   ),
                                 ),
                                 Padding(
@@ -93,8 +90,8 @@ class AppIntroWidget extends StatelessWidget {
                                   ),
                                   child: Text(
                                     "Visualise Growth",
-                                    style:
-                                        CommonTextStyles.loginTextStyle(context),
+                                    style: CommonTextStyles.loginTextStyle(
+                                        context),
                                   ),
                                 ),
                                 Padding(
@@ -125,30 +122,33 @@ class AppIntroWidget extends StatelessWidget {
                                         children: [
                                           TextSpan(
                                             text: "3",
-                                            style: CommonTextStyles
-                                                    .loginTextStyle(context)
-                                                .copyWith(fontSize: 90)
-                                                .copyWith(
-                                                    color:
-                                                        CommonColors.introColor),
+                                            style:
+                                                CommonTextStyles.loginTextStyle(
+                                                        context)
+                                                    .copyWith(fontSize: 90)
+                                                    .copyWith(
+                                                        color: CommonColors
+                                                            .introColor),
                                           ),
                                           TextSpan(
                                             text: " : ",
-                                            style: CommonTextStyles
-                                                    .loginTextStyle(context)
-                                                .copyWith(
-                                                    fontSize: 90,
-                                                    color:
-                                                        CommonColors.chartColor),
+                                            style:
+                                                CommonTextStyles.loginTextStyle(
+                                                        context)
+                                                    .copyWith(
+                                                        fontSize: 90,
+                                                        color: CommonColors
+                                                            .chartColor),
                                           ),
                                           TextSpan(
                                             text: "7",
-                                            style: CommonTextStyles
-                                                    .loginTextStyle(context)
-                                                .copyWith(fontSize: 90)
-                                                .copyWith(
-                                                    color:
-                                                        CommonColors.introColor),
+                                            style:
+                                                CommonTextStyles.loginTextStyle(
+                                                        context)
+                                                    .copyWith(fontSize: 90)
+                                                    .copyWith(
+                                                        color: CommonColors
+                                                            .introColor),
                                           ),
                                         ],
                                       ),
@@ -161,8 +161,8 @@ class AppIntroWidget extends StatelessWidget {
                                   ),
                                   child: Text(
                                     "3:7 Rule",
-                                    style:
-                                        CommonTextStyles.loginTextStyle(context),
+                                    style: CommonTextStyles.loginTextStyle(
+                                        context),
                                   ),
                                 ),
                                 Padding(
@@ -210,8 +210,8 @@ class AppIntroWidget extends StatelessWidget {
                                     ),
                                     child: Text(
                                       "Exercise your intellectual efficiency through puzzles",
-                                      style:
-                                          CommonTextStyles.taskTextStyle(context),
+                                      style: CommonTextStyles.taskTextStyle(
+                                          context),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),

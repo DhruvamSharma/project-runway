@@ -97,7 +97,10 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                       child: IconButton(
                         highlightColor: Colors.transparent,
                         tooltip: "Share List",
-                        icon: Icon(Icons.share),
+                        icon: Icon(Icons.share,
+                            color: pageState.pageNumber == 0
+                                ? CommonColors.taskTextColor.withOpacity(0.38)
+                                : CommonColors.taskTextColor.withOpacity(0.60)),
                         onPressed: () {
                           try {
                             AnalyticsUtils.sendAnalyticEvent(
@@ -180,11 +183,13 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                       },
                       child: Text(
                         "More Details",
-                        style: CommonTextStyles.badgeTextStyle(context)
+                        style: CommonTextStyles.disabledTaskTextStyle()
                             .copyWith(
                                 color: pageState.pageNumber == 0
-                                    ? CommonColors.disabledTaskTextColor
-                                    : appState.currentTheme.accentColor,
+                                    ? CommonColors.taskTextColor
+                                        .withOpacity(0.38)
+                                    : CommonColors.taskTextColor
+                                        .withOpacity(0.60),
                                 letterSpacing: 3,
                                 fontSize: 14),
                       ),
@@ -198,8 +203,8 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                           icon: Icon(
                             Icons.send,
                             color: pageState.pageNumber == 0
-                                ? CommonColors.disabledTaskTextColor
-                                : appState.currentTheme.accentColor,
+                                ? CommonColors.taskTextColor.withOpacity(0.38)
+                                : CommonColors.taskTextColor.withOpacity(0.6),
                             semanticLabel: "Create Task",
                           ),
                           onPressed: () {
