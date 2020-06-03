@@ -4,7 +4,7 @@ class CommonColors {
   // Theme colors
   static final Color primarySwatch = chartColor;
   static final Color accentColor = _getColor(0xffFFFFFF);
-  static final Color scaffoldColor = bottomSheetColor;
+  static final Color scaffoldColor = _getColor(0xff121212);
   static final Color toggleableActiveColor = Colors.transparent;
   static final Color cursorColor = Colors.grey;
 
@@ -42,7 +42,7 @@ class CommonColors {
   // for light theme
   static final Color taskBadgeColorLightTheme = scaffoldColor;
 
-  static final Color errorTextColor = Colors.red;
+  static final Color errorTextColor = _getColor(0xffCF6679);
 
   // App bar colors
   static final Color appBarColor = Colors.transparent;

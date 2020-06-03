@@ -126,7 +126,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                     helperText: "1 is most important and 9 is least",
                     helperTextStyle:
                         CommonTextStyles.badgeTextStyle(context).copyWith(
-                      color: appState.currentTheme.accentColor,
+                      color: appState.currentTheme.accentColor.withOpacity(0.5),
                       fontSize: 14,
                     ),
                     onSubmitted: (text) {},
@@ -140,14 +140,15 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                   ),
                 ),
                 Container(
+                  margin: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_20,
+                  ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.only(top: 10),
                     title: Text(
-                      "Noification Time",
-                      style: CommonTextStyles.taskTextStyle(context).copyWith(
-                        color:
-                            appState.currentTheme.accentColor.withOpacity(0.5),
-                      ),
+                      "Notification Time",
+                      style:
+                          CommonTextStyles.buildNotificationTextColor(context),
                     ),
                     trailing: Text(
                       Provider.of<TaskDetailProviderModel>(newContext,
@@ -159,7 +160,8 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                                   listen: false)
                               .notificationTime)
                           : "None",
-                      style: CommonTextStyles.disabledTaskTextStyle(),
+                      style:
+                          CommonTextStyles.buildNotificationTextColor(context),
                     ),
                     onTap: isEnabled
                         ? () {
