@@ -1,4 +1,3 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/analytics_utils.dart';
@@ -21,10 +20,9 @@ import 'package:uuid/uuid.dart';
 
 class CreateTaskShortcutWidget extends StatelessWidget {
   final int totalTaskNumber;
-  final FirebaseAnalytics firebaseAnalytics;
   CreateTaskShortcutWidget({
     @required this.totalTaskNumber,
-  }) : firebaseAnalytics = FirebaseAnalytics();
+  });
 
   @override
   Widget build(BuildContext parentContext) {

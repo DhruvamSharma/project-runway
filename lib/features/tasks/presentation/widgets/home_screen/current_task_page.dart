@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:project_runway/core/analytics_utils.dart';
@@ -13,6 +14,8 @@ import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/data/models/task_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
+import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
+import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/create_task_shortcut_widget.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_widget.dart';
@@ -28,9 +31,12 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
         AutomaticKeepAliveClientMixin<CurrentTaskPage>,
         SingleTickerProviderStateMixin {
   String initialTaskText;
+  // required for handling incoming text from other apps
+  static const platform = const MethodChannel('app.channel.shared.data');
   GlobalKey<AnimatedListState> animatedListStateKey = GlobalKey();
   bool isLoadingTasks = true;
   AnimationController _animationController;
+  String sharedText;
 
   @override
   void initState() {
@@ -48,6 +54,37 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
   void didChangeDependencies() {
     getAllTasks();
     super.didChangeDependencies();
+  }
+
+  getSharedText(
+    BuildContext context,
+  ) async {
+    var sharedData = await platform.invokeMethod("getSharedText");
+    String emptyText = "empty_8ebddc3a-a5d8-11ea-bb37-0242ac130002";
+    print("fetched data from native layer");
+    if (sharedData != emptyText) {
+      print(sharedData);
+      if (sharedData != null && sharedData.toString().isNotEmpty) {
+        final timeNow = DateTime.now();
+        final data = await Navigator.pushNamed(
+            context, CreateTaskPage.routeName,
+            arguments: CreateTaskScreenArguments(
+                runningDate: DateTime(timeNow.year, timeNow.month, timeNow.day),
+                totalTasksCreated:
+                    6, // 6 because incoming text should always be saved
+                initialTaskTitle: sharedData as String));
+
+        if (data != null && data is TaskEntity) {
+          Provider.of<TaskListHolderProvider>(context, listen: false)
+              .insertTaskToList(data);
+        }
+        sharedText = emptyText;
+      } else {
+        // Do nothing
+      }
+    } else {
+      // Do nothing
+    }
   }
 
   @override
@@ -238,6 +275,9 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
       });
       Provider.of<TaskListHolderProvider>(providerContext, listen: false)
           .assignTaskList(state.taskListEntity.taskList);
+
+      // check for shared text
+      getSharedText(providerContext);
     }
 
     if (state is ErrorHomeScreenAllTasksState) {
