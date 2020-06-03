@@ -120,20 +120,49 @@ class CommonTextStyles {
       letterSpacing: 2,
     );
   }
+
+  static TextStyle buildNotificationTextColor(BuildContext context) {
+    final currentTheme =
+        Provider.of<ThemeModel>(context, listen: false).currentTheme;
+
+    if (currentTheme == lightTheme) {
+      return CommonTextStyles.taskTextStyle(context).copyWith(
+        color: CommonColors.scaffoldColor.withOpacity(0.38),
+      );
+    } else {
+      return CommonTextStyles.taskTextStyle(context).copyWith(
+        color: CommonColors.taskTextColor.withOpacity(0.38),
+      );
+    }
+  }
 }
 
 TextStyle selectTaskStyle(
     TaskEntity task, BuildContext context, bool isCompleted) {
   TextStyle taskTextStyle;
+  final currentTheme =
+      Provider.of<ThemeModel>(context, listen: false).currentTheme;
   // calculating if the task is completed
   if (isCompleted) {
-    taskTextStyle = CommonTextStyles.disabledTaskTextStyle();
+    if (currentTheme == darkTheme) {
+      taskTextStyle = CommonTextStyles.disabledTaskTextStyle();
+    } else {
+      taskTextStyle = CommonTextStyles.taskTextStyle(context).copyWith(
+        color: CommonColors.scaffoldColor.withOpacity(0.38),
+      );
+    }
   } else {
     taskTextStyle = CommonTextStyles.taskTextStyle(context);
   }
   // calculating if the task is for a previous day
   if (checkIsTaskIsOfPast(task.runningDate)) {
-    taskTextStyle = CommonTextStyles.disabledTaskTextStyle();
+    if (currentTheme == darkTheme) {
+      taskTextStyle = CommonTextStyles.disabledTaskTextStyle();
+    } else {
+      taskTextStyle = CommonTextStyles.taskTextStyle(context).copyWith(
+        color: CommonColors.scaffoldColor.withOpacity(0.38),
+      );
+    }
   }
   return taskTextStyle;
 }

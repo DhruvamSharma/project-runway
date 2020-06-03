@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/date_time_parser.dart';
+import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/current_task_page.dart';
 import 'package:provider/provider.dart';
@@ -35,15 +36,25 @@ class TaskBadge extends StatelessWidget {
   Color selectBadgeColor(BuildContext context, ThemeModel appState,
       TaskHolderProviderModel taskState) {
     Color badgeColor;
+    final currentTheme =
+        Provider.of<ThemeModel>(context, listen: false).currentTheme;
     if (isCompleted) {
-      badgeColor = CommonColors.taskTextColor.withOpacity(0.38);
+      if (currentTheme == darkTheme) {
+        badgeColor = CommonColors.taskTextColor.withOpacity(0.38);
+      } else {
+        badgeColor = CommonColors.scaffoldColor.withOpacity(0.38);
+      }
     } else {
       badgeColor = CommonColors.chartColor;
     }
 
     // calculating if the task is for a previous day
     if (checkIsTaskIsOfPast(taskState.taskEntity.runningDate)) {
-      badgeColor = CommonColors.taskTextColor.withOpacity(0.38);
+      if (currentTheme == darkTheme) {
+        badgeColor = CommonColors.taskTextColor.withOpacity(0.38);
+      } else {
+        badgeColor = CommonColors.scaffoldColor.withOpacity(0.38);
+      }
     }
     return badgeColor;
   }

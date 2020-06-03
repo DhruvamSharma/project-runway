@@ -98,9 +98,8 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                         highlightColor: Colors.transparent,
                         tooltip: "Share List",
                         icon: Icon(Icons.share,
-                            color: pageState.pageNumber == 0
-                                ? CommonColors.taskTextColor.withOpacity(0.38)
-                                : CommonColors.taskTextColor.withOpacity(0.60)),
+                            color:
+                                buildIconColor(appState, pageState.pageNumber)),
                         onPressed: () {
                           try {
                             AnalyticsUtils.sendAnalyticEvent(
@@ -185,11 +184,8 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                         "More Details",
                         style: CommonTextStyles.disabledTaskTextStyle()
                             .copyWith(
-                                color: pageState.pageNumber == 0
-                                    ? CommonColors.taskTextColor
-                                        .withOpacity(0.38)
-                                    : CommonColors.taskTextColor
-                                        .withOpacity(0.60),
+                                color: buildIconColor(
+                                    appState, pageState.pageNumber),
                                 letterSpacing: 3,
                                 fontSize: 14),
                       ),
@@ -202,9 +198,8 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                           tooltip: "Create Task",
                           icon: Icon(
                             Icons.send,
-                            color: pageState.pageNumber == 0
-                                ? CommonColors.taskTextColor.withOpacity(0.38)
-                                : CommonColors.taskTextColor.withOpacity(0.6),
+                            color:
+                                buildIconColor(appState, pageState.pageNumber),
                             semanticLabel: "Create Task",
                           ),
                           onPressed: () {
@@ -308,6 +303,22 @@ class CreateTaskShortcutWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color buildIconColor(ThemeModel appState, int pageNumber) {
+    if (appState.currentTheme == darkTheme) {
+      if (pageNumber == 0) {
+        return CommonColors.taskTextColor.withOpacity(0.38);
+      } else {
+        return CommonColors.taskTextColor.withOpacity(0.60);
+      }
+    } else {
+      if (pageNumber == 0) {
+        return CommonColors.scaffoldColor.withOpacity(0.38);
+      } else {
+        return CommonColors.scaffoldColor.withOpacity(0.60);
+      }
+    }
   }
 
   String buildLabelForTaskField(PageHolderProviderModel pageState) {

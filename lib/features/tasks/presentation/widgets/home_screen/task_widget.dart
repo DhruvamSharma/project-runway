@@ -101,10 +101,10 @@ class _TaskWidgetState extends State<TaskWidget> {
         },
         child: Container(
           padding: const EdgeInsets.only(
-            top: CommonDimens.MARGIN_20,
+            top: CommonDimens.MARGIN_20 / 1.5,
             left: CommonDimens.MARGIN_20,
             right: CommonDimens.MARGIN_20,
-            bottom: CommonDimens.MARGIN_20,
+            bottom: CommonDimens.MARGIN_20 / 1.5,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

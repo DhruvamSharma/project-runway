@@ -140,11 +140,15 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                   ),
                 ),
                 Container(
+                  margin: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_20,
+                  ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.only(top: 10),
                     title: Text(
                       "Notification Time",
-                      style: CommonTextStyles.disabledTaskTextStyle(),
+                      style:
+                          CommonTextStyles.buildNotificationTextColor(context),
                     ),
                     trailing: Text(
                       Provider.of<TaskDetailProviderModel>(newContext,
@@ -156,7 +160,8 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                                   listen: false)
                               .notificationTime)
                           : "None",
-                      style: CommonTextStyles.disabledTaskTextStyle(),
+                      style:
+                          CommonTextStyles.buildNotificationTextColor(context),
                     ),
                     onTap: isEnabled
                         ? () {
