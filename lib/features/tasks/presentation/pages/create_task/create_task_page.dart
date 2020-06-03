@@ -177,7 +177,8 @@ class CreateTaskPage extends StatelessWidget {
                                 helperTextStyle:
                                     CommonTextStyles.badgeTextStyle(context)
                                         .copyWith(
-                                  color: appState.currentTheme.accentColor,
+                                  color: appState.currentTheme.accentColor
+                                      .withOpacity(0.5),
                                   fontSize: 14,
                                 ),
                                 onSubmitted: (text) {},
@@ -202,11 +203,8 @@ class CreateTaskPage extends StatelessWidget {
                                 contentPadding: const EdgeInsets.all(0),
                                 title: Text(
                                   "Notification Time",
-                                  style: CommonTextStyles.taskTextStyle(context)
-                                      .copyWith(
-                                    color: appState.currentTheme.accentColor
-                                        .withOpacity(0.5),
-                                  ),
+                                  style:
+                                      CommonTextStyles.disabledTaskTextStyle(),
                                 ),
                                 trailing: Text(
                                   Provider.of<TaskDetailProviderModel>(

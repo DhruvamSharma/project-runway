@@ -195,11 +195,28 @@ class _CustomTextFieldState extends State<CustomTextField> {
   }
 
   TextStyle buildTextStyle() {
-    TextStyle textStyle = CommonTextStyles.taskTextStyle(context);
-    if (widget.enabled != null && !widget.enabled) {
-      textStyle = textStyle.copyWith(
-        color: Colors.grey,
-      );
+    TextStyle textStyle;
+    final currentTheme =
+        Provider.of<ThemeModel>(context, listen: false).currentTheme;
+    // calculating if the task is completed
+    if (widget.enabled) {
+      if (currentTheme == darkTheme) {
+        textStyle = CommonTextStyles.taskTextStyle(context).copyWith(
+          color: CommonColors.taskTextColor.withOpacity(0.60),
+        );
+      } else {
+        textStyle = CommonTextStyles.taskTextStyle(context).copyWith(
+          color: CommonColors.scaffoldColor.withOpacity(0.60),
+        );
+      }
+    } else {
+      if (currentTheme == darkTheme) {
+        textStyle = CommonTextStyles.disabledTaskTextStyle();
+      } else {
+        textStyle = CommonTextStyles.taskTextStyle(context).copyWith(
+          color: CommonColors.scaffoldColor.withOpacity(0.38),
+        );
+      }
     }
     return textStyle;
   }
@@ -224,14 +241,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   Color buildLabelAndHintColor() {
     Color hintAndLabelColor;
+    final appTheme =
+        Provider.of<ThemeModel>(context, listen: false).currentTheme;
     if (widget.enabled != null && !widget.enabled) {
-      hintAndLabelColor = CommonColors.disabledTaskTextColor;
+      if (appTheme == lightTheme) {
+        hintAndLabelColor = CommonColors.scaffoldColor.withOpacity(0.38);
+      } else {
+        hintAndLabelColor = CommonColors.taskTextColor.withOpacity(0.38);
+      }
     } else {
-      hintAndLabelColor =
-          Provider.of<ThemeModel>(context, listen: false).currentTheme ==
-                  lightTheme
-              ? CommonColors.taskTextColorLightTheme
-              : CommonColors.taskTextColor.withOpacity(0.5);
+      hintAndLabelColor = appTheme == lightTheme
+          ? CommonColors.scaffoldColor.withOpacity(0.50)
+          : CommonColors.taskTextColor.withOpacity(0.50);
     }
     return hintAndLabelColor;
   }
