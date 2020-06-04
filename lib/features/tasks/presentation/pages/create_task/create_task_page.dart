@@ -53,6 +53,8 @@ class CreateTaskPage extends StatelessWidget {
                     );
                     Navigator.pop(context, state.taskEntity);
                   }
+
+                  if (state is ErrorCreateScreenCreateTaskState) {}
                 },
                 child: Stack(
                   children: <Widget>[
