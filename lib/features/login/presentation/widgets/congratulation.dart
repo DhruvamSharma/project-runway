@@ -60,7 +60,7 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
               children: <Widget>[
                 Spacer(),
                 Text(
-                  "Congratulations\nYou are all set up to increase your productivity",
+                  "Congratulations,\nYou are all set up to increase your productivity",
                   style: CommonTextStyles.loginTextStyle(context),
                   textAlign: TextAlign.center,
                 ),
@@ -70,9 +70,9 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
                     top: CommonDimens.MARGIN_60,
                   ),
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: OutlineButton(
-                      highlightedBorderColor: CommonColors.chartColor,
+                    width: 200,
+                    child: RaisedButton(
+                      color: CommonColors.chartColor,
                       onPressed: () {
                         if (!isCreatingAccount) {
                           setState(() {
