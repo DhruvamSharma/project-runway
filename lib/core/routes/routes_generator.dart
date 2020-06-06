@@ -13,7 +13,7 @@ import 'package:project_runway/features/stats/presentation/pages/stats_screen.da
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/home_screen.dart';
-import 'package:project_runway/features/tasks/presentation/widgets/secret_puzzle_widget.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/image_selector.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -53,6 +53,9 @@ class RouteGenerator {
         ));
       case StatsScreen.routeName:
         return _transitionRoute(StatsScreen());
+
+      case ImageSelectorRoute.routeName:
+        return _transitionRoute(ImageSelectorRoute());
       default:
         // If there is no such named route in the switch statement, e.g. /third
         return _errorRoute();
