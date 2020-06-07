@@ -11,6 +11,7 @@ class VisionModel extends Equatable {
   final int points;
   final String anotherVariable;
   final bool isDeleted;
+  final bool isCompleted;
 
   VisionModel({
     @required this.visionBoardId,
@@ -22,6 +23,7 @@ class VisionModel extends Equatable {
     @required this.points,
     @required this.anotherVariable,
     @required this.isDeleted,
+    @required this.isCompleted,
   });
 
   @override
@@ -34,6 +36,7 @@ class VisionModel extends Equatable {
         createdAt,
         points,
         anotherVariable,
+        isCompleted,
       ];
 
   factory VisionModel.fromJson(Map<String, Object> map) {
@@ -48,6 +51,7 @@ class VisionModel extends Equatable {
         points: map["points"],
         anotherVariable: map["anotherVariable"],
         isDeleted: map["isDeleted"],
+        isCompleted: map["isCompleted"],
       );
     } catch (ex) {
       print(ex.toString());
@@ -67,6 +71,7 @@ class VisionModel extends Equatable {
         "points": points,
         "anotherVariable": anotherVariable,
         "isDeleted": isDeleted,
+        "isCompleted": isCompleted,
       };
     } catch (ex) {
       print(ex.toString());

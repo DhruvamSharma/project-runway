@@ -26,7 +26,7 @@ import 'package:project_runway/features/login/presentation/widgets/app_into.dart
 import 'package:project_runway/features/login/presentation/widgets/custom_list_tile.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/secret_puzzle_widget.dart';
-import 'package:project_runway/features/vision_boards/presentation/pages/image_selector.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -298,10 +298,10 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             leadingIcon: Icons.visibility,
                             onTap: () {
                               Navigator.pushNamed(
-                                  context, ImageSelectorRoute.routeName);
+                                  context, VisionBoardListRoute.routeName);
                             },
                             appState: appState,
-                            text: "Vision Boards",
+                            text: "Vision Board",
                           ),
                           Divider(
                             color: appState.currentTheme == lightTheme

@@ -13,7 +13,13 @@ import 'package:project_runway/features/stats/presentation/pages/stats_screen.da
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/home_screen.dart';
+import 'package:project_runway/features/vision_boards/presentation/manager/bloc.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/create_vision_board/create_vision_board.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/create_vision_board/create_vision_board_args.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/edit_vision_detaiils/edit_vision_details.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/edit_vision_detaiils/edit_vision_details_args.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/image_selector.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -56,6 +62,33 @@ class RouteGenerator {
 
       case ImageSelectorRoute.routeName:
         return _transitionRoute(ImageSelectorRoute());
+      case VisionBoardListRoute.routeName:
+        return _transitionRoute(
+          BlocProvider<VisionBoardBloc>(
+            create: (_) => sl<VisionBoardBloc>(),
+            child: VisionBoardListRoute(),
+          ),
+        );
+      case CreateVisionBoardRoute.routeName:
+        final CreateVisionBoardArgs args = settings.arguments;
+        return _transitionRoute(BlocProvider<VisionBoardBloc>(
+          create: (_) => sl<VisionBoardBloc>(),
+          child: CreateVisionBoardRoute(
+            visionBoardId: args.visionBoardId,
+          ),
+        ));
+      case EditVisionRoute.routeName:
+        final EditVisionArgs args = settings.arguments;
+        return _transitionRoute(
+          BlocProvider<VisionBoardBloc>(
+            create: (_) => sl<VisionBoardBloc>(),
+            child: EditVisionRoute(
+              visionBoardId: args.visionBoardId,
+              visionImageUrl:
+                  "https://images.unsplash.com/photo-1470047721614-35220c146849?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80",
+            ),
+          ),
+        );
       default:
         // If there is no such named route in the switch statement, e.g. /third
         return _errorRoute();

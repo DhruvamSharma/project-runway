@@ -10,6 +10,7 @@ class VisionBoardModel extends Equatable {
   final int points;
   final String imageUrl;
   final bool isDeleted;
+  final bool isCompleted;
   final String anotherVariable;
 
   VisionBoardModel({
@@ -21,6 +22,7 @@ class VisionBoardModel extends Equatable {
     @required this.points,
     @required this.imageUrl,
     @required this.isDeleted,
+    @required this.isCompleted,
     @required this.anotherVariable,
   });
 
@@ -34,6 +36,7 @@ class VisionBoardModel extends Equatable {
         points,
         imageUrl,
         isDeleted,
+        isCompleted,
         anotherVariable,
       ];
 
@@ -49,6 +52,7 @@ class VisionBoardModel extends Equatable {
         points: map["points"],
         anotherVariable: map["anotherVariable"],
         isDeleted: map["isDeleted"],
+        isCompleted: map["isCompleted"],
       );
     } catch (ex) {
       print(ex.toString());
@@ -68,6 +72,7 @@ class VisionBoardModel extends Equatable {
         "points": points,
         "anotherVariable": anotherVariable,
         "isDeleted": isDeleted,
+        "isCompleted": isCompleted,
       };
     } catch (ex) {
       print(ex.toString());
