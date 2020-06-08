@@ -78,6 +78,13 @@ dependencies:
   # webview for vision-boards
   webview_flutter: ^0.3.22+1
   flutter_webview_plugin: ^0.3.11
+  # hosting files and images
+  firebase_storage: ^3.1.6
+  firebase_core: ^0.4.5
+  # picking images from device
+  image_picker: ^0.6.7+1
+  # uploading files
+  flutter_uploader: ^1.2.0
 
 dev_dependencies:
   flutter_test:

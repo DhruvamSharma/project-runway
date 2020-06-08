@@ -20,6 +20,7 @@ import 'package:project_runway/features/vision_boards/presentation/pages/edit_vi
 import 'package:project_runway/features/vision_boards/presentation/pages/edit_vision_detaiils/edit_vision_details_args.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/image_selector.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
+import 'package:provider/provider.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -80,12 +81,14 @@ class RouteGenerator {
       case EditVisionRoute.routeName:
         final EditVisionArgs args = settings.arguments;
         return _transitionRoute(
-          BlocProvider<VisionBoardBloc>(
-            create: (_) => sl<VisionBoardBloc>(),
-            child: EditVisionRoute(
-              visionBoardId: args.visionBoardId,
-              visionImageUrl:
-                  "https://images.unsplash.com/photo-1470047721614-35220c146849?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80",
+          ChangeNotifierProvider<VisionUploadProviderModel>.value(
+            value: VisionUploadProviderModel(),
+            child: BlocProvider<VisionBoardBloc>(
+              create: (_) => sl<VisionBoardBloc>(),
+              child: EditVisionRoute(
+                visionBoardId: args.visionBoardId,
+                visionImageUrl: args.imageUrl,
+              ),
             ),
           ),
         );

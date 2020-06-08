@@ -96,17 +96,21 @@ class _CreateVisionBoardRouteState extends State<CreateVisionBoardRoute> {
                     ),
                     child: FlatButton(
                         onPressed: () async {
-                          await Navigator.pushNamed(
-                            context,
-                            EditVisionRoute.routeName,
-                            arguments: EditVisionArgs(
-                              visionBoardId: widget.visionBoardId,
-                            ),
-                          );
-                          setState(() {
-                            isLoadingVisions = true;
-                          });
-                          getAllVisions();
+                          final imageUrl = await buildChooseFromOptions();
+                          if (imageUrl != null) {
+                            await Navigator.pushNamed(
+                              context,
+                              EditVisionRoute.routeName,
+                              arguments: EditVisionArgs(
+                                visionBoardId: widget.visionBoardId,
+                                imageUrl: imageUrl,
+                              ),
+                            );
+                            setState(() {
+                              isLoadingVisions = true;
+                            });
+                            getAllVisions();
+                          }
                         },
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -153,4 +157,126 @@ class _CreateVisionBoardRouteState extends State<CreateVisionBoardRoute> {
     BlocProvider.of<VisionBoardBloc>(context)
         .add(GetAllVisionsEvent(visionBoardId: widget.visionBoardId));
   }
+
+  Future<String> buildChooseFromOptions() async {
+    final String response = await showModalBottomSheet(
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(5))),
+      context: context,
+      builder: (_) => Container(
+        color: CommonColors.scaffoldColor,
+        height: MediaQuery.of(context).size.width * 1.0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: CommonDimens.MARGIN_20,
+            vertical: CommonDimens.MARGIN_60 / 2,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: CommonDimens.MARGIN_20,
+                ),
+                child: Text(
+                  "Select a photo",
+                  style: CommonTextStyles.taskTextStyle(context),
+                ),
+              ),
+              ListView(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                children: <Widget>[
+                  Material(
+                    child: InkWell(
+                      onTap: () {
+//                        pickImageFromDevice();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_20 / 2,
+                          bottom: CommonDimens.MARGIN_20 / 2,
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            CircleAvatar(
+                              radius: 3,
+                              backgroundColor: CommonColors.chartColor,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: CommonDimens.MARGIN_20,
+                              ),
+                              child: Text("Select from your device",
+                                  style:
+                                      CommonTextStyles.taskTextStyle(context)),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_20 / 2,
+                      bottom: CommonDimens.MARGIN_20 / 2,
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        CircleAvatar(
+                          radius: 3,
+                          backgroundColor: CommonColors.chartColor,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: CommonDimens.MARGIN_20,
+                          ),
+                          child: Text("Select from our selection",
+                              style: CommonTextStyles.taskTextStyle(context)),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_20 / 2,
+                      bottom: CommonDimens.MARGIN_20 / 2,
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        CircleAvatar(
+                          radius: 3,
+                          backgroundColor: CommonColors.chartColor,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: CommonDimens.MARGIN_20,
+                          ),
+                          child: Text(
+                            "Select from our selection",
+                            style: CommonTextStyles.taskTextStyle(context),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    return response;
+  }
+
+//  pickImageFromDevice() async {
+//    PickedFile _pickedFile;
+//    final ImagePicker _picker = ImagePicker();
+//    final pickedFile = await _picker.getImage(
+//      source: ImageSource.camera,
+//    );
+//    StorageUtils.uploadFile(pickedFile.path, widget.visionBoardId);
+//  }
 }

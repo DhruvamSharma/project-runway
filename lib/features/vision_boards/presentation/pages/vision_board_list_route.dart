@@ -14,8 +14,8 @@ import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 import 'package:project_runway/features/vision_boards/data/models/vision_board_model.dart';
 import 'package:project_runway/features/vision_boards/data/models/vision_model.dart';
 import 'package:project_runway/features/vision_boards/presentation/manager/bloc.dart';
-import 'package:project_runway/features/vision_boards/presentation/pages/create_vision_board/create_vision_board.dart';
-import 'package:project_runway/features/vision_boards/presentation/pages/create_vision_board/create_vision_board_args.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/edit_vision_detaiils/edit_vision_details.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/edit_vision_detaiils/edit_vision_details_args.dart';
 import 'package:uuid/uuid.dart';
 
 class VisionBoardListRoute extends StatefulWidget {
@@ -217,9 +217,12 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
   }
 
   void moveToCreateVisionRoute() async {
-    await Navigator.pushNamed(context, CreateVisionBoardRoute.routeName,
-        arguments: CreateVisionBoardArgs(
-            visionBoardId: visionBoards[0].visionBoardId));
+    await Navigator.pushNamed(
+      context,
+      EditVisionRoute.routeName,
+      arguments: EditVisionArgs(
+          visionBoardId: visionBoards[0].visionBoardId, imageUrl: ""),
+    );
     setState(() {
       isLoadingVisionBoards = true;
       loadAllVisionBoards();
