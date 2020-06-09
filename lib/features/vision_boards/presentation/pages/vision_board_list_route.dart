@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
@@ -106,14 +107,35 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
 
   Widget buildLoadedList() {
     return Center(
-      child: MaterialButton(
-        onPressed: () {
-          moveToCreateVisionRoute();
-        },
-        child: Text(
-          "Add More +",
-          style: CommonTextStyles.taskTextStyle(context),
-        ),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: StaggeredGridView.countBuilder(
+              crossAxisCount: 2,
+              itemBuilder: (_, index) {
+                return CachedNetworkImage(
+                  imageUrl: visions[index].imageUrl,
+                  fit: BoxFit.cover,
+                  width: MediaQuery.of(_).size.width,
+                );
+              },
+              staggeredTileBuilder: (int index) =>
+                  StaggeredTile.count(1, index.isEven ? 2 : 1),
+              mainAxisSpacing: 4.0,
+              crossAxisSpacing: 4.0,
+              itemCount: visions.length,
+            ),
+          ),
+          MaterialButton(
+            onPressed: () {
+              moveToCreateVisionRoute();
+            },
+            child: Text(
+              "Add More +",
+              style: CommonTextStyles.taskTextStyle(context),
+            ),
+          ),
+        ],
       ),
     );
   }
