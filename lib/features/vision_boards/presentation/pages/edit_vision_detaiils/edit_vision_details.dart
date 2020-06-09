@@ -10,11 +10,12 @@ import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/storage_utils.dart';
 import 'package:project_runway/features/vision_boards/data/models/vision_model.dart';
 import 'package:project_runway/features/vision_boards/presentation/manager/bloc.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/image_selector.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class EditVisionRoute extends StatefulWidget {
-  static const String routeName = "${APP_NAME}_v1_vision-board_edit-vision";
+  static const String routeName = "${APP_NAME}_v1_image_selector";
   final String visionImageUrl;
   final String visionBoardId;
 
@@ -150,42 +151,22 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
   }
 
   Widget buildImage(BuildContext providerContext) {
-    final uploadState = Provider.of<VisionUploadProviderModel>(providerContext);
+    final uploadState = Provider.of<VisionUploadProviderModel>(
+      providerContext,
+    );
     if (uploadState.response != null && uploadState.response.isNotEmpty) {
-      return Stack(
-        children: <Widget>[
-          Container(
-            height: 200,
-            width: MediaQuery.of(context).size.width,
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(
-                  10,
-                ),
-              ),
-              color: CommonColors.disabledTaskTextColor,
-            ),
-            child: CachedNetworkImage(
-              imageUrl: uploadState.response,
-              height: 200,
-              fit: BoxFit.cover,
-            ),
-          ),
-          IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () {
-                buildChooseFromOptions(providerContext);
-              }),
-        ],
-      );
+      return buildSelectedImageContainer(providerContext, uploadState);
     } else {
       if (fileSelectionMethod != null) {
         if (fileSelectionMethod == FILE_SELECTION_METHOD.CAMERA ||
             fileSelectionMethod == FILE_SELECTION_METHOD.GALLERY) {
           return buildContainerForFileUpload(providerContext);
         } else {
-          uploadState.assignResponse(visionImageUrl);
+          if (uploadState.response != null) {
+            return buildSelectedImageContainer(providerContext, uploadState);
+          } else {
+            return buildAddImageContainer(providerContext);
+          }
         }
       } else {
         return buildAddImageContainer(providerContext);
@@ -193,11 +174,53 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
     }
   }
 
+  Widget buildSelectedImageContainer(
+      BuildContext providerContext, VisionUploadProviderModel uploadState) {
+    return Stack(
+      children: <Widget>[
+        Container(
+          height: 200,
+          width: MediaQuery.of(context).size.width,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(
+                10,
+              ),
+            ),
+            color: CommonColors.disabledTaskTextColor,
+          ),
+          child: CachedNetworkImage(
+            imageUrl: uploadState.response,
+            height: 200,
+            fit: BoxFit.cover,
+            progressIndicatorBuilder: (_, __, progress) {
+              return Center(
+                child: SizedBox(
+                  height: 5,
+                  child: LinearProgressIndicator(
+                    value: progress.progress,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              buildChooseFromOptions(providerContext);
+            }),
+      ],
+    );
+  }
+
   void createVision() {
     final vision = VisionModel(
       visionBoardId: widget.visionBoardId,
       visionId: Uuid().v1(),
-      imageUrl: widget.visionImageUrl,
+      imageUrl: Provider.of<VisionUploadProviderModel>(context, listen: false)
+          .response,
       visionName: visionName,
       quote: null,
       createdAt: DateTime.now(),
@@ -205,6 +228,11 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
       anotherVariable: null,
       isDeleted: false,
       isCompleted: false,
+      profileImageUrl:
+          Provider.of<VisionUploadProviderModel>(context, listen: false)
+              .profileImageUrl,
+      fullName: Provider.of<VisionUploadProviderModel>(context, listen: false)
+          .fullName,
     );
 
     BlocProvider.of<VisionBoardBloc>(context).add(
@@ -220,19 +248,21 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
     _pickedFile = await _picker.getImage(
       source: ImageSource.camera,
     );
-    final uploadState =
-        Provider.of<VisionUploadProviderModel>(providerContext, listen: false);
-    uploadState.assignResponse(null);
-    StorageUtils.uploadFile(
-        _pickedFile.path, widget.visionBoardId, uploadState);
+    if (_pickedFile != null && _pickedFile.path != null) {
+      final uploadState = Provider.of<VisionUploadProviderModel>(
+          providerContext,
+          listen: false);
+      uploadState.assignResponse(null);
+      StorageUtils.uploadFile(
+          _pickedFile.path, widget.visionBoardId, uploadState);
+    }
   }
 
   Widget buildAddImageContainer(BuildContext providerContext) {
     return Material(
       child: InkWell(
-        onTap: () async {
-          String response = await buildChooseFromOptions(providerContext);
-          if (response != null) {}
+        onTap: () {
+          buildChooseFromOptions(providerContext);
         },
         child: Container(
           height: 200,
@@ -292,7 +322,8 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
 
   double buildProgress(BuildContext providerContext) {
     int progress =
-        Provider.of<VisionUploadProviderModel>(providerContext).progress;
+        Provider.of<VisionUploadProviderModel>(providerContext, listen: false)
+            .progress;
     if (progress != null) {
       return progress.toDouble();
     } else {
@@ -300,8 +331,8 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
     }
   }
 
-  Future<String> buildChooseFromOptions(BuildContext providerContext) async {
-    final String response = await showModalBottomSheet(
+  buildChooseFromOptions(BuildContext providerContext) {
+    showModalBottomSheet(
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -363,25 +394,50 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: CommonDimens.MARGIN_20 / 2,
-                      bottom: CommonDimens.MARGIN_20 / 2,
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        CircleAvatar(
-                          radius: 3,
-                          backgroundColor: CommonColors.chartColor,
+                  Material(
+                    child: InkWell(
+                      onTap: () async {
+                        setState(() {
+                          fileSelectionMethod = FILE_SELECTION_METHOD.UNSPLASH;
+                        });
+                        final result = await Navigator.pushNamed(
+                            context, ImageSelectorRoute.routeName);
+                        if (result != null) {
+                          final uploadState =
+                              Provider.of<VisionUploadProviderModel>(
+                                  providerContext,
+                                  listen: false);
+                          List<String> responseArray = result;
+                          uploadState.assignResponse(responseArray[0]);
+                          uploadState.profileImageUrl = responseArray[1];
+                          uploadState.fullName = responseArray[2];
+                          Navigator.pop(
+                            context,
+                          );
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_20 / 2,
+                          bottom: CommonDimens.MARGIN_20 / 2,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: CommonDimens.MARGIN_20,
-                          ),
-                          child: Text("Select from our selection",
-                              style: CommonTextStyles.taskTextStyle(context)),
-                        )
-                      ],
+                        child: Row(
+                          children: <Widget>[
+                            CircleAvatar(
+                              radius: 3,
+                              backgroundColor: CommonColors.chartColor,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: CommonDimens.MARGIN_20,
+                              ),
+                              child: Text("Select from our selection",
+                                  style:
+                                      CommonTextStyles.taskTextStyle(context)),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                   Padding(
@@ -414,7 +470,6 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
         ),
       ),
     );
-    return response;
   }
 }
 
@@ -429,6 +484,8 @@ enum FILE_SELECTION_METHOD {
 class VisionUploadProviderModel extends ChangeNotifier {
   int progress;
   String response;
+  String profileImageUrl;
+  String fullName;
 
   void assignProgress(int value) {
     progress = value;

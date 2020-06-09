@@ -85,6 +85,7 @@ dependencies:
   image_picker: ^0.6.7+1
   # uploading files
   flutter_uploader: ^1.2.0
+  rxdart: ^0.24.1
 
 dev_dependencies:
   flutter_test:
