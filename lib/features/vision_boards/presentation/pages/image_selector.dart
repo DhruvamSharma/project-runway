@@ -148,25 +148,36 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
                 ),
               ),
               Align(
-                alignment: Alignment.bottomLeft,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: <Widget>[
-                      ClipRRect(
-                        child: CachedNetworkImage(
-                          imageUrl: result.user.profileImage.small,
-                          height: 30,
-                          width: 30,
-                        ),
-                        borderRadius: BorderRadius.circular(25.0),
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    alignment: Alignment.bottomCenter,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.black, Colors.transparent],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.center,
                       ),
-                      SizedBox(width: 10.0),
-                      Text(result.user.name),
-                    ],
-                  ),
-                ),
-              )
+                    ),
+                    height: 400,
+                    child: Row(
+                      children: <Widget>[
+                        ClipRRect(
+                          child: CachedNetworkImage(
+                            imageUrl: result.user.profileImage.small,
+                            height: 20,
+                            width: 20,
+                          ),
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                        SizedBox(width: 10.0),
+                        Text(
+                          "${result.user.firstName} ${result.user.lastName}",
+                          style: CommonTextStyles.scaffoldTextStyle(context),
+                        ),
+                      ],
+                    )),
+              ),
             ],
           ),
         ),

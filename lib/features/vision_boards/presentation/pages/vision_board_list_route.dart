@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
@@ -17,6 +20,9 @@ import 'package:project_runway/features/vision_boards/data/models/vision_model.d
 import 'package:project_runway/features/vision_boards/presentation/manager/bloc.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/edit_vision_detaiils/edit_vision_details.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/edit_vision_detaiils/edit_vision_details_args.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/view_vision_details/view_vision_details.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/view_vision_details/view_vision_details_args.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:uuid/uuid.dart';
 
 class VisionBoardListRoute extends StatefulWidget {
@@ -32,6 +38,9 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
   List<VisionBoardModel> visionBoards;
   List<VisionModel> visions;
   bool isLoadingVisionBoards = true;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  bool isTakingScreenshot = false;
+  ScreenshotController _screenshotController = ScreenshotController();
   @override
   void initState() {
     user = UserModel.fromJson(
@@ -58,7 +67,6 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
           setState(() {
             visions = state.visionList;
           });
-          print(state.visionList.length);
         }
 
         if (state is ErrorVisionBoardState) {
@@ -68,26 +76,68 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
           });
         }
       },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: Stack(
-          children: <Widget>[
-            Align(
-              alignment: Alignment.center,
-              child: RotatedBox(
-                quarterTurns: 3,
-                child: Text(
-                  screenName.toUpperCase(),
-                  style: CommonTextStyles.rotatedDesignTextStyle(context),
-                  textAlign: TextAlign.center,
+      child: SafeArea(
+        top: false,
+        child: Scaffold(
+          key: _scaffoldKey,
+          floatingActionButton:
+              (visions == null || visions.length == TOTAL_VISIONS_LIMIT + 1)
+                  ? Container()
+                  : FloatingActionButton.extended(
+                      onPressed: () {
+                        moveToCreateVisionRoute();
+                      },
+                      label: Text(
+                        "Add More",
+                        style: CommonTextStyles.scaffoldTextStyle(context)
+                            .copyWith(color: Colors.white),
+                      )),
+          body: Stack(
+            children: <Widget>[
+              Align(
+                alignment: Alignment.center,
+                child: RotatedBox(
+                  quarterTurns: 3,
+                  child: Text(
+                    screenName.toUpperCase(),
+                    style: CommonTextStyles.rotatedDesignTextStyle(context),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
-            ),
-            buildRoute(),
-          ],
+              buildRoute(),
+              SizedBox(
+                height: 52,
+                child: AppBar(
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+              FloatingActionButton(onPressed: () async {
+                if (await Permission.storage.request().isGranted) {
+                  setState(() {
+                    isTakingScreenshot = true;
+                  });
+                  _screenshotController
+                      .capture(
+                    pixelRatio: 3.0,
+                  )
+                      .then((File image) async {
+                    final result = await ImageGallerySaver.saveImage(
+                        image.readAsBytesSync());
+                    setState(() {
+                      isTakingScreenshot = false;
+                    }); // Save image to gallery,  Needs plugin  https://pub.dev/packages/image_gallery_saver
+                  }).catchError((onError) {
+                    print(onError);
+                    setState(() {
+                      isTakingScreenshot = false;
+                    });
+                  });
+                }
+              })
+            ],
+          ),
         ),
       ),
     );
@@ -100,42 +150,98 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
       if (visionBoards == null || visionBoards.isEmpty) {
         return buildEmptyList();
       } else {
-        return buildLoadedList();
+        if (visions == null || visions.isEmpty) {
+          return buildLoadingList();
+        } else {
+          return buildLoadedList();
+        }
       }
     }
   }
 
   Widget buildLoadedList() {
     return Center(
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: StaggeredGridView.countBuilder(
-              crossAxisCount: 2,
-              itemBuilder: (_, index) {
-                return CachedNetworkImage(
-                  imageUrl: visions[index].imageUrl,
-                  fit: BoxFit.cover,
-                  width: MediaQuery.of(_).size.width,
+      child: Screenshot(
+        controller: _screenshotController,
+        child: StaggeredGridView.countBuilder(
+          itemCount: visions.length,
+          crossAxisCount: 4,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          staggeredTileBuilder: (index) =>
+              new StaggeredTile.count(2, index.isEven ? 3.0 : 2.0),
+          itemBuilder: (_, index) {
+            return GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  ViewVisionDetailsRoute.routeName,
+                  arguments: ViewVisionDetailsArgs(
+                    vision: visions[index],
+                  ),
                 );
               },
-              staggeredTileBuilder: (int index) =>
-                  StaggeredTile.count(1, index.isEven ? 2 : 1),
-              mainAxisSpacing: 4.0,
-              crossAxisSpacing: 4.0,
-              itemCount: visions.length,
-            ),
-          ),
-          MaterialButton(
-            onPressed: () {
-              moveToCreateVisionRoute();
-            },
-            child: Text(
-              "Add More +",
-              style: CommonTextStyles.taskTextStyle(context),
-            ),
-          ),
-        ],
+              child: Hero(
+                tag: visions[index].imageUrl,
+                child: Material(
+                  child: Stack(
+                    children: <Widget>[
+                      CachedNetworkImage(
+                        imageUrl: visions[index].imageUrl,
+                        fit: BoxFit.cover,
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          alignment: Alignment.bottomCenter,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.black, Colors.transparent],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.center,
+                            ),
+                          ),
+                          height: 400,
+                          child: visions[index].profileImageUrl != null
+                              ? Row(
+                                  children: <Widget>[
+                                    ClipRRect(
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            visions[index].profileImageUrl,
+                                        height: isTakingScreenshot ? 10 : 20,
+                                        width: isTakingScreenshot ? 10 : 20,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                    SizedBox(width: 10.0),
+                                    AnimatedDefaultTextStyle(
+                                      child: Text(
+                                        visions[index].fullName,
+                                      ),
+                                      style: CommonTextStyles.scaffoldTextStyle(
+                                              context)
+                                          .copyWith(
+                                              color: CommonColors.accentColor,
+                                              fontSize:
+                                                  isTakingScreenshot ? 10 : 14),
+                                      duration: Duration(milliseconds: 200),
+                                    ),
+                                  ],
+                                )
+                              : Container(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

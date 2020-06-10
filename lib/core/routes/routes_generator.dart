@@ -19,6 +19,8 @@ import 'package:project_runway/features/vision_boards/presentation/pages/create_
 import 'package:project_runway/features/vision_boards/presentation/pages/edit_vision_detaiils/edit_vision_details.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/edit_vision_detaiils/edit_vision_details_args.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/image_selector.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/view_vision_details/view_vision_details.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/view_vision_details/view_vision_details_args.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
 import 'package:provider/provider.dart';
 
@@ -92,6 +94,10 @@ class RouteGenerator {
             ),
           ),
         );
+
+      case ViewVisionDetailsRoute.routeName:
+        final ViewVisionDetailsArgs args = settings.arguments;
+        return _transitionRoute(ViewVisionDetailsRoute(vision: args.vision));
       default:
         // If there is no such named route in the switch statement, e.g. /third
         return _errorRoute();

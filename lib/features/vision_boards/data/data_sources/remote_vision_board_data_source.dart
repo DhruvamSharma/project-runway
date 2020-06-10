@@ -69,6 +69,7 @@ class RemoteVisionBoardDataSourceImpl implements RemoteVisionBoardDataSource {
       final visionFirebaseData = await firestore
           .collection(VISION_BOARD_COLLECTION)
           .where("userId", isEqualTo: userId)
+          .where("isDeleted", isEqualTo: false)
           .getDocuments();
       final List<VisionBoardModel> visionBoards = List();
       for (int i = 0; i < visionFirebaseData.documents.length; i++) {
@@ -88,6 +89,7 @@ class RemoteVisionBoardDataSourceImpl implements RemoteVisionBoardDataSource {
       final visionFirebaseData = await firestore
           .collection(VISION_COLLECTION)
           .where("visionBoardId", isEqualTo: visionBoardId)
+          .where("isDeleted", isEqualTo: false)
           .getDocuments();
       final List<VisionModel> visions = List();
       for (int i = 0; i < visionFirebaseData.documents.length; i++) {

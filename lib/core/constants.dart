@@ -11,6 +11,7 @@ const String REFRESH_TEXT = "Refreshed the app";
 const int DEFAULT_URGENCY = 4;
 // All list starts from i = 0 to 6  ==> 7 items
 const int TOTAL_TASK_CREATION_LIMIT = 6;
+const int TOTAL_VISIONS_LIMIT = 10;
 
 // POINTS
 const int TASK_CREATION_POINTS = 10;
@@ -23,12 +24,9 @@ const int SOLVE_PUZZLE_POINTS = 50;
 
 const int PUZZLE_ID_INCREMENT_NUMBER = 13;
 
-
 // Notifications
 const String TASK_CHANNEL_ID = "TASK_NOTIFICATION";
 const String TASK_CHANNEL_NAME = "TASK_CHANNEL";
-
-
 
 // EVENT NAMES
 const String SIGN_IN = "sign_in";
