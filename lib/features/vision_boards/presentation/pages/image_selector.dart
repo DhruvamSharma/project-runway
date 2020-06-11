@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/keys.dart';
 import 'package:project_runway/features/vision_boards/data/models/retreived_photo_model.dart';
 import 'package:project_runway/features/vision_boards/presentation/manager/photos_bloc.dart';
 
@@ -19,6 +22,8 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
   String imageUrl;
   String profileImageUrl;
   String fullName;
+  String downloadLink;
+  String profileLink;
   @override
   void initState() {
     super.initState();
@@ -43,10 +48,12 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          triggerDownloadEventForUnsplash();
           Navigator.pop(context, [
             imageUrl,
             profileImageUrl,
             fullName,
+            profileLink,
           ]);
         },
         label: Text(
@@ -118,8 +125,11 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedIndex = index;
+          downloadLink = result.links.downloadLocation;
+          profileLink =
+              "https://unsplash.com/@${result.user.username}?utm_source=$APP_NAME&utm_medium=referral";
           imageUrl = result.urls.regular;
+          selectedIndex = index;
           profileImageUrl = result.user.profileImage.small;
           fullName = "${result.user.firstName} ${result.user.lastName}";
         });
@@ -173,7 +183,8 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
                         SizedBox(width: 10.0),
                         Text(
                           "${result.user.firstName} ${result.user.lastName}",
-                          style: CommonTextStyles.scaffoldTextStyle(context),
+                          style: CommonTextStyles.scaffoldTextStyle(context)
+                              .copyWith(color: CommonColors.accentColor),
                         ),
                       ],
                     )),
@@ -183,5 +194,13 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
         ),
       ),
     );
+  }
+
+  void triggerDownloadEventForUnsplash() async {
+    try {
+      await http.get("$downloadLink?client_id=$UNSPLASH_KEY");
+    } catch (ex) {
+      // Do nothing
+    }
   }
 }

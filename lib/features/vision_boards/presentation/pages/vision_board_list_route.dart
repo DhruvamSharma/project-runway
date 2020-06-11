@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -50,7 +51,13 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // To turn off landscape mode
     return BlocListener<VisionBoardBloc, VisionBoardState>(
       listener: (_, state) {
         if (state is LoadedGetAllVisionBoardState) {
@@ -65,6 +72,7 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
 
         if (state is LoadedGetAllVisionState) {
           setState(() {
+            isLoadingVisionBoards = false;
             visions = state.visionList;
           });
         }
@@ -111,36 +119,68 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
                 child: AppBar(
                   elevation: 0,
                   backgroundColor: Colors.transparent,
+                  actions: <Widget>[
+                    if (visions != null && visions.isNotEmpty)
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundColor: Colors.black,
+                        child: Center(
+                          child: IconButton(
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.all(0),
+                              icon: Icon(
+                                Icons.save_alt,
+                                size: 14,
+                              ),
+                              onPressed: saveVisionBoardToGallery),
+                        ),
+                      )
+                  ],
                 ),
               ),
-              FloatingActionButton(onPressed: () async {
-                if (await Permission.storage.request().isGranted) {
-                  setState(() {
-                    isTakingScreenshot = true;
-                  });
-                  _screenshotController
-                      .capture(
-                    pixelRatio: 3.0,
-                  )
-                      .then((File image) async {
-                    final result = await ImageGallerySaver.saveImage(
-                        image.readAsBytesSync());
-                    setState(() {
-                      isTakingScreenshot = false;
-                    }); // Save image to gallery,  Needs plugin  https://pub.dev/packages/image_gallery_saver
-                  }).catchError((onError) {
-                    print(onError);
-                    setState(() {
-                      isTakingScreenshot = false;
-                    });
-                  });
-                }
-              })
             ],
           ),
         ),
       ),
     );
+  }
+
+  void saveVisionBoardToGallery() async {
+    if (await Permission.storage.request().isGranted) {
+      // To turn off landscape mode
+      await SystemChrome.setPreferredOrientations(
+          [DeviceOrientation.landscapeLeft]);
+      setState(() {
+        isTakingScreenshot = true;
+      });
+      _screenshotController
+          .capture(
+        pixelRatio: 3.0,
+        delay: Duration(milliseconds: 500),
+      )
+          .then((File image) async {
+        await ImageGallerySaver.saveImage(image.readAsBytesSync());
+        setState(() {
+          isTakingScreenshot = false;
+        }); // Save image to gallery,  Needs plugin  https://pub.dev/packages/image_gallery_saver
+        _scaffoldKey.currentState.removeCurrentSnackBar();
+        _scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            content: Text("Image saved to Gallery"),
+            backgroundColor: CommonColors.scaffoldColor,
+            behavior: SnackBarBehavior.fixed,
+          ),
+        );
+      }).catchError((onError) {
+        print(onError);
+        setState(() {
+          isTakingScreenshot = false;
+        });
+      });
+      // To turn off landscape mode
+      await SystemChrome.setPreferredOrientations(
+          [DeviceOrientation.portraitUp]);
+    }
   }
 
   Widget buildRoute() {
@@ -165,21 +205,37 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
         controller: _screenshotController,
         child: StaggeredGridView.countBuilder(
           itemCount: visions.length,
-          crossAxisCount: 4,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-          staggeredTileBuilder: (index) =>
-              new StaggeredTile.count(2, index.isEven ? 3.0 : 2.0),
+          crossAxisCount:
+              MediaQuery.of(context).orientation == Orientation.landscape
+                  ? 5
+                  : 2,
+          mainAxisSpacing: 5,
+          crossAxisSpacing: 5,
+          shrinkWrap:
+              MediaQuery.of(context).orientation == Orientation.landscape
+                  ? true
+                  : false,
+          staggeredTileBuilder: (index) => new StaggeredTile.count(
+              1,
+              MediaQuery.of(context).orientation == Orientation.landscape
+                  ? (index.isEven ? 1.0 : 1.5)
+                  : (index.isEven ? 2.0 : 1.0)),
           itemBuilder: (_, index) {
             return GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(
+              onTap: () async {
+                final response = await Navigator.pushNamed(
                   context,
                   ViewVisionDetailsRoute.routeName,
                   arguments: ViewVisionDetailsArgs(
                     vision: visions[index],
                   ),
                 );
+                if (response != null && (response as bool) != false) {
+                  setState(() {
+                    isLoadingVisionBoards = true;
+                    loadAllVisionBoards();
+                  });
+                }
               },
               child: Hero(
                 tag: visions[index].imageUrl,
@@ -192,6 +248,23 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
                         height: MediaQuery.of(context).size.height,
                         width: MediaQuery.of(context).size.width,
                       ),
+                      if (visions[index].isCompleted)
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                right: CommonDimens.MARGIN_20 / 2,
+                                top: CommonDimens.MARGIN_20 / 2),
+                            child: CircleAvatar(
+                                backgroundColor: CommonColors.chartColor,
+                                radius: 10,
+                                child: Center(
+                                    child: Icon(
+                                  Icons.check,
+                                  size: 14,
+                                ))),
+                          ),
+                        ),
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Container(
@@ -218,17 +291,20 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
                                       borderRadius: BorderRadius.circular(15.0),
                                     ),
                                     SizedBox(width: 10.0),
-                                    AnimatedDefaultTextStyle(
-                                      child: Text(
-                                        visions[index].fullName,
+                                    Expanded(
+                                      child: AnimatedDefaultTextStyle(
+                                        child: Text(
+                                          visions[index].fullName,
+                                        ),
+                                        style: CommonTextStyles
+                                                .scaffoldTextStyle(context)
+                                            .copyWith(
+                                                color: CommonColors.accentColor,
+                                                fontSize: isTakingScreenshot
+                                                    ? 8
+                                                    : 14),
+                                        duration: Duration(milliseconds: 200),
                                       ),
-                                      style: CommonTextStyles.scaffoldTextStyle(
-                                              context)
-                                          .copyWith(
-                                              color: CommonColors.accentColor,
-                                              fontSize:
-                                                  isTakingScreenshot ? 10 : 14),
-                                      duration: Duration(milliseconds: 200),
                                     ),
                                   ],
                                 )
@@ -256,65 +332,71 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
   }
 
   Widget buildEmptyList() {
-    return Column(
-      children: <Widget>[
-        Align(
-          alignment: Alignment.topCenter,
-          child: Text(
-            screenName.toUpperCase(),
-            style: CommonTextStyles.headerTextStyle(context),
-            textAlign: TextAlign.center,
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: CommonDimens.MARGIN_80,
+      ),
+      child: Column(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.topCenter,
+            child: Text(
+              screenName.toUpperCase(),
+              style: CommonTextStyles.headerTextStyle(context),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(
-            top: CommonDimens.MARGIN_40,
-            left: CommonDimens.MARGIN_20,
-            right: CommonDimens.MARGIN_20,
+          Container(
+            margin: const EdgeInsets.only(
+              top: CommonDimens.MARGIN_40,
+              left: CommonDimens.MARGIN_20,
+              right: CommonDimens.MARGIN_20,
+            ),
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+                color: CommonColors.accentColor,
+                borderRadius: BorderRadius.all(Radius.circular(15))),
+            child: CachedNetworkImage(
+              imageUrl:
+                  "https://images.unsplash.com/photo-1507361617237-221d9f2c84f7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1106&q=80",
+            ),
           ),
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-              color: CommonColors.accentColor,
-              borderRadius: BorderRadius.all(Radius.circular(15))),
-          child: CachedNetworkImage(
-            imageUrl:
-                "https://images.unsplash.com/photo-1507361617237-221d9f2c84f7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1106&q=80",
+          Padding(
+            padding: const EdgeInsets.only(
+              top: CommonDimens.MARGIN_40,
+            ),
+            child: Text(
+              "Vision Boards",
+              textAlign: TextAlign.center,
+              style: CommonTextStyles.loginTextStyle(context),
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: CommonDimens.MARGIN_40,
+          Padding(
+            padding: const EdgeInsets.only(
+              top: CommonDimens.MARGIN_20,
+            ),
+            child: Text(
+              "keep your productivity\nAt an all-time high",
+              textAlign: TextAlign.center,
+              style: CommonTextStyles.taskTextStyle(context),
+            ),
           ),
-          child: Text(
-            "Vision Boards",
-            textAlign: TextAlign.center,
-            style: CommonTextStyles.loginTextStyle(context),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: CommonDimens.MARGIN_20,
-          ),
-          child: Text(
-            "keep your productivity\nAt an all-time high",
-            textAlign: TextAlign.center,
-            style: CommonTextStyles.taskTextStyle(context),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: CommonDimens.MARGIN_40,
-          ),
-          child: MaterialButton(
-            onPressed: () async {
-              createVisionBoard();
-              moveToCreateVisionRoute();
-            },
-            child: Text("Create"),
-            color: CommonColors.chartColor,
-          ),
-        ),
-      ],
+          if (visionBoards.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(
+                top: CommonDimens.MARGIN_40,
+              ),
+              child: MaterialButton(
+                onPressed: () async {
+                  createVisionBoard();
+                  moveToCreateVisionRoute();
+                },
+                child: Text("Create"),
+                color: CommonColors.chartColor,
+              ),
+            ),
+        ],
+      ),
     );
   }
 

@@ -97,7 +97,14 @@ class RouteGenerator {
 
       case ViewVisionDetailsRoute.routeName:
         final ViewVisionDetailsArgs args = settings.arguments;
-        return _transitionRoute(ViewVisionDetailsRoute(vision: args.vision));
+        return _transitionRoute(
+          BlocProvider<VisionBoardBloc>(
+            create: (_) => sl<VisionBoardBloc>(),
+            child: ViewVisionDetailsRoute(
+              vision: args.vision,
+            ),
+          ),
+        );
       default:
         // If there is no such named route in the switch statement, e.g. /third
         return _errorRoute();

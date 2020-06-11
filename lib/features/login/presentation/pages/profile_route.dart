@@ -214,6 +214,21 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                 : CommonColors.dateTextColor,
                           ),
                           CustomListTile(
+                            leadingIcon: Icons.visibility,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, VisionBoardListRoute.routeName);
+                            },
+                            appState: appState,
+                            text: "Vision Board",
+                            isNew: true,
+                          ),
+                          Divider(
+                            color: appState.currentTheme == lightTheme
+                                ? CommonColors.dateTextColorLightTheme
+                                : CommonColors.dateTextColor,
+                          ),
+                          CustomListTile(
                             leadingIcon: Icons.lightbulb_outline,
                             onTap: () {
                               if (appState.currentTheme == lightTheme) {
@@ -288,20 +303,6 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             },
                             appState: appState,
                             text: "Report a bug, or request a feature",
-                          ),
-                          Divider(
-                            color: appState.currentTheme == lightTheme
-                                ? CommonColors.dateTextColorLightTheme
-                                : CommonColors.dateTextColor,
-                          ),
-                          CustomListTile(
-                            leadingIcon: Icons.visibility,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, VisionBoardListRoute.routeName);
-                            },
-                            appState: appState,
-                            text: "Vision Board",
                           ),
                           Divider(
                             color: appState.currentTheme == lightTheme

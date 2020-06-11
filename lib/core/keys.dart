@@ -22,6 +22,7 @@ const String NOTIFICATION_OPEN_ID = "open_id";
 const String STATS_ROUTE_KEY = "stats";
 const String PROFILE_ROUTE_KEY = "profile";
 const String HOME_ROUTE_KEY = "home";
+const String VISION_BOARD_ROUTE_KEY = "vision-board";
 
 // First entries
 const String FIRST_HOME_ENTRY = "home_entry";
@@ -29,3 +30,6 @@ const String FIRST_HOME_ENTRY = "home_entry";
 // secrets
 const String REFRESH_KEY = "refresh_w5bmD85rLtxWDynzgi9Sp9F75jAv";
 const String PUZZLE_SOLVED = "puzzle_solved";
+
+// UNSPLASH CLIENT ID
+const String UNSPLASH_KEY = "xZ04LEcFWvdu-8GiAyxt5LikjEgdBi1mLndVQEt-LAk";
