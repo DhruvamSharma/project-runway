@@ -13,7 +13,16 @@ import 'package:project_runway/features/stats/presentation/pages/stats_screen.da
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/home_screen.dart';
-import 'package:project_runway/features/tasks/presentation/widgets/secret_puzzle_widget.dart';
+import 'package:project_runway/features/vision_boards/presentation/manager/bloc.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/create_vision_board/create_vision_board.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/create_vision_board/create_vision_board_args.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/edit_vision_detaiils/edit_vision_details.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/edit_vision_detaiils/edit_vision_details_args.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/image_selector.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/view_vision_details/view_vision_details.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/view_vision_details/view_vision_details_args.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
+import 'package:provider/provider.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -53,6 +62,49 @@ class RouteGenerator {
         ));
       case StatsScreen.routeName:
         return _transitionRoute(StatsScreen());
+
+      case ImageSelectorRoute.routeName:
+        return _transitionRoute(ImageSelectorRoute());
+      case VisionBoardListRoute.routeName:
+        return _transitionRoute(
+          BlocProvider<VisionBoardBloc>(
+            create: (_) => sl<VisionBoardBloc>(),
+            child: VisionBoardListRoute(),
+          ),
+        );
+      case CreateVisionBoardRoute.routeName:
+        final CreateVisionBoardArgs args = settings.arguments;
+        return _transitionRoute(BlocProvider<VisionBoardBloc>(
+          create: (_) => sl<VisionBoardBloc>(),
+          child: CreateVisionBoardRoute(
+            visionBoardId: args.visionBoardId,
+          ),
+        ));
+      case EditVisionRoute.routeName:
+        final EditVisionArgs args = settings.arguments;
+        return _transitionRoute(
+          ChangeNotifierProvider<VisionUploadProviderModel>.value(
+            value: VisionUploadProviderModel(),
+            child: BlocProvider<VisionBoardBloc>(
+              create: (_) => sl<VisionBoardBloc>(),
+              child: EditVisionRoute(
+                visionBoardId: args.visionBoardId,
+                visionImageUrl: args.imageUrl,
+              ),
+            ),
+          ),
+        );
+
+      case ViewVisionDetailsRoute.routeName:
+        final ViewVisionDetailsArgs args = settings.arguments;
+        return _transitionRoute(
+          BlocProvider<VisionBoardBloc>(
+            create: (_) => sl<VisionBoardBloc>(),
+            child: ViewVisionDetailsRoute(
+              vision: args.vision,
+            ),
+          ),
+        );
       default:
         // If there is no such named route in the switch statement, e.g. /third
         return _errorRoute();
