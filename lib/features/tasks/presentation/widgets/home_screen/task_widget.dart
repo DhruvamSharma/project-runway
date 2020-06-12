@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:linkable/linkable.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
@@ -119,10 +120,16 @@ class _TaskWidgetState extends State<TaskWidget> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Expanded(
-                    child: Text(
-                      taskState.taskEntity.taskTitle,
+                    child: Linkable(
+                      text: taskState.taskEntity.taskTitle,
                       style: selectTaskStyle(
-                          taskState.taskEntity, context, isCompleted),
+                        taskState.taskEntity,
+                        context,
+                        isCompleted,
+                      ),
+                      textColor: selectTaskStyle(
+                              taskState.taskEntity, context, isCompleted)
+                          .color,
                     ),
                   ),
                   Theme(

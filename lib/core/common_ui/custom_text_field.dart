@@ -114,6 +114,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       // Set the border color
       checkForBorderColor(_controller.text);
     }
+    checkForBorderColor(_controller.text);
     super.didUpdateWidget(oldWidget);
   }
 
@@ -136,6 +137,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
       enableSuggestions: true,
       keyboardType: widget.type,
       inputFormatters: widget.textInputFormatter,
+      enableInteractiveSelection: true,
+      smartQuotesType: SmartQuotesType.enabled,
+      toolbarOptions: ToolbarOptions(
+        copy: true,
+        selectAll: true,
+        paste: true,
+        cut: true,
+      ),
       onChanged: (text) {
         // Check For Border Color
         setState(() {
@@ -145,6 +154,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
       },
       style: widget.textStyle ?? buildTextStyle(),
       onFieldSubmitted: (text) {
+        setState(() {
+          checkForBorderColor(text);
+        });
         widget.onSubmitted(text);
       },
       validator: (newString) {
@@ -319,7 +331,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
     if (errorCheckString == null &&
         _controller.text != null &&
         _controller.text.isNotEmpty) {
-      borderColor = borderColor;
+      borderColor = CommonColors.chartColor;
+    }
+
+    if (_focusNode.hasFocus) {
+      borderColor = CommonColors.chartColor;
+    }
+
+    if (errorCheckString == null &&
+        !_focusNode.hasFocus &&
+        _controller.text.isEmpty) {
+      borderColor = Colors.grey;
     }
   }
 

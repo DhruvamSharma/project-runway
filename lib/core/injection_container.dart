@@ -27,6 +27,18 @@ import 'package:project_runway/features/tasks/domain/use_cases/get_all_tasks_for
 import 'package:project_runway/features/tasks/domain/use_cases/read_task_use_case.dart';
 import 'package:project_runway/features/tasks/domain/use_cases/update_task_use_case.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
+import 'package:project_runway/features/vision_boards/data/data_sources/remote_vision_board_data_source.dart';
+import 'package:project_runway/features/vision_boards/data/repositories/vision_board_repository_impl.dart';
+import 'package:project_runway/features/vision_boards/domain/repositories/vision_board_repository.dart';
+import 'package:project_runway/features/vision_boards/domain/use_cases/create_vision_board_use_case.dart';
+import 'package:project_runway/features/vision_boards/domain/use_cases/create_vision_use_case.dart';
+import 'package:project_runway/features/vision_boards/domain/use_cases/delete_vision_board_use_case.dart';
+import 'package:project_runway/features/vision_boards/domain/use_cases/delete_vision_use_case.dart';
+import 'package:project_runway/features/vision_boards/domain/use_cases/read_all_vision_board_use_case.dart';
+import 'package:project_runway/features/vision_boards/domain/use_cases/read_vision_board_use_case.dart';
+import 'package:project_runway/features/vision_boards/domain/use_cases/update_vision_board_use_case.dart';
+import 'package:project_runway/features/vision_boards/domain/use_cases/update_vision_use_case.dart';
+import 'package:project_runway/features/vision_boards/presentation/manager/vision_board_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -42,6 +54,8 @@ Future<void> serviceLocatorInit() async {
 
   statsInjection();
 
+  visionBoardInjection();
+
   sl.registerLazySingleton<NetworkInfo>(
       () => NetworkInfoImpl(connectionChecker: sl()));
 
@@ -51,6 +65,41 @@ Future<void> serviceLocatorInit() async {
   sl.registerLazySingleton(() => DataConnectionChecker());
   sl.registerLazySingleton(() => Firestore.instance);
   sl.registerLazySingleton(() => Uuid());
+}
+
+void visionBoardInjection() {
+  // bloc
+  sl.registerFactory(() => VisionBoardBloc(
+        readAllVisionBoardUseCase: sl(),
+        updateVisionBoardUseCase: sl(),
+        deleteVisionBoardUseCase: sl(),
+        createVisionBoardUseCase: sl(),
+        readVisionBoardUseCase: sl(),
+        createVisionUseCase: sl(),
+        updateVisionUseCase: sl(),
+        deleteVisionUseCase: sl(),
+      ));
+  // use case
+  sl.registerLazySingleton(() => ReadAllVisionBoardUseCase(repository: sl()));
+  sl.registerLazySingleton(() => CreateVisionBoardUseCase(repository: sl()));
+  sl.registerLazySingleton(() => UpdateVisionBoardUseCase(repository: sl()));
+  sl.registerLazySingleton(() => DeleteVisionBoardUseCase(repository: sl()));
+
+  sl.registerLazySingleton(() => ReadVisionBoardUseCase(repository: sl()));
+  sl.registerLazySingleton(() => UpdateVisionUseCase(repository: sl()));
+  sl.registerLazySingleton(() => CreateVisionUseCase(repository: sl()));
+  sl.registerLazySingleton(() => DeleteVisionUseCase(repository: sl()));
+
+  // repository
+  sl.registerLazySingleton<VisionBoardRepository>(
+      () => VisionBoardRepositoryImpl(
+            remoteDataSource: sl(),
+          ));
+  // data sources
+  sl.registerLazySingleton<RemoteVisionBoardDataSource>(
+      () => RemoteVisionBoardDataSourceImpl(
+            firestore: sl(),
+          ));
 }
 
 void statsInjection() {

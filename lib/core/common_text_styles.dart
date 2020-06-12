@@ -160,7 +160,7 @@ TextStyle selectTaskStyle(
       taskTextStyle = CommonTextStyles.disabledTaskTextStyle();
     } else {
       taskTextStyle = CommonTextStyles.taskTextStyle(context).copyWith(
-        color: CommonColors.scaffoldColor.withOpacity(0.38),
+        color: CommonColors.scaffoldColor.withOpacity(0.60),
       );
     }
   }
