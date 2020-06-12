@@ -119,6 +119,18 @@ class _TaskWidgetState extends State<TaskWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: CircleAvatar(
+                      radius: 10,
+                      backgroundColor: Colors.black,
+                      child: Text(
+                        taskState.taskEntity.urgency.toString(),
+                        style: CommonTextStyles.badgeTextStyle(context)
+                            .copyWith(color: CommonColors.accentColor),
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: Linkable(
                       text: taskState.taskEntity.taskTitle,

@@ -15,6 +15,10 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     backgroundColor: CommonColors.chartColor,
   ),
+  sliderTheme: SliderThemeData(
+      thumbColor: CommonColors.chartColor,
+      activeTrackColor: CommonColors.chartColor,
+      showValueIndicator: ShowValueIndicator.always),
   inputDecorationTheme: InputDecorationTheme(
     errorBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: Colors.red),
@@ -47,6 +51,10 @@ ThemeData lightTheme = ThemeData.light().copyWith(
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     backgroundColor: CommonColors.chartColor,
   ),
+  sliderTheme: SliderThemeData(
+      thumbColor: CommonColors.chartColor,
+      activeTrackColor: CommonColors.chartColor,
+      showValueIndicator: ShowValueIndicator.always),
   canvasColor: Colors.transparent,
   appBarTheme: AppBarTheme(
     elevation: 0,
