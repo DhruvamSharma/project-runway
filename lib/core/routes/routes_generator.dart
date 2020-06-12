@@ -12,6 +12,7 @@ import 'package:project_runway/features/stats/presentation/manager/bloc.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
+import 'package:project_runway/features/tasks/presentation/pages/draw_task/draw_task.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/home_screen.dart';
 import 'package:project_runway/features/vision_boards/presentation/manager/bloc.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/create_vision_board/create_vision_board.dart';
@@ -37,6 +38,8 @@ class RouteGenerator {
         break;
       case HomeScreen.routeName:
         return _transitionRoute(HomeScreen());
+      case DrawTaskRoute.routeName:
+        return _transitionRoute(DrawTaskRoute());
       case ProfileRoute.routeName:
         return _transitionRoute(ProfileRoute());
       case SecretPuzzleRoute.routeName:

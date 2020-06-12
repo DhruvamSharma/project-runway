@@ -12,6 +12,7 @@ import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
+import 'package:project_runway/features/tasks/presentation/pages/draw_task/draw_task.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/current_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:provider/provider.dart';
@@ -88,6 +89,15 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.format_paint,
+                          color:
+                              buildIconColor(appState, pageState.pageNumber)),
+                      onPressed: () {
+                        Navigator.pushNamed(context, DrawTaskRoute.routeName);
+                      },
+                      tooltip: "Draw Task",
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(
                         right: CommonDimens.MARGIN_20,
