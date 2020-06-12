@@ -155,7 +155,7 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
       });
       _screenshotController
           .capture(
-        pixelRatio: 3.0,
+        pixelRatio: 5.0,
         delay: Duration(milliseconds: 500),
       )
           .then((File image) async {
@@ -190,7 +190,7 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
       if (visionBoards == null || visionBoards.isEmpty) {
         return buildEmptyList();
       } else {
-        if (visions == null || visions.isEmpty) {
+        if (visions == null) {
           return buildLoadingList();
         } else {
           return buildLoadedList();
