@@ -14,6 +14,7 @@ import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/pages/draw_task/draw_task.dart';
+import 'package:project_runway/features/tasks/presentation/pages/speach_task/speech_task.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/current_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:provider/provider.dart';
@@ -84,6 +85,35 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.mic,
+                          color:
+                              buildIconColor(appState, pageState.pageNumber)),
+                      onPressed: () async {
+                        if (taskListState.taskList.length <=
+                                TOTAL_TASK_CREATION_LIMIT &&
+                            pageState.pageNumber != 0) {
+                          final response = await Navigator.pushNamed(
+                              context, SpeechTaskRoute.routeName);
+                          print(response);
+                          if (response != null &&
+                              (response as String).isNotEmpty) {
+                            Provider.of<InitialTaskTitleProviderModel>(context,
+                                    listen: false)
+                                .assignTaskTitle(response as String);
+                          }
+                        } else {
+                          Scaffold.of(context).removeCurrentSnackBar();
+                          Scaffold.of(context).showSnackBar(
+                            CustomSnackbar.withAnimation(
+                              context,
+                              "You cannot create task for yesterday",
+                            ),
+                          );
+                        }
+                      },
+                      tooltip: "Draw Task",
+                    ),
                     IconButton(
                       icon: Icon(Icons.format_paint,
                           color:
