@@ -20,6 +20,7 @@ import 'package:project_runway/features/stats/presentation/charts/task_action.da
 import 'package:project_runway/features/stats/presentation/manager/bloc.dart';
 import 'package:project_runway/features/stats/presentation/widgets/puzzle_stats_widget.dart';
 import 'package:project_runway/features/stats/presentation/widgets/score_widget.dart';
+import 'package:project_runway/features/stats/presentation/widgets/vision_board_stats.dart';
 import 'package:provider/provider.dart';
 
 class StatsWidget extends StatefulWidget {
@@ -145,6 +146,16 @@ class _StatsWidgetState extends State<StatsWidget> {
                   ),
                 ),
               ),
+            Padding(
+              padding: const EdgeInsets.only(
+                top: CommonDimens.MARGIN_20,
+              ),
+              child: Divider(
+                height: 1,
+              ),
+            ),
+            SizedBox(
+                height: 500, child: DatumLegendWithMeasures.withSampleData()),
             Padding(
               padding: const EdgeInsets.only(
                 top: CommonDimens.MARGIN_20,
