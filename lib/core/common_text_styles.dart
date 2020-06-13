@@ -65,7 +65,6 @@ class CommonTextStyles {
 
   static TextStyle rotatedDesignTextStyle(BuildContext context) {
     return _googleFontStyle.copyWith(
-      height: 1.5,
       color: Provider.of<ThemeModel>(
                 context,
               ).currentTheme ==

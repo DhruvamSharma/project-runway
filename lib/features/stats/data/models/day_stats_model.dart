@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/core/keys/keys.dart';
 
 class DayStatsModel extends Equatable {
   int tasksCompleted;

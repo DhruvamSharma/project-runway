@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:get_it/get_it.dart';
+import 'package:project_runway/core/remote_config/remote_config_service.dart';
 import 'package:project_runway/features/login/data/data_sources/user_local_data_source.dart';
 import 'package:project_runway/features/login/data/data_sources/user_remote_data_source.dart';
 import 'package:project_runway/features/login/data/repositories/user_repository_impl.dart';
@@ -65,6 +66,8 @@ Future<void> serviceLocatorInit() async {
   sl.registerLazySingleton(() => DataConnectionChecker());
   sl.registerLazySingleton(() => Firestore.instance);
   sl.registerLazySingleton(() => Uuid());
+  var remoteConfig = await RemoteConfigService.getInstance();
+  sl.registerLazySingleton(() => remoteConfig);
 }
 
 void visionBoardInjection() {

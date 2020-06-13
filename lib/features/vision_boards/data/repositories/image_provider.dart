@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http/http.dart';
-import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/core/keys/keys.dart';
 import 'package:project_runway/features/vision_boards/data/repositories/photos_state.dart';
 
 import '../models/retreived_photo_model.dart';

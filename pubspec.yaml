@@ -90,7 +90,8 @@ dependencies:
   permission_handler: ^5.0.1                                #35
   # text recognition
   firebase_ml_vision: ^0.9.4                                #36
-
+  # remote configuration
+  firebase_remote_config: ^0.3.1                            #38
 
 
 dev_dependencies:
@@ -123,6 +124,7 @@ flutter:
     - assets/no_new_puzzle_animation.json
     - assets/loading_stats_animation.json
     - assets/account_not_linked_animation.json
+    - assets/under_maintenance_animation.json
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:project_runway/core/injection_container.dart';
-import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/core/keys/keys.dart';
 import 'package:project_runway/features/login/data/models/user_model.dart';
 import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 
@@ -16,11 +16,11 @@ class AnalyticsUtils {
     try {
       analytics.setUserId(userEntity.googleId);
       analytics.setCurrentScreen(
-        screenName: screenName,);
+        screenName: screenName,
+      );
       analytics.logEvent(name: eventName, parameters: props);
     } catch (ex) {
       // Do nothing
     }
   }
-
 }
