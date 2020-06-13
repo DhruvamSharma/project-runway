@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
@@ -11,13 +12,11 @@ import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
-import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/data/models/user_model.dart';
 import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 import 'package:project_runway/features/stats/data/models/managed_stats_model.dart';
 import 'package:project_runway/features/stats/presentation/charts/task_action.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:project_runway/features/stats/presentation/manager/bloc.dart';
 import 'package:project_runway/features/stats/presentation/widgets/puzzle_stats_widget.dart';
 import 'package:project_runway/features/stats/presentation/widgets/score_widget.dart';
@@ -56,27 +55,19 @@ class _StatsWidgetState extends State<StatsWidget> {
 
         if (state is ErrorGetStatsState) {
           if (state.message == NO_INTERNET)
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text(
+            Scaffold.of(context).showSnackBar(
+              CustomSnackbar.withAnimation(
+                context,
                 "Sorry, you do not have a stable internet connection",
-                style: CommonTextStyles.scaffoldTextStyle(context),
               ),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: appState.currentTheme == lightTheme
-                  ? CommonColors.scaffoldColor
-                  : CommonColors.accentColor,
-            ));
+            );
           else {
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text(
-                "Sorry, some error occured",
-                style: CommonTextStyles.scaffoldTextStyle(context),
+            Scaffold.of(context).showSnackBar(
+              CustomSnackbar.withAnimation(
+                context,
+                "Sorry, some error occurred",
               ),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: appState.currentTheme == lightTheme
-                  ? CommonColors.scaffoldColor
-                  : CommonColors.accentColor,
-            ));
+            );
           }
           Future.delayed(Duration(seconds: 4)).then((value) => () {
                 setState(() {

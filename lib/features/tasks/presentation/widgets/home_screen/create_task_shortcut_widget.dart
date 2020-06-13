@@ -4,6 +4,7 @@ import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/theme/theme.dart';
@@ -42,15 +43,9 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                 if (pageState.pageNumber == 0) {
                   Scaffold.of(context).removeCurrentSnackBar();
                   Scaffold.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        "Sorry, you cannot create any more tasks",
-                        style: CommonTextStyles.scaffoldTextStyle(context),
-                      ),
-                      behavior: SnackBarBehavior.floating,
-                      backgroundColor: appState.currentTheme == lightTheme
-                          ? CommonColors.scaffoldColor
-                          : CommonColors.accentColor,
+                    CustomSnackbar.withAnimation(
+                      context,
+                      "Sorry, you cannot create any more tasks",
                     ),
                   );
                 }
@@ -93,8 +88,28 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                       icon: Icon(Icons.format_paint,
                           color:
                               buildIconColor(appState, pageState.pageNumber)),
-                      onPressed: () {
-                        Navigator.pushNamed(context, DrawTaskRoute.routeName);
+                      onPressed: () async {
+                        if (taskListState.taskList.length <=
+                                TOTAL_TASK_CREATION_LIMIT &&
+                            pageState.pageNumber != 0) {
+                          final response = await Navigator.pushNamed(
+                              context, DrawTaskRoute.routeName);
+                          print(response);
+                          if (response != null &&
+                              (response as String).isNotEmpty) {
+                            Provider.of<InitialTaskTitleProviderModel>(context,
+                                    listen: false)
+                                .assignTaskTitle(response as String);
+                          }
+                        } else {
+                          Scaffold.of(context).removeCurrentSnackBar();
+                          Scaffold.of(context).showSnackBar(
+                            CustomSnackbar.withAnimation(
+                              context,
+                              "You cannot create task for yesterday",
+                            ),
+                          );
+                        }
                       },
                       tooltip: "Draw Task",
                     ),
@@ -121,17 +136,9 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                             } else {
                               Scaffold.of(context).removeCurrentSnackBar();
                               Scaffold.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    "Oops, you cannot share an empty list",
-                                    style: CommonTextStyles.scaffoldTextStyle(
-                                        context),
-                                  ),
-                                  behavior: SnackBarBehavior.floating,
-                                  backgroundColor:
-                                      appState.currentTheme == lightTheme
-                                          ? CommonColors.scaffoldColor
-                                          : CommonColors.accentColor,
+                                CustomSnackbar.withAnimation(
+                                  context,
+                                  "Oops, you cannot share an empty list",
                                 ),
                               );
                             }
@@ -173,17 +180,9 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                         } else {
                           Scaffold.of(context).removeCurrentSnackBar();
                           Scaffold.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                "You cannot create task for yesterday",
-                                style:
-                                    CommonTextStyles.scaffoldTextStyle(context),
-                              ),
-                              behavior: SnackBarBehavior.floating,
-                              backgroundColor:
-                                  appState.currentTheme == lightTheme
-                                      ? CommonColors.scaffoldColor
-                                      : CommonColors.accentColor,
+                            CustomSnackbar.withAnimation(
+                              context,
+                              "You cannot create task for yesterday",
                             ),
                           );
                         }
@@ -250,35 +249,18 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                                 } else {
                                   Scaffold.of(context).removeCurrentSnackBar();
                                   Scaffold.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        "Please enter title for your task",
-                                        style:
-                                            CommonTextStyles.scaffoldTextStyle(
-                                                context),
-                                      ),
-                                      behavior: SnackBarBehavior.floating,
-                                      backgroundColor:
-                                          appState.currentTheme == lightTheme
-                                              ? CommonColors.scaffoldColor
-                                              : CommonColors.accentColor,
+                                    CustomSnackbar.withAnimation(
+                                      context,
+                                      "Please enter title for your task",
                                     ),
                                   );
                                 }
                               } else {
                                 Scaffold.of(context).removeCurrentSnackBar();
                                 Scaffold.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      "Sorry, you cannot create any more tasks",
-                                      style: CommonTextStyles.scaffoldTextStyle(
-                                          context),
-                                    ),
-                                    behavior: SnackBarBehavior.floating,
-                                    backgroundColor:
-                                        appState.currentTheme == lightTheme
-                                            ? CommonColors.scaffoldColor
-                                            : CommonColors.accentColor,
+                                  CustomSnackbar.withAnimation(
+                                    context,
+                                    "Sorry, you cannot create any more tasks",
                                   ),
                                 );
                               }
@@ -288,18 +270,12 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                               ).assignTaskTitle("");
                             } else {
                               Scaffold.of(context).removeCurrentSnackBar();
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text(
+                              Scaffold.of(context).showSnackBar(
+                                CustomSnackbar.withAnimation(
+                                  context,
                                   "You cannot create task for yesterday",
-                                  style: CommonTextStyles.scaffoldTextStyle(
-                                      context),
                                 ),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor:
-                                    appState.currentTheme == lightTheme
-                                        ? CommonColors.scaffoldColor
-                                        : CommonColors.accentColor,
-                              ));
+                              );
                             }
                           }),
                     ),

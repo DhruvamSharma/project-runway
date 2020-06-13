@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/storage_utils.dart';
@@ -35,6 +36,7 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
   FILE_SELECTION_METHOD fileSelectionMethod;
   String visionImageUrl;
   PickedFile pickedFile;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -45,13 +47,26 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
     final uploadState =
         Provider.of<VisionUploadProviderModel>(context, listen: false);
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: BlocListener<VisionBoardBloc, VisionBoardState>(
         listener: (_, state) {
-          print(state);
+          if (state is LoadedCreateVisionState) {
+            Navigator.pop(context);
+          }
+
+          if (state is ErrorVisionBoardState) {
+            // show the error
+            _scaffoldKey.currentState.showSnackBar(
+              CustomSnackbar.withAnimation(
+                context,
+                "Sorry, could not create your vision at the moment",
+              ),
+            );
+          }
         },
         child: Stack(
           children: <Widget>[

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
-import 'package:project_runway/core/theme/theme.dart';
+import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/widgets/app_into.dart';
 import 'package:project_runway/features/login/presentation/widgets/congratulation.dart';
@@ -235,36 +235,22 @@ class UserEntryRoute extends StatelessWidget {
                       listen: false)
                   .googleId
                   .isEmpty)) {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text(
+        _scaffoldKey.currentState.showSnackBar(
+          CustomSnackbar.withAnimation(
+            providerContext,
             "Please login to use full suite of tools",
-            style: CommonTextStyles.scaffoldTextStyle(providerContext),
           ),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor:
-              Provider.of<ThemeModel>(providerContext, listen: false)
-                          .currentTheme ==
-                      lightTheme
-                  ? CommonColors.scaffoldColor
-                  : CommonColors.accentColor,
-        ));
+        );
       }
 
       if (_pageController.page.toInt() == 1 &&
           (userName == null || userName.isEmpty)) {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text(
+        _scaffoldKey.currentState.showSnackBar(
+          CustomSnackbar.withAnimation(
+            providerContext,
             "Please enter your name",
-            style: CommonTextStyles.scaffoldTextStyle(providerContext),
           ),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor:
-              Provider.of<ThemeModel>(providerContext, listen: false)
-                          .currentTheme ==
-                      lightTheme
-                  ? CommonColors.scaffoldColor
-                  : CommonColors.accentColor,
-        ));
+        );
       }
     }
   }

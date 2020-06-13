@@ -3,13 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/notifications/local_notifications.dart';
 import 'package:project_runway/core/task_utility.dart';
-import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
@@ -248,23 +248,12 @@ class CreateTaskPage extends StatelessWidget {
                                 try {
                                   selectTimeForNotification(
                                       newContext, runningDate, () {
-                                    Scaffold.of(newContext)
-                                        .showSnackBar(SnackBar(
-                                      content: Text(
+                                    Scaffold.of(newContext).showSnackBar(
+                                      CustomSnackbar.withAnimation(
+                                        context,
                                         "Sorry, you cannot select this time",
-                                        style:
-                                            CommonTextStyles.scaffoldTextStyle(
-                                                newContext),
                                       ),
-                                      behavior: SnackBarBehavior.floating,
-                                      backgroundColor: Provider.of<ThemeModel>(
-                                                      newContext,
-                                                      listen: false)
-                                                  .currentTheme ==
-                                              lightTheme
-                                          ? CommonColors.scaffoldColor
-                                          : CommonColors.accentColor,
-                                    ));
+                                    );
                                   }, () {});
                                 } catch (ex) {
                                   // Do something
@@ -343,29 +332,17 @@ class CreateTaskPage extends StatelessWidget {
             .add(CreateTaskEvent(task: task));
       } else {
         Scaffold.of(newContext).showSnackBar(
-          SnackBar(
-            content: Text(
-              "Please enter title for your task",
-              style: CommonTextStyles.scaffoldTextStyle(newContext),
-            ),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: appState.currentTheme == lightTheme
-                ? CommonColors.scaffoldColor
-                : CommonColors.accentColor,
+          CustomSnackbar.withAnimation(
+            newContext,
+            "Please enter title for your task",
           ),
         );
       }
     } else {
       Scaffold.of(newContext).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Sorry, you cannot create any more tasks for today",
-            style: CommonTextStyles.scaffoldTextStyle(newContext),
-          ),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: appState.currentTheme == lightTheme
-              ? CommonColors.scaffoldColor
-              : CommonColors.accentColor,
+        CustomSnackbar.withAnimation(
+          newContext,
+          "Sorry, you cannot create any more tasks for today",
         ),
       );
     }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
@@ -47,16 +48,12 @@ class _PuzzleStatsWidgetState extends State<PuzzleStatsWidget> {
 
         if (state is ErrorGetPuzzleSolvedListState) {
           if (state.message == NO_INTERNET)
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text(
+            Scaffold.of(context).showSnackBar(
+              CustomSnackbar.withAnimation(
+                context,
                 "Sorry, you do not have an internet connection",
-                style: CommonTextStyles.scaffoldTextStyle(context),
               ),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: appState.currentTheme == lightTheme
-                  ? CommonColors.scaffoldColor
-                  : CommonColors.accentColor,
-            ));
+            );
         }
       },
       child: (solvedPuzzleList != null && solvedPuzzleList.length > 3)

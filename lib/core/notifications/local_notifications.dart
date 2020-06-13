@@ -48,6 +48,27 @@ Future<void> scheduleNotification(
   }
 }
 
+Future<void> sendNotificationForFCM(
+    String taskId, String taskTitle, DateTime scheduledNotificationTime) async {
+  await initLocalNotifications();
+  if (taskId != null &&
+      taskTitle != null &&
+      scheduledNotificationTime != null) {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        TASK_CHANNEL_ID, TASK_CHANNEL_NAME, 'your other channel description');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.schedule(
+        0,
+        taskTitle,
+        "Let's strike this off from our list of work",
+        scheduledNotificationTime,
+        platformChannelSpecifics,
+        androidAllowWhileIdle: true);
+  }
+}
+
 void selectTimeForNotification(BuildContext newContext, runningDate,
     Function onDateError, Function onSuccess) async {
   TimeOfDay timeOfDay = await showTimePicker(
