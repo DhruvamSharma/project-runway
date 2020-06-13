@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
-import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/notifications/local_notifications.dart';
+import 'package:project_runway/core/task_utility.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
@@ -44,8 +44,6 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
     return Builder(
       builder: (newContext) => Padding(
         padding: const EdgeInsets.only(
-          left: CommonDimens.MARGIN_20,
-          right: CommonDimens.MARGIN_20,
           top: CommonDimens.MARGIN_20,
         ),
         child: Stack(
@@ -56,6 +54,8 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                 Padding(
                   padding: const EdgeInsets.only(
                     top: CommonDimens.MARGIN_20,
+                    left: CommonDimens.MARGIN_20,
+                    right: CommonDimens.MARGIN_20,
                   ),
                   child: CustomTextField(
                     null,
@@ -74,6 +74,8 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                 Padding(
                   padding: const EdgeInsets.only(
                     top: CommonDimens.MARGIN_20,
+                    left: CommonDimens.MARGIN_20,
+                    right: CommonDimens.MARGIN_20,
                   ),
                   child: CustomTextField(
                     null,
@@ -92,6 +94,8 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                 Padding(
                   padding: const EdgeInsets.only(
                     top: CommonDimens.MARGIN_20,
+                    left: CommonDimens.MARGIN_20,
+                    right: CommonDimens.MARGIN_20,
                   ),
                   child: CustomTextField(
                     null,
@@ -109,39 +113,67 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_20,
+                    top: CommonDimens.MARGIN_40,
+                    left: CommonDimens.MARGIN_20,
+                    right: CommonDimens.MARGIN_20,
                   ),
-                  child: CustomTextField(
-                    1,
-                    1,
-                    initialText: widget.task.urgency.toString(),
-                    onValueChange: (urgency) {
-                      taskDetailState.assignTaskUrgency(urgency);
-                    },
-                    label: "Urgency",
-                    enabled: isEnabled,
-                    labelPadding: const EdgeInsets.only(
-                        bottom: CommonDimens.MARGIN_20 / 2),
-                    isRequired: false,
-                    helperText: "1 is most important and 9 is least",
-                    helperTextStyle:
-                        CommonTextStyles.badgeTextStyle(context).copyWith(
-                      color: appState.currentTheme.accentColor.withOpacity(0.5),
-                      fontSize: 14,
-                    ),
-                    onSubmitted: (text) {},
-                    textFieldValue: taskDetailState.urgency,
-                    type: TextInputType.phone,
-                    textInputFormatter: [
-                      LengthLimitingTextInputFormatter(1),
-                      WhitelistingTextInputFormatter.digitsOnly,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "Importance",
+                        style: CommonTextStyles.disabledTaskTextStyle(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: CircleAvatar(
+                          radius: 14,
+                          backgroundColor: Colors.black,
+                          child: Text(
+                            double.parse(taskDetailState.urgency)
+                                .round()
+                                .toString(),
+                            style: CommonTextStyles.badgeTextStyle(context)
+                                .copyWith(
+                                    color: CommonColors.accentColor,
+                                    fontSize: 14),
+                          ),
+                        ),
+                      ),
                     ],
-                    errorTextStyle: CommonTextStyles.errorFieldTextStyle(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_20 / 4,
+                  ),
+                  child: SliderTheme(
+                    data: SliderThemeData(
+                        trackHeight: 5,
+                        showValueIndicator: ShowValueIndicator.always,
+                        activeTrackColor: CommonColors.chartColor,
+                        thumbColor: CommonColors.disabledTaskTextColor,
+                        valueIndicatorColor: CommonColors.chartColor,
+                        inactiveTrackColor:
+                            CommonColors.rotatedDesignTextColor),
+                    child: Slider(
+                        min: 1,
+                        label: buildLabel(taskDetailState.urgency),
+                        max: 10,
+                        value: double.parse(taskDetailState.urgency),
+                        onChanged: isEnabled
+                            ? (_) {
+                                taskEntity.urgency = _.round();
+                                taskDetailState.assignTaskUrgency(_.toString());
+                              }
+                            : null),
                   ),
                 ),
                 Container(
                   margin: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_20,
+                    top: CommonDimens.MARGIN_20 / 8,
+                    left: CommonDimens.MARGIN_20,
+                    right: CommonDimens.MARGIN_20,
                   ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.only(top: 10),
@@ -187,6 +219,8 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                 Padding(
                   padding: const EdgeInsets.only(
                     top: CommonDimens.MARGIN_40,
+                    left: CommonDimens.MARGIN_20,
+                    right: CommonDimens.MARGIN_20,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -266,17 +300,23 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
             ),
             Align(
               alignment: Alignment.topRight,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: CircleAvatar(
-                  child: Icon(
-                    Icons.clear,
-                    color: appState.currentTheme.scaffoldBackgroundColor,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: CommonDimens.MARGIN_20,
+                  right: CommonDimens.MARGIN_20,
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: CircleAvatar(
+                    child: Icon(
+                      Icons.clear,
+                      color: appState.currentTheme.scaffoldBackgroundColor,
+                    ),
+                    backgroundColor: appState.currentTheme.accentColor,
+                    radius: 12,
                   ),
-                  backgroundColor: appState.currentTheme.accentColor,
-                  radius: 12,
                 ),
               ),
             ),
@@ -284,15 +324,5 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
         ),
       ),
     );
-  }
-
-  int buildUrgency(String urgency) {
-    int urgencyInt;
-    try {
-      urgencyInt = int.parse(urgency);
-    } catch (ex) {
-      urgencyInt = DEFAULT_URGENCY;
-    }
-    return urgencyInt;
   }
 }

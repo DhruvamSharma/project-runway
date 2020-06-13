@@ -67,5 +67,9 @@
             <meta-data android:name="com.bluechilli.flutteruploader.UPLOAD_CONNECTION_TIMEOUT_IN_SECONDS" android:value="3600" />
         </provider>
 
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="ocr" />
+
     </application>
 </manifest>

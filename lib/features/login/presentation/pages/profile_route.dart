@@ -11,6 +11,7 @@ import 'package:project_runway/core/auth_service.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
@@ -64,29 +65,21 @@ class _ProfileRouteState extends State<ProfileRoute> {
             }
 
             if (state is ErrorFindUserBlocState) {
-              _scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text(
+              _scaffoldKey.currentState.showSnackBar(
+                CustomSnackbar.withAnimation(
+                  context,
                   "Sorry, a problem occurred",
-                  style: CommonTextStyles.scaffoldTextStyle(context),
                 ),
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: appState.currentTheme == lightTheme
-                    ? CommonColors.scaffoldColor
-                    : CommonColors.accentColor,
-              ));
+              );
             }
 
             if (state is ErrorLoginBlocState) {
-              _scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text(
+              _scaffoldKey.currentState.showSnackBar(
+                CustomSnackbar.withAnimation(
+                  context,
                   "Sorry, a problem occurred",
-                  style: CommonTextStyles.scaffoldTextStyle(context),
                 ),
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: appState.currentTheme == lightTheme
-                    ? CommonColors.scaffoldColor
-                    : CommonColors.accentColor,
-              ));
+              );
             }
 
             if (state is LoadedLoginBlocState) {
@@ -101,16 +94,12 @@ class _ProfileRouteState extends State<ProfileRoute> {
                     context, UserEntryRoute.routeName, (route) => false);
               }
               // show successful message
-              _scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text(
+              _scaffoldKey.currentState.showSnackBar(
+                CustomSnackbar.withAnimation(
+                  context,
                   "Linking account successful. Now you can use full suite of tools",
-                  style: CommonTextStyles.scaffoldTextStyle(context),
                 ),
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: appState.currentTheme == lightTheme
-                    ? CommonColors.scaffoldColor
-                    : CommonColors.accentColor,
-              ));
+              );
             }
           },
           child: Scaffold(
@@ -169,22 +158,15 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                       .add(LoginUserEvent(user: widget.user));
                                 } else {
                                   // show successful message
-                                  _scaffoldKey.currentState
-                                      .showSnackBar(SnackBar(
-                                    content: Text(
+                                  _scaffoldKey.currentState.showSnackBar(
+                                    CustomSnackbar.withAnimation(
+                                      context,
                                       "Linking the accounts failed. Either"
                                       " you don't have a stable internet"
                                       " connection or the account is"
                                       " already in use",
-                                      style: CommonTextStyles.scaffoldTextStyle(
-                                          context),
                                     ),
-                                    behavior: SnackBarBehavior.floating,
-                                    backgroundColor:
-                                        appState.currentTheme == lightTheme
-                                            ? CommonColors.scaffoldColor
-                                            : CommonColors.accentColor,
-                                  ));
+                                  );
                                 }
                               },
                               appState: appState,
@@ -287,18 +269,12 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                     BUG_REPORT, {}, "SETTING_SCREEN");
                                 Wiredash.of(context).show();
                               } catch (ex) {
-                                _scaffoldKey.currentState.showSnackBar(SnackBar(
-                                  content: Text(
+                                _scaffoldKey.currentState.showSnackBar(
+                                  CustomSnackbar.withAnimation(
+                                    context,
                                     "Sorry, a problem occurred, try again later",
-                                    style: CommonTextStyles.scaffoldTextStyle(
-                                        context),
                                   ),
-                                  behavior: SnackBarBehavior.floating,
-                                  backgroundColor:
-                                      appState.currentTheme == lightTheme
-                                          ? CommonColors.scaffoldColor
-                                          : CommonColors.accentColor,
-                                ));
+                                );
                               }
                             },
                             appState: appState,

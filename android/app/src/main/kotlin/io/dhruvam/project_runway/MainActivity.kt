@@ -15,10 +15,6 @@ class MainActivity: FlutterActivity() {
     private var sharedText: String = ""
     private var oldText: String = ""
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-    }
-
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         // handle incoming text
         catchIncomingText()

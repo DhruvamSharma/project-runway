@@ -11,6 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
@@ -119,25 +120,32 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
                 child: AppBar(
                   elevation: 0,
                   backgroundColor: Colors.transparent,
-                  actions: <Widget>[
-                    if (visions != null && visions.isNotEmpty)
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: Colors.black,
-                        child: Center(
-                          child: IconButton(
-                              visualDensity: VisualDensity.compact,
-                              padding: const EdgeInsets.all(0),
-                              icon: Icon(
-                                Icons.save_alt,
-                                size: 14,
-                              ),
-                              onPressed: saveVisionBoardToGallery),
-                        ),
-                      )
-                  ],
                 ),
               ),
+              if (visions != null && visions.isNotEmpty)
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_20 + 10,
+                      right: CommonDimens.MARGIN_20,
+                    ),
+                    child: CircleAvatar(
+                      radius: 24,
+                      backgroundColor: Colors.black,
+                      child: Center(
+                        child: IconButton(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.all(0),
+                            icon: Icon(
+                              Icons.save_alt,
+                              size: 20,
+                            ),
+                            onPressed: saveVisionBoardToGallery),
+                      ),
+                    ),
+                  ),
+                )
             ],
           ),
         ),
@@ -165,10 +173,9 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
         }); // Save image to gallery,  Needs plugin  https://pub.dev/packages/image_gallery_saver
         _scaffoldKey.currentState.removeCurrentSnackBar();
         _scaffoldKey.currentState.showSnackBar(
-          SnackBar(
-            content: Text("Image saved to Gallery"),
-            backgroundColor: CommonColors.scaffoldColor,
-            behavior: SnackBarBehavior.fixed,
+          CustomSnackbar.withAnimation(
+            context,
+            "Image saved to Gallery",
           ),
         );
       }).catchError((onError) {

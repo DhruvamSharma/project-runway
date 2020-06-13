@@ -35,23 +35,7 @@ Future<Null> oneSignalInit() async {
         .containsKey(NOTIFICATION_OPEN_ID)) {
       String value =
           result.notification.payload.additionalData[NOTIFICATION_OPEN_ID];
-      switch (value) {
-        case STATS_ROUTE_KEY:
-          navigatorKey.currentState.pushNamed(StatsScreen.routeName);
-          break;
-        case PROFILE_ROUTE_KEY:
-          navigatorKey.currentState.pushNamed(ProfileRoute.routeName);
-          break;
-        case HOME_ROUTE_KEY:
-          navigatorKey.currentState.pushNamed(HomeScreen.routeName);
-          break;
-        case VISION_BOARD_ROUTE_KEY:
-          navigatorKey.currentState.pushNamed(VisionBoardListRoute.routeName);
-          break;
-        default:
-          navigatorKey.currentState.pushNamed(HomeScreen.routeName);
-          break;
-      }
+      handleOpenRouteFunction(value);
     }
   });
 
@@ -80,4 +64,24 @@ Future<Null> oneSignalInit() async {
 
 void _handleNotificationReceived(OSNotification notification) {
   print(notification.payload.additionalData);
+}
+
+void handleOpenRouteFunction(String openId) {
+  switch (openId) {
+    case STATS_ROUTE_KEY:
+      navigatorKey.currentState.pushNamed(StatsScreen.routeName);
+      break;
+    case PROFILE_ROUTE_KEY:
+      navigatorKey.currentState.pushNamed(ProfileRoute.routeName);
+      break;
+    case HOME_ROUTE_KEY:
+      navigatorKey.currentState.pushNamed(HomeScreen.routeName);
+      break;
+    case VISION_BOARD_ROUTE_KEY:
+      navigatorKey.currentState.pushNamed(VisionBoardListRoute.routeName);
+      break;
+    default:
+      navigatorKey.currentState.pushNamed(HomeScreen.routeName);
+      break;
+  }
 }

@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
@@ -188,17 +188,9 @@ class _SecretPuzzleWidgetState extends State<SecretPuzzleWidget> {
                             if (int.parse(puzzleSolution) == 29) {
                               _scaffoldKey.currentState.removeCurrentSnackBar();
                               _scaffoldKey.currentState.showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    "Congratulation, your answer is correct",
-                                    style: CommonTextStyles.scaffoldTextStyle(
-                                        context),
-                                  ),
-                                  behavior: SnackBarBehavior.floating,
-                                  backgroundColor:
-                                      appState.currentTheme == lightTheme
-                                          ? CommonColors.scaffoldColor
-                                          : CommonColors.accentColor,
+                                CustomSnackbar.withAnimation(
+                                  context,
+                                  "Congratulation, your answer is correct",
                                 ),
                               );
                               setState(() {
@@ -220,34 +212,18 @@ class _SecretPuzzleWidgetState extends State<SecretPuzzleWidget> {
                             } else {
                               _scaffoldKey.currentState.removeCurrentSnackBar();
                               _scaffoldKey.currentState.showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    "Oops, wrong answer, try again",
-                                    style: CommonTextStyles.scaffoldTextStyle(
-                                        context),
-                                  ),
-                                  behavior: SnackBarBehavior.floating,
-                                  backgroundColor:
-                                      appState.currentTheme == lightTheme
-                                          ? CommonColors.scaffoldColor
-                                          : CommonColors.accentColor,
+                                CustomSnackbar.withAnimation(
+                                  context,
+                                  "Oops, wrong answer, try again",
                                 ),
                               );
                             }
                           } else {
                             _scaffoldKey.currentState.removeCurrentSnackBar();
                             _scaffoldKey.currentState.showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "Please enter your answer",
-                                  style: CommonTextStyles.scaffoldTextStyle(
-                                      context),
-                                ),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor:
-                                    appState.currentTheme == lightTheme
-                                        ? CommonColors.scaffoldColor
-                                        : CommonColors.accentColor,
+                              CustomSnackbar.withAnimation(
+                                context,
+                                "Please enter your answer",
                               ),
                             );
                           }

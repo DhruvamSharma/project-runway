@@ -22,74 +22,74 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
-  equatable: ^1.1.1
-  mockito: ^4.1.1
-  dartz: ^0.9.0
-  shared_preferences: ^0.5.7
+  cupertino_icons: ^0.1.2                                   #1
+  equatable: ^1.1.1                                         #2
+  mockito: ^4.1.1                                           #3
+  dartz: ^0.9.0                                             #4
+  shared_preferences: ^0.5.7                                #5
   # to check for internet availability
-  data_connection_checker: ^0.3.4
+  data_connection_checker: ^0.3.4                           #6
   # firebase database
-  cloud_firestore: ^0.13.5
+  cloud_firestore: ^0.13.5                                  #7
   # Bloc for state management
-  flutter_bloc: ^4.0.0
+  flutter_bloc: ^4.0.0                                      #8
   #Fonts Package
-  google_fonts: ^1.0.0
+  google_fonts: ^1.0.0                                      #9
   # page indicator
-  smooth_page_indicator: ^0.1.5
+  smooth_page_indicator: ^0.1.5                             #10
   # service locator
-  get_it: ^4.0.2
+  get_it: ^4.0.2                                            #11
   # provider
-  provider: ^4.0.5
+  provider: ^4.0.5                                          #12
   # firebase auth
-  firebase_auth: ^0.16.0
+  firebase_auth: ^0.16.0                                    #13
   # google auth
-  google_sign_in: ^4.4.4
+  google_sign_in: ^4.4.4                                    #14
   # unique keys
-  uuid: ^2.0.4
+  uuid: ^2.0.4                                              #15
   # charts for statistics
-  charts_flutter: ^0.9.0
+  charts_flutter: ^0.9.0                                    #16
   # notifications
-  onesignal_flutter: ^2.4.1
+  onesignal_flutter: ^2.4.1                                 #17
   # lottie for better animations
-  lottie: ^0.3.3
+  lottie: ^0.3.3                                            #18
   # reporting crashes
-  firebase_crashlytics: ^0.1.3+3
+  firebase_crashlytics: ^0.1.3+3                            #19
   # analytics for tab
   # and route transitions
-  firebase_analytics: ^5.0.11
+  firebase_analytics: ^5.0.11                               #20
   # caching images
-  cached_network_image: ^2.2.0+1
+  cached_network_image: ^2.2.0+1                            #21
   # sending notifications from
   # user's device and scheduling
-  flutter_local_notifications: ^1.4.3
+  flutter_local_notifications: ^1.4.3                       #22
   # share app
-  share: ^0.6.4+3
+  share: ^0.6.4+3                                           #23
   # performance monitoring
-  firebase_performance: ^0.3.1+8
+  firebase_performance: ^0.3.1+8                            #24
   # user feedback tool
-  wiredash: 0.0.1
+  wiredash: 0.0.1                                           #25
   # application info like version number
-  package_info: ^0.4.0+18
+  package_info: ^0.4.0+18                                   #26
   # url opening handler
-  url_launcher: ^5.4.10
+  url_launcher: ^5.4.10                                     #27
   # make text linkable
-  linkable: ^1.0.4
+  linkable: ^1.0.4                                          #28
   # picking images from device
-  image_picker: ^0.6.7+1
+  image_picker: ^0.6.7+1                                    #29
   # uploading files
-  flutter_uploader: ^1.2.0
-  rxdart: ^0.24.1
+  flutter_uploader: ^1.2.0                                  #30
+  rxdart: ^0.24.1                                           #31
   # staggered grid view
-  flutter_staggered_grid_view: ^0.3.0
+  flutter_staggered_grid_view: ^0.3.0                       #32
   # screenshots of the vision board
-  screenshot: ^0.2.0
+  screenshot: ^0.2.0                                        #33
   # save images to gallery
-  image_gallery_saver: ^1.2.2
+  image_gallery_saver: ^1.2.2                               #34
   # permissions for native layer
-  permission_handler: ^5.0.1
-  # zoomable images
-  photo_view: ^0.9.2
+  permission_handler: ^5.0.1                                #35
+  # text recognition
+  firebase_ml_vision: ^0.9.4                                #36
 
 
 

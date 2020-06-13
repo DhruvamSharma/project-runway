@@ -1,16 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/auth_service.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
+import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys.dart';
-import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/manager/bloc.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
@@ -114,18 +112,12 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
 
                             userEntryState.animatedToNextPage();
                           } else {
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                              content: Text(
+                            Scaffold.of(context).showSnackBar(
+                              CustomSnackbar.withAnimation(
+                                context,
                                 "Sorry, a problem occurred, please try again",
-                                style:
-                                    CommonTextStyles.scaffoldTextStyle(context),
                               ),
-                              behavior: SnackBarBehavior.floating,
-                              backgroundColor:
-                                  appState.currentTheme == lightTheme
-                                      ? CommonColors.scaffoldColor
-                                      : CommonColors.accentColor,
-                            ));
+                            );
                           }
                           // stop showing a loader
                           setState(() {
@@ -248,16 +240,12 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                 BlocProvider.of<LoginBloc>(blocContext)
                     .add(CheckIfUserExistsEvent(googleId: firebaseUser.uid));
               } else {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(
+                Scaffold.of(context).showSnackBar(
+                  CustomSnackbar.withAnimation(
+                    context,
                     "Sorry, a problem occurred, please try again",
-                    style: CommonTextStyles.scaffoldTextStyle(context),
                   ),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: appState.currentTheme == lightTheme
-                      ? CommonColors.scaffoldColor
-                      : CommonColors.accentColor,
-                ));
+                );
                 setState(() {
                   isFindingUser = false;
                 });
