@@ -10,8 +10,11 @@ import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys/keys.dart';
+import 'package:project_runway/core/keys/quick_action_keys.dart';
+import 'package:project_runway/core/quick_actions.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
+import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/data/models/task_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
@@ -20,6 +23,7 @@ import 'package:project_runway/features/tasks/presentation/pages/create_task/cre
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/create_task_shortcut_widget.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_widget.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
 import 'package:provider/provider.dart';
 
 class CurrentTaskPage extends StatefulWidget {
@@ -279,6 +283,8 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
 
       // check for shared text
       getSharedText(providerContext);
+      // check for quick action call
+      handleQuickActions(state, providerContext);
     }
 
     if (state is ErrorHomeScreenAllTasksState) {
@@ -323,6 +329,36 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
     if (state is ErrorCreateScreenCreateTaskState) {
 //                print(state.message);
     }
+  }
+
+  void handleQuickActions(
+      LoadedHomeScreenAllTasksState state, BuildContext providerContext) {
+    CustomQuickActions.initQuickActions((type) async {
+      switch (type) {
+        case CREATE_TASK:
+          final response =
+              await Navigator.pushNamed(context, CreateTaskPage.routeName,
+                  arguments: CreateTaskScreenArguments(
+                    runningDate: state.taskListEntity.runningDate,
+                    totalTasksCreated: state.taskListEntity.taskList.length,
+                  ));
+
+          if (response != null && response is TaskEntity) {
+            Provider.of<TaskListHolderProvider>(providerContext, listen: false)
+                .insertTaskToList(response);
+          }
+          break;
+        case CREATE_VISION:
+          Navigator.pushNamed(context, VisionBoardListRoute.routeName);
+          break;
+        case VIEW_STATS:
+          Navigator.pushNamed(context, StatsScreen.routeName);
+          break;
+        default:
+          // Do nothing
+          break;
+      }
+    });
   }
 }
 
