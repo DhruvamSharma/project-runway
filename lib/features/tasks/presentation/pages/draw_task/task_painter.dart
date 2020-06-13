@@ -13,7 +13,7 @@ class TaskPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = CommonColors.chartColor
+      ..color = CommonColors.accentColor
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
     for (int i = 0; i < offsets.length - 1; i++) {

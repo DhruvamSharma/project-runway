@@ -20,6 +20,8 @@ import 'package:project_runway/features/stats/presentation/charts/task_action.da
 import 'package:project_runway/features/stats/presentation/manager/bloc.dart';
 import 'package:project_runway/features/stats/presentation/widgets/puzzle_stats_widget.dart';
 import 'package:project_runway/features/stats/presentation/widgets/score_widget.dart';
+import 'package:project_runway/features/stats/presentation/widgets/vision_board_stats.dart';
+import 'package:project_runway/features/vision_boards/presentation/manager/bloc.dart';
 import 'package:provider/provider.dart';
 
 class StatsWidget extends StatefulWidget {
@@ -76,87 +78,137 @@ class _StatsWidgetState extends State<StatsWidget> {
               });
         }
       },
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: CommonDimens.MARGIN_20,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: CommonDimens.MARGIN_20,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: CommonDimens.MARGIN_40,
               ),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_40,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      "Total Score",
-                      style: CommonTextStyles.taskTextStyle(context),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "Total Score",
+                    style: CommonTextStyles.taskTextStyle(context),
+                  ),
+                  ScoreWidget(weeklyScore),
+                ],
+              ),
+            ),
+          ),
+          if (isLoading)
+            // Load a Lottie file from your assets
+            SizedBox(
+                height: 300,
+                child: Lottie.asset("assets/loading_stats_animation.json",
+                    height: 200)),
+          if (!isLoading)
+            Padding(
+              padding: const EdgeInsets.only(
+                top: CommonDimens.MARGIN_60,
+                left: CommonDimens.MARGIN_20,
+                right: CommonDimens.MARGIN_20,
+              ),
+              child: SizedBox(
+                height: 300.0,
+                child: charts.BarChart(
+                  buildSeries(appState),
+                  animate: true,
+                  defaultRenderer: charts.BarRendererConfig(
+                      groupingType: charts.BarGroupingType.groupedStacked,
+                      strokeWidthPx: 2.0),
+                  defaultInteractions: true,
+                  behaviors: [
+                    new charts.SeriesLegend(
+                      // Positions for "start" and "end" will be left and right respectively
+                      // for widgets with a build context that has directionality ltr.
+                      // For rtl, "start" and "end" will be right and left respectively.
+                      // Since this example has directionality of ltr, the legend is
+                      // positioned on the right side of the chart.
+                      position: charts.BehaviorPosition.top,
+                      // By default, if the position of the chart is on the left or right of
+                      // the chart, [horizontalFirst] is set to false. This means that the
+                      // legend entries will grow as new rows first instead of a new column.
+                      horizontalFirst: false,
+                      // This defines the padding around each legend entry.
+                      cellPadding: new EdgeInsets.only(right: 4.0, bottom: 4.0),
+                      // Set show measures to true to display measures in series legend,
+                      // when the datum is selected.
+                      showMeasures: true,
+                      // Optionally provide a measure formatter to format the measure value.
+                      // If none is specified the value is formatted as a decimal.
+                      measureFormatter: (num value) {
+                        return value == null ? '-' : '${value.toInt()}';
+                      },
                     ),
-                    ScoreWidget(weeklyScore),
                   ],
                 ),
               ),
             ),
-            if (isLoading)
-              // Load a Lottie file from your assets
-              Lottie.asset("assets/loading_stats_animation.json", height: 200),
-            if (!isLoading)
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_60,
-                  left: CommonDimens.MARGIN_20,
-                  right: CommonDimens.MARGIN_20,
-                ),
-                child: SizedBox(
-                  height: 300.0,
-                  child: charts.BarChart(
-                    buildSeries(appState),
-                    animate: true,
-                    defaultRenderer: new charts.BarRendererConfig(
-                        groupingType: charts.BarGroupingType.groupedStacked,
-                        strokeWidthPx: 2.0),
-                    defaultInteractions: true,
-                    behaviors: [
-                      new charts.SeriesLegend(
-                        // Positions for "start" and "end" will be left and right respectively
-                        // for widgets with a build context that has directionality ltr.
-                        // For rtl, "start" and "end" will be right and left respectively.
-                        // Since this example has directionality of ltr, the legend is
-                        // positioned on the right side of the chart.
-                        position: charts.BehaviorPosition.top,
-                        // By default, if the position of the chart is on the left or right of
-                        // the chart, [horizontalFirst] is set to false. This means that the
-                        // legend entries will grow as new rows first instead of a new column.
-                        horizontalFirst: false,
-                        // This defines the padding around each legend entry.
-                        cellPadding:
-                            new EdgeInsets.only(right: 4.0, bottom: 4.0),
-                        // Set show measures to true to display measures in series legend,
-                        // when the datum is selected.
-                        showMeasures: true,
-                        // Optionally provide a measure formatter to format the measure value.
-                        // If none is specified the value is formatted as a decimal.
-                        measureFormatter: (num value) {
-                          return value == null ? '-' : '${value.toInt()}';
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: CommonDimens.MARGIN_20,
-              ),
-              child: Divider(
-                height: 1,
-              ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: CommonDimens.MARGIN_20,
             ),
-            if (!isLoading && userEntity.score != null && userEntity.score != 0)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
+            child: Divider(
+              height: 1,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: CommonDimens.MARGIN_20,
+              bottom: CommonDimens.MARGIN_20,
+            ),
+            child: Text(
+              "Vision Board Stats",
+              style: CommonTextStyles.taskTextStyle(context),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(CommonDimens.MARGIN_20),
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                    height: 300,
+                    child: BlocProvider<VisionBoardBloc>(
+                        create: (_) => sl<VisionBoardBloc>(),
+                        child: DatumLegendOptions.withSampleData())),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: CommonDimens.MARGIN_20,
+            ),
+            child: Divider(
+              height: 1,
+            ),
+          ),
+          if (!isLoading && userEntity.score != null && userEntity.score != 0)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: CommonDimens.MARGIN_20,
+                      ),
+                      child: Text(
+                        "Puzzles Solved",
+                        style: CommonTextStyles.taskTextStyle(context),
+                      ),
+                    ),
+                    if (isLoading)
+                      ScoreWidget(0)
+                    else
+                      ScoreWidget(userEntity.score.toInt() ~/
+                          PUZZLE_ID_INCREMENT_NUMBER),
+                  ],
+                ),
+                if (userEntity.age != null)
                   Column(
                     children: <Widget>[
                       Padding(
@@ -164,50 +216,30 @@ class _StatsWidgetState extends State<StatsWidget> {
                           top: CommonDimens.MARGIN_20,
                         ),
                         child: Text(
-                          "Puzzles Solved",
+                          "Score earned",
                           style: CommonTextStyles.taskTextStyle(context),
                         ),
                       ),
                       if (isLoading)
                         ScoreWidget(0)
                       else
-                        ScoreWidget(userEntity.score.toInt() ~/
-                            PUZZLE_ID_INCREMENT_NUMBER),
+                        ScoreWidget(userEntity.age),
                     ],
                   ),
-                  if (userEntity.age != null)
-                    Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: CommonDimens.MARGIN_20,
-                          ),
-                          child: Text(
-                            "Score earned",
-                            style: CommonTextStyles.taskTextStyle(context),
-                          ),
-                        ),
-                        if (isLoading)
-                          ScoreWidget(0)
-                        else
-                          ScoreWidget(userEntity.age),
-                      ],
-                    ),
-                ],
+              ],
+            ),
+          if (!isLoading && userEntity.score != null && userEntity.score != 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: CommonDimens.MARGIN_20,
+                vertical: CommonDimens.MARGIN_20,
               ),
-            if (!isLoading && userEntity.score != null && userEntity.score != 0)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: CommonDimens.MARGIN_20,
-                  vertical: CommonDimens.MARGIN_20,
-                ),
-                child: SizedBox(
-                    height: 300,
-                    child: PuzzleStatsWidget(
-                        user: userEntity, totalScore: statsTable.score)),
-              ),
-          ],
-        ),
+              child: SizedBox(
+                  height: 300,
+                  child: PuzzleStatsWidget(
+                      user: userEntity, totalScore: statsTable.score)),
+            ),
+        ],
       ),
     );
   }
