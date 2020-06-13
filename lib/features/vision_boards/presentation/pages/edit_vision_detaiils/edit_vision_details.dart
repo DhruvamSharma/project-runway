@@ -7,7 +7,10 @@ import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
+import 'package:project_runway/core/common_ui/under_maintainance_widget.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/remote_config/remote_config_service.dart';
 import 'package:project_runway/core/storage_utils.dart';
 import 'package:project_runway/features/vision_boards/data/models/vision_model.dart';
 import 'package:project_runway/features/vision_boards/presentation/manager/bloc.dart';
@@ -31,6 +34,7 @@ class EditVisionRoute extends StatefulWidget {
 
 class _EditVisionRouteState extends State<EditVisionRoute> {
   static const String screenName = "Vision";
+  final RemoteConfigService _remoteConfigService = sl<RemoteConfigService>();
   double urgencyValue = 30;
   String visionName;
   FILE_SELECTION_METHOD fileSelectionMethod;
@@ -44,8 +48,6 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
 
   @override
   Widget build(BuildContext context) {
-    final uploadState =
-        Provider.of<VisionUploadProviderModel>(context, listen: false);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -68,101 +70,115 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
             );
           }
         },
-        child: Stack(
-          children: <Widget>[
-            Align(
-              alignment: Alignment.center,
-              child: RotatedBox(
-                quarterTurns: 3,
+        child: buildRoute(),
+      ),
+    );
+  }
+
+  Widget buildRoute() {
+    if (_remoteConfigService.createVisionEnabled) {
+      return buildCreateVisionRoute();
+    } else {
+      return UnderMaintenanceWidget();
+    }
+  }
+
+  Widget buildCreateVisionRoute() {
+    final uploadState =
+        Provider.of<VisionUploadProviderModel>(context, listen: false);
+    return Stack(
+      children: <Widget>[
+        Align(
+          alignment: Alignment.center,
+          child: RotatedBox(
+            quarterTurns: 3,
+            child: Text(
+              screenName.toUpperCase(),
+              style: CommonTextStyles.rotatedDesignTextStyle(context),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Align(
+                alignment: Alignment.topCenter,
                 child: Text(
                   screenName.toUpperCase(),
-                  style: CommonTextStyles.rotatedDesignTextStyle(context),
+                  style: CommonTextStyles.headerTextStyle(context),
                   textAlign: TextAlign.center,
                 ),
               ),
-            ),
-            SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Text(
-                      screenName.toUpperCase(),
-                      style: CommonTextStyles.headerTextStyle(context),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: CommonDimens.MARGIN_20,
-                      bottom: CommonDimens.MARGIN_20,
-                      left: CommonDimens.MARGIN_40,
-                      right: CommonDimens.MARGIN_40,
-                    ),
-                    child: buildImage(context),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: CommonDimens.MARGIN_60,
-                      vertical: CommonDimens.MARGIN_20,
-                    ),
-                    child: CustomTextField(
-                      null,
-                      null,
-                      label: "Vision Name",
-                      isRequired: false,
-                      onValueChange: (value) {
-                        visionName = value;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: CommonDimens.MARGIN_40,
-                      left: CommonDimens.MARGIN_40,
-                      right: CommonDimens.MARGIN_40,
-                    ),
-                    child: SliderTheme(
-                      data: SliderThemeData(
-                          trackHeight: 6,
-                          showValueIndicator: ShowValueIndicator.always,
-                          valueIndicatorColor: CommonColors.chartColor),
-                      child: Slider(
-                        value: urgencyValue,
-                        min: 0,
-                        max: 100,
-                        activeColor: CommonColors.chartColor,
-                        inactiveColor: CommonColors.disabledTaskTextColor,
-                        onChanged: (changedValue) {
-                          setState(() {
-                            urgencyValue = changedValue;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: CommonDimens.MARGIN_40,
-                    ),
-                    child: MaterialButton(
-                      color: uploadState.response != null
-                          ? CommonColors.chartColor
-                          : CommonColors.disabledTaskTextColor,
-                      onPressed: uploadState.response != null
-                          ? () {
-                              createVision();
-                            }
-                          : null,
-                      child: Text("Create Vision"),
-                    ),
-                  )
-                ],
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_20,
+                  bottom: CommonDimens.MARGIN_20,
+                  left: CommonDimens.MARGIN_40,
+                  right: CommonDimens.MARGIN_40,
+                ),
+                child: buildImage(context),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: CommonDimens.MARGIN_60,
+                  vertical: CommonDimens.MARGIN_20,
+                ),
+                child: CustomTextField(
+                  null,
+                  null,
+                  label: "Vision Name",
+                  isRequired: false,
+                  onValueChange: (value) {
+                    visionName = value;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_40,
+                  left: CommonDimens.MARGIN_40,
+                  right: CommonDimens.MARGIN_40,
+                ),
+                child: SliderTheme(
+                  data: SliderThemeData(
+                      trackHeight: 6,
+                      showValueIndicator: ShowValueIndicator.always,
+                      valueIndicatorColor: CommonColors.chartColor),
+                  child: Slider(
+                    value: urgencyValue,
+                    min: 0,
+                    max: 100,
+                    activeColor: CommonColors.chartColor,
+                    inactiveColor: CommonColors.disabledTaskTextColor,
+                    onChanged: (changedValue) {
+                      setState(() {
+                        urgencyValue = changedValue;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_40,
+                ),
+                child: MaterialButton(
+                  color: uploadState.response != null
+                      ? CommonColors.chartColor
+                      : CommonColors.disabledTaskTextColor,
+                  onPressed: uploadState.response != null
+                      ? () {
+                          createVision();
+                        }
+                      : null,
+                  child: Text("Create Vision"),
+                ),
+              )
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 

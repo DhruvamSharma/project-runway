@@ -12,9 +12,11 @@ import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_snackbar.dart';
+import 'package:project_runway/core/common_ui/under_maintainance_widget.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
-import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/core/keys/keys.dart';
+import 'package:project_runway/core/remote_config/remote_config_service.dart';
 import 'package:project_runway/features/login/data/models/user_model.dart';
 import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 import 'package:project_runway/features/vision_boards/data/models/vision_board_model.dart';
@@ -36,6 +38,7 @@ class VisionBoardListRoute extends StatefulWidget {
 
 class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
   UserEntity user;
+  final RemoteConfigService _remoteConfigService = sl<RemoteConfigService>();
   static const String screenName = "Vision";
   List<VisionBoardModel> visionBoards;
   List<VisionModel> visions;
@@ -87,70 +90,17 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
       },
       child: SafeArea(
         top: false,
-        child: Scaffold(
-          key: _scaffoldKey,
-          floatingActionButton:
-              (visions == null || visions.length == TOTAL_VISIONS_LIMIT + 1)
-                  ? Container()
-                  : FloatingActionButton.extended(
-                      onPressed: () {
-                        moveToCreateVisionRoute();
-                      },
-                      label: Text(
-                        "Add More",
-                        style: CommonTextStyles.scaffoldTextStyle(context)
-                            .copyWith(color: Colors.white),
-                      )),
-          body: Stack(
-            children: <Widget>[
-              Align(
-                alignment: Alignment.center,
-                child: RotatedBox(
-                  quarterTurns: 3,
-                  child: Text(
-                    screenName.toUpperCase(),
-                    style: CommonTextStyles.rotatedDesignTextStyle(context),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              buildRoute(),
-              SizedBox(
-                height: 52,
-                child: AppBar(
-                  elevation: 0,
-                  backgroundColor: Colors.transparent,
-                ),
-              ),
-              if (visions != null && visions.isNotEmpty)
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: CommonDimens.MARGIN_20 + 10,
-                      right: CommonDimens.MARGIN_20,
-                    ),
-                    child: CircleAvatar(
-                      radius: 24,
-                      backgroundColor: Colors.black,
-                      child: Center(
-                        child: IconButton(
-                            visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.all(0),
-                            icon: Icon(
-                              Icons.save_alt,
-                              size: 20,
-                            ),
-                            onPressed: saveVisionBoardToGallery),
-                      ),
-                    ),
-                  ),
-                )
-            ],
-          ),
-        ),
+        child: buildRoute(),
       ),
     );
+  }
+
+  Widget buildRoute() {
+    if (_remoteConfigService.visionBoardEnabled) {
+      return visionBoardPageRoute();
+    } else {
+      return Scaffold(body: UnderMaintenanceWidget());
+    }
   }
 
   void saveVisionBoardToGallery() async {
@@ -190,7 +140,7 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
     }
   }
 
-  Widget buildRoute() {
+  Widget buildVisionBoardRoute() {
     if (isLoadingVisionBoards) {
       return buildLoadingList();
     } else {
@@ -449,5 +399,70 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
   void loadAllVisions(String visionBoardId) {
     BlocProvider.of<VisionBoardBloc>(context)
         .add(GetAllVisionsEvent(visionBoardId: visionBoardId));
+  }
+
+  Widget visionBoardPageRoute() {
+    return Scaffold(
+      key: _scaffoldKey,
+      floatingActionButton:
+          (visions == null || visions.length == TOTAL_VISIONS_LIMIT + 1)
+              ? Container()
+              : FloatingActionButton.extended(
+                  onPressed: () {
+                    moveToCreateVisionRoute();
+                  },
+                  label: Text(
+                    "Add More",
+                    style: CommonTextStyles.scaffoldTextStyle(context)
+                        .copyWith(color: Colors.white),
+                  )),
+      body: Stack(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.center,
+            child: RotatedBox(
+              quarterTurns: 3,
+              child: Text(
+                screenName.toUpperCase(),
+                style: CommonTextStyles.rotatedDesignTextStyle(context),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          buildVisionBoardRoute(),
+          SizedBox(
+            height: 52,
+            child: AppBar(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+            ),
+          ),
+          if (visions != null && visions.isNotEmpty)
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_20 + 10,
+                  right: CommonDimens.MARGIN_20,
+                ),
+                child: CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.black,
+                  child: Center(
+                    child: IconButton(
+                        visualDensity: VisualDensity.compact,
+                        padding: const EdgeInsets.all(0),
+                        icon: Icon(
+                          Icons.save_alt,
+                          size: 20,
+                        ),
+                        onPressed: saveVisionBoardToGallery),
+                  ),
+                ),
+              ),
+            )
+        ],
+      ),
+    );
   }
 }

@@ -7,6 +7,7 @@ import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/notifications/local_notifications.dart';
 import 'package:project_runway/core/notifications/one_signal.dart';
+import 'package:project_runway/core/remote_config/remote_config_service.dart';
 import 'package:project_runway/core/routes/routes_generator.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/presentation/pages/user_entry_route.dart';
@@ -21,6 +22,9 @@ void main() async {
   await initLocalNotifications();
   // initialising get_it
   await serviceLocatorInit();
+  // initialise remote config values
+  final RemoteConfigService remoteConfigService = sl<RemoteConfigService>();
+  await remoteConfigService.initialiseRemoteConfig();
   // To turn off landscape mode
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   // Pass all uncaught errors from the framework to Crashlytics.

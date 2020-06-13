@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/errors/exceptions.dart';
-import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/core/keys/keys.dart';
 import 'package:project_runway/features/login/data/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

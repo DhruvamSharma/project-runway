@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_runway/core/injection_container.dart';
-import 'package:project_runway/core/keys.dart';
+import 'package:project_runway/core/keys/keys.dart';
 import 'package:project_runway/core/theme/theme.dart';
 
 enum ThemeType { Light, Dark }
