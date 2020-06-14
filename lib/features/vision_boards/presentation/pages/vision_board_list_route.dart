@@ -13,6 +13,7 @@ import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/common_ui/under_maintainance_widget.dart';
+import 'package:project_runway/core/common_ui/user_not_verified_widget.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys/keys.dart';
@@ -97,7 +98,21 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
 
   Widget buildRoute() {
     if (_remoteConfigService.visionBoardEnabled) {
-      return visionBoardPageRoute();
+      if (user.isVerified) {
+        return buildVisionBoardRoute();
+      } else {
+        return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+            body: Padding(
+              padding: const EdgeInsets.only(
+                top: CommonDimens.MARGIN_40,
+              ),
+              child: UserNotVerifiedWidget("Vision Board"),
+            ));
+      }
     } else {
       return Scaffold(body: UnderMaintenanceWidget());
     }
@@ -249,18 +264,10 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
                                     ),
                                     SizedBox(width: 10.0),
                                     Expanded(
-                                      child: AnimatedDefaultTextStyle(
-                                        child: Text(
-                                          visions[index].fullName,
-                                        ),
-                                        style: CommonTextStyles
-                                                .scaffoldTextStyle(context)
-                                            .copyWith(
-                                                color: CommonColors.accentColor,
-                                                fontSize: isTakingScreenshot
-                                                    ? 8
-                                                    : 14),
-                                        duration: Duration(milliseconds: 200),
+                                      child: Text(
+                                        visions[index].fullName,
+                                        style: CommonTextStyles.badgeTextStyle(
+                                            context),
                                       ),
                                     ),
                                   ],

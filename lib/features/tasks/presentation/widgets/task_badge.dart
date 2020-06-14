@@ -26,9 +26,7 @@ class TaskBadge extends StatelessWidget {
       ),
       child: Text(
         taskState.taskEntity.tag,
-        style: CommonTextStyles.badgeTextStyle(context).copyWith(
-          color: CommonColors.accentColor,
-        ),
+        style: CommonTextStyles.badgeTextStyle(context),
       ),
     );
   }

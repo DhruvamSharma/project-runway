@@ -86,7 +86,7 @@ class CreateTaskWidget extends StatelessWidget {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
-                              top: CommonDimens.MARGIN_20,
+                              top: CommonDimens.MARGIN_20 / 2,
                             ),
                             child: Text(
                               beautifyDate(runningDate ?? ""),

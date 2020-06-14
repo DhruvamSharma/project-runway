@@ -25,6 +25,11 @@ class UserEntryRoute extends StatelessWidget {
           key: _scaffoldKey,
           body: Stack(
             children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height / 2,
+                width: MediaQuery.of(context).size.width,
+                color: CommonColors.introColor.withOpacity(0.01),
+              ),
               PageView(
                 controller: _pageController,
                 physics: NeverScrollableScrollPhysics(),
@@ -73,80 +78,73 @@ class UserEntryRoute extends StatelessWidget {
                         elevation: 0,
                       )),
                 ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: CommonDimens.MARGIN_20,
-                ),
-                child: Row(
-                  mainAxisAlignment: Provider.of<UserEntryProviderHolder>(
-                            providerContext,
-                          ).pageNumber ==
-                          0
-                      ? MainAxisAlignment.center
-                      : MainAxisAlignment.end,
-                  children: <Widget>[
-                    if (Provider.of<UserEntryProviderHolder>(
+              Row(
+                mainAxisAlignment: Provider.of<UserEntryProviderHolder>(
                           providerContext,
                         ).pageNumber ==
-                        0)
-                      Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: CommonDimens.MARGIN_20,
+                        0
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.end,
+                children: <Widget>[
+                  if (Provider.of<UserEntryProviderHolder>(
+                        providerContext,
+                      ).pageNumber ==
+                      0)
+                    Align(
+                        alignment: Alignment.bottomCenter,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: MaterialButton(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: CommonDimens.MARGIN_40,
+                              vertical: CommonDimens.MARGIN_20 / 2,
                             ),
-                            child: MaterialButton(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: CommonDimens.MARGIN_40,
-                                vertical: CommonDimens.MARGIN_20 / 2,
-                              ),
-                              onPressed: () {
-                                onForwardClick(providerContext);
-                              },
-                              child: Text(
-                                "Get Started",
-                                style: CommonTextStyles.taskTextStyle(context)
-                                    .copyWith(
-                                  color: appState
-                                      .currentTheme.scaffoldBackgroundColor,
-                                  letterSpacing: 5,
-                                ),
-                              ),
-                              color: appState.currentTheme.accentColor,
-                            ),
-                          )),
-                    if (Provider.of<UserEntryProviderHolder>(
-                              providerContext,
-                            ).pageNumber !=
-                            3 &&
-                        Provider.of<UserEntryProviderHolder>(
-                              providerContext,
-                            ).pageNumber !=
-                            0 &&
-                        Provider.of<UserEntryProviderHolder>(
-                              providerContext,
-                            ).pageNumber !=
-                            2)
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            right: CommonDimens.MARGIN_20,
-                          ),
-                          child: FloatingActionButton(
                             onPressed: () {
                               onForwardClick(providerContext);
                             },
-                            mini: true,
-                            child: Icon(
-                              Icons.arrow_downward,
-                              color: CommonColors.accentColor,
+                            child: Text(
+                              "Get Started",
+                              style: CommonTextStyles.taskTextStyle(context)
+                                  .copyWith(
+                                color: appState
+                                    .currentTheme.scaffoldBackgroundColor,
+                              ),
                             ),
+                            color: appState.currentTheme.accentColor,
+                          ),
+                        )),
+                  if (Provider.of<UserEntryProviderHolder>(
+                            providerContext,
+                          ).pageNumber !=
+                          3 &&
+                      Provider.of<UserEntryProviderHolder>(
+                            providerContext,
+                          ).pageNumber !=
+                          0 &&
+                      Provider.of<UserEntryProviderHolder>(
+                            providerContext,
+                          ).pageNumber !=
+                          2)
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          right: CommonDimens.MARGIN_20,
+                          bottom: CommonDimens.MARGIN_20,
+                        ),
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            onForwardClick(providerContext);
+                          },
+                          mini: true,
+                          child: Icon(
+                            Icons.arrow_downward,
+                            color: CommonColors.accentColor,
                           ),
                         ),
-                      )
-                  ],
-                ),
+                      ),
+                    )
+                ],
               ),
             ],
           ),

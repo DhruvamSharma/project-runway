@@ -1,6 +1,7 @@
 //theme.dart
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:project_runway/core/common_colors.dart';
 
 ThemeData darkTheme = ThemeData.dark().copyWith(
@@ -9,11 +10,99 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   brightness: Brightness.light,
   scaffoldBackgroundColor: CommonColors.scaffoldColor,
   canvasColor: Colors.transparent,
-  iconTheme: IconThemeData(color: Colors.white),
+  iconTheme: IconThemeData(color: Colors.white.withOpacity(0.60)),
   primaryIconTheme: IconThemeData(color: Colors.white),
   accentIconTheme: IconThemeData(color: Colors.white),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     backgroundColor: CommonColors.chartColor,
+  ),
+  textTheme: GoogleFonts.baumansTextTheme().copyWith(
+    headline1: GoogleFonts.baumans().copyWith(
+        height: 1.5,
+        color: CommonColors.headerTextColor.withOpacity(0.60),
+        letterSpacing: 25,
+        fontSize: 70),
+    // Used for background rotated text
+    headline2: GoogleFonts.baumans().copyWith(
+      height: 1.5,
+      color: CommonColors.rotatedDesignTextColor.withOpacity(0.60),
+      letterSpacing: 24,
+      fontSize: 40,
+    ),
+    // Used for headers
+    headline3: GoogleFonts.baumans().copyWith(
+      height: 1.5,
+      color: CommonColors.headerTextColor.withOpacity(0.38),
+      letterSpacing: 14,
+      fontSize: 40,
+    ),
+    // Used for telling scores
+    headline4: GoogleFonts.baumans().copyWith(
+      height: 1.5,
+      color: CommonColors.headerTextColor.withOpacity(0.60),
+      letterSpacing: 10,
+      fontSize: 34,
+    ),
+    // Used for header texts, bigger than titles
+    headline5: GoogleFonts.baumans().copyWith(
+      height: 1.0,
+      color: CommonColors.headerTextColor.withOpacity(0.60),
+      letterSpacing: 4,
+      fontSize: 24,
+    ),
+    // Used for task title, setting list item
+    headline6: GoogleFonts.baumans().copyWith(
+      height: 1.5,
+      letterSpacing: 2,
+      color: CommonColors.introColor.withOpacity(0.89),
+      fontSize: 20,
+    ),
+    button: GoogleFonts.baumans().copyWith(
+        height: 1.5,
+        color: CommonColors.headerTextColor.withOpacity(0.60),
+        letterSpacing: 2,
+        fontSize: 14,
+        fontWeight: FontWeight.w500),
+    // Used for date texts, used for text field labels
+    subtitle1: GoogleFonts.baumans().copyWith(
+        height: 1.5,
+        color: CommonColors.headerTextColor.withOpacity(0.38),
+        letterSpacing: 4,
+        fontSize: 18),
+    // Used for badges
+    subtitle2: GoogleFonts.baumans().copyWith(
+        height: 1.5,
+        color: CommonColors.headerTextColor.withOpacity(0.60),
+        letterSpacing: 2,
+        fontSize: 12,
+        fontWeight: FontWeight.w500),
+    // used for snackbars
+    bodyText1: GoogleFonts.baumans().copyWith(
+      height: 1.5,
+      color: CommonColors.scaffoldColor.withOpacity(0.89),
+      letterSpacing: 2,
+      fontSize: 14,
+    ),
+    bodyText2: GoogleFonts.baumans().copyWith(
+      height: 1.5,
+      color: CommonColors.headerTextColor.withOpacity(0.60),
+      letterSpacing: 4,
+      fontSize: 12,
+    ),
+    // Used for badges text
+    caption: GoogleFonts.baumans().copyWith(
+      height: 1.5,
+      color: CommonColors.taskBadgeColor.withOpacity(0.60),
+      letterSpacing: 4,
+      fontSize: 14,
+    ),
+
+    // Used for asterisk notes
+    overline: GoogleFonts.baumans().copyWith(
+      height: 1.5,
+      color: CommonColors.taskBadgeColor.withOpacity(0.60),
+      letterSpacing: 4,
+    ),
   ),
   sliderTheme: SliderThemeData(
       thumbColor: CommonColors.chartColor,

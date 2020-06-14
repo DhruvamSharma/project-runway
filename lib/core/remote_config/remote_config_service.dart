@@ -11,6 +11,7 @@ class RemoteConfigService {
     DRAW_TASK_ENABLED_KEY: true,
     VIEW_VISION_BOARD_DETAILS_ENABLED_KEY: true,
     CREATE_VISION_ENABLED_KEY: true,
+    LIGHT_THEME_OPTION_ENABLED_KEY: true,
   };
   static RemoteConfigService _instance;
   static Future<RemoteConfigService> getInstance() async {
@@ -34,6 +35,8 @@ class RemoteConfigService {
       _remoteConfig.getBool(VIEW_VISION_BOARD_DETAILS_ENABLED_KEY);
   bool get createVisionEnabled =>
       _remoteConfig.getBool(CREATE_VISION_ENABLED_KEY);
+  bool get lightThemeOptionEnabled =>
+      _remoteConfig.getBool(LIGHT_THEME_OPTION_ENABLED_KEY);
 
   Future initialiseRemoteConfig() async {
     try {

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:project_runway/core/common_colors.dart';
+import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
@@ -68,7 +69,10 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
             children: <Widget>[
               Flexible(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: CommonDimens.MARGIN_40,
+                    vertical: CommonDimens.MARGIN_20,
+                  ),
                   child: CustomTextField(
                     null,
                     null,
@@ -106,7 +110,7 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
                               Flexible(
                                   child: Text(
                                 'Type a word',
-                                style: Theme.of(context).textTheme.display1,
+                                style: CommonTextStyles.disabledTaskTextStyle(),
                               ))
                             ],
                           ),

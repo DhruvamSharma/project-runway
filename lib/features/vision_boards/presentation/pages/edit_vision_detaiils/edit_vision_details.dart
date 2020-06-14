@@ -12,6 +12,7 @@ import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/remote_config/remote_config_service.dart';
 import 'package:project_runway/core/storage_utils.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/vision_boards/data/models/vision_model.dart';
 import 'package:project_runway/features/vision_boards/presentation/manager/bloc.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/image_selector.dart';
@@ -112,7 +113,7 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_20,
+                  top: CommonDimens.MARGIN_60,
                   bottom: CommonDimens.MARGIN_20,
                   left: CommonDimens.MARGIN_40,
                   right: CommonDimens.MARGIN_40,
@@ -213,6 +214,7 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
   Widget buildSelectedImageContainer(
       BuildContext providerContext, VisionUploadProviderModel uploadState) {
     return Stack(
+      overflow: Overflow.visible,
       children: <Widget>[
         Container(
           height: 200,
@@ -316,7 +318,9 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
                 10,
               ),
             ),
-            color: CommonColors.disabledTaskTextColor,
+            border: Border.all(
+              color: CommonColors.introColor,
+            ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -376,12 +380,15 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
   buildChooseFromOptions(BuildContext providerContext) {
     showModalBottomSheet(
       isScrollControlled: true,
+      backgroundColor: Provider.of<ThemeModel>(context, listen: false)
+          .currentTheme
+          .scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5))),
+          borderRadius:
+              BorderRadius.all(Radius.circular(CommonDimens.MARGIN_20 / 2))),
       context: context,
       builder: (_) => Container(
-        color: CommonColors.scaffoldColor,
-        height: MediaQuery.of(context).size.width * 1.0,
+        height: 300,
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: CommonDimens.MARGIN_20,
@@ -395,7 +402,7 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
                   bottom: CommonDimens.MARGIN_20,
                 ),
                 child: Text(
-                  "Select a photo",
+                  "Select a photo".toUpperCase(),
                   style: CommonTextStyles.taskTextStyle(context),
                 ),
               ),
@@ -445,7 +452,7 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
                               ),
                               child: Text("Select from our selection",
                                   style:
-                                      CommonTextStyles.taskTextStyle(context)),
+                                      CommonTextStyles.disabledTaskTextStyle()),
                             )
                           ],
                         ),
@@ -478,7 +485,7 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
                               ),
                               child: Text("Select from your Camera",
                                   style:
-                                      CommonTextStyles.taskTextStyle(context)),
+                                      CommonTextStyles.disabledTaskTextStyle()),
                             )
                           ],
                         ),
@@ -511,7 +518,7 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
                               ),
                               child: Text("Select from your Gallery",
                                   style:
-                                      CommonTextStyles.taskTextStyle(context)),
+                                      CommonTextStyles.disabledTaskTextStyle()),
                             )
                           ],
                         ),

@@ -102,7 +102,7 @@ class _StatsWidgetState extends State<StatsWidget> {
           if (isLoading)
             // Load a Lottie file from your assets
             SizedBox(
-                height: 300,
+                height: 200,
                 child: Lottie.asset("assets/loading_stats_animation.json",
                     height: 200)),
           if (!isLoading)
@@ -167,7 +167,9 @@ class _StatsWidgetState extends State<StatsWidget> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(CommonDimens.MARGIN_20),
+            padding: const EdgeInsets.symmetric(
+                vertical: CommonDimens.MARGIN_20,
+                horizontal: CommonDimens.MARGIN_60 / 2),
             child: Column(
               children: <Widget>[
                 SizedBox(
@@ -277,7 +279,7 @@ class _StatsWidgetState extends State<StatsWidget> {
     // return 3 series
     return [
       charts.Series(
-        id: 'No. of Task Completed',
+        id: 'Task Completed',
         domainFn: (TaskAction clickData, _) => clickData.dayOfTheWeek,
         measureFn: (TaskAction clickData, _) => clickData.taskAmount,
         colorFn: (TaskAction clickData, _) => clickData.color,
@@ -291,7 +293,7 @@ class _StatsWidgetState extends State<StatsWidget> {
 //        data: deletedTaskData,
 //      ),
       charts.Series(
-        id: 'No. of Tasks Created',
+        id: 'Tasks Created',
         domainFn: (TaskAction clickData, _) => clickData.dayOfTheWeek,
         measureFn: (TaskAction clickData, _) => clickData.taskAmount,
         colorFn: (TaskAction clickData, _) => clickData.color,

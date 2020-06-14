@@ -1,19 +1,19 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:project_runway/core/common_colors.dart';
 
 class TaskPainter extends CustomPainter {
   final List<Offset> offsets;
-
+  final Color strokeColor;
   TaskPainter({
     @required this.offsets,
+    this.strokeColor,
   }) : super();
 
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = CommonColors.accentColor
+      ..color = strokeColor
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
     for (int i = 0; i < offsets.length - 1; i++) {

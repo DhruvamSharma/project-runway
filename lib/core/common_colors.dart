@@ -38,7 +38,7 @@ class CommonColors {
   // for light theme
   static final Color taskBadgeTextColorLightTheme = accentColor;
   // for dark theme
-  static final Color taskBadgeColor = accentColor;
+  static final Color taskBadgeColor = Colors.white;
   // for light theme
   static final Color taskBadgeColorLightTheme = scaffoldColor;
 

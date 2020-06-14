@@ -1,11 +1,9 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/constants.dart';
-import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 import 'package:project_runway/features/stats/data/models/puzzle_model.dart';
@@ -104,11 +102,7 @@ class _PuzzleStatsWidgetState extends State<PuzzleStatsWidget> {
               child: Text(
               "Enough Data not available. Try solving 3 or more puzzles",
               textAlign: TextAlign.center,
-              style: appState.currentTheme == lightTheme
-                  ? CommonTextStyles.disabledTaskTextStyle().copyWith(
-                      color: CommonColors.scaffoldColor,
-                    )
-                  : CommonTextStyles.disabledTaskTextStyle(),
+              style: CommonTextStyles.disabledTaskTextStyle(),
             )),
     );
   }

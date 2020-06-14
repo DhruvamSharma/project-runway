@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
@@ -7,9 +8,13 @@ import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/common_ui/under_maintainance_widget.dart';
+import 'package:project_runway/core/common_ui/user_not_verified_widget.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/keys/keys.dart';
 import 'package:project_runway/core/remote_config/remote_config_service.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
+import 'package:project_runway/features/login/data/models/user_model.dart';
 import 'package:project_runway/features/tasks/presentation/pages/draw_task/task_painter.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -17,7 +22,8 @@ import 'package:screenshot/screenshot.dart';
 class DrawTaskRoute extends StatelessWidget {
   static const String routeName = "${APP_NAME}_v1_tasks_draw-task";
   final RemoteConfigService _remoteConfigService = sl<RemoteConfigService>();
-
+  final UserModel user = UserModel.fromJson(
+      json.decode(sharedPreferences.getString(USER_MODEL_KEY)));
   final TextRecognizer textRecognizer =
       FirebaseVision.instance.textRecognizer();
   final ScreenshotController _screenshotController = ScreenshotController();
@@ -37,13 +43,23 @@ class DrawTaskRoute extends StatelessWidget {
 
   Widget buildRoute(BuildContext context) {
     if (_remoteConfigService.drawTaskEnabled) {
-      return drawingWidget(context);
+      if (user.isVerified) {
+        return drawingWidget(context);
+      } else {
+        return Padding(
+          padding: const EdgeInsets.only(
+            top: CommonDimens.MARGIN_80,
+          ),
+          child: UserNotVerifiedWidget("Draw Your Task"),
+        );
+      }
     } else {
       return UnderMaintenanceWidget();
     }
   }
 
   Widget drawingWidget(BuildContext providerContext) {
+    final appState = Provider.of<ThemeModel>(providerContext);
     return Stack(
       children: <Widget>[
         GestureDetector(
@@ -65,8 +81,9 @@ class DrawTaskRoute extends StatelessWidget {
               child: CustomPaint(
                 painter: TaskPainter(
                     offsets: Provider.of<DrawingPointsModel>(
-                  providerContext,
-                ).offsets),
+                      providerContext,
+                    ).offsets,
+                    strokeColor: appState.currentTheme.iconTheme.color),
                 child: Container(
                   height: MediaQuery.of(providerContext).size.height,
                   width: MediaQuery.of(providerContext).size.width,
@@ -78,10 +95,13 @@ class DrawTaskRoute extends StatelessWidget {
         SafeArea(
           child: SizedBox(
             child: AppBar(
+              actionsIconTheme: appState.currentTheme.iconTheme,
               backgroundColor: Colors.transparent,
               actions: <Widget>[
                 IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: Icon(
+                      Icons.delete,
+                    ),
                     onPressed: () {
                       Provider.of<DrawingPointsModel>(providerContext,
                               listen: false)
@@ -98,8 +118,7 @@ class DrawTaskRoute extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               "* Text sometimes might not be accurately recognised",
-              style: CommonTextStyles.disabledTaskTextStyle()
-                  .copyWith(fontSize: 12),
+              style: CommonTextStyles.asteriskTextStyle(providerContext),
             ),
           ),
         ),
@@ -115,7 +134,10 @@ class DrawTaskRoute extends StatelessWidget {
                 mlTheHellOutOfImage(providerContext);
               },
               mini: true,
-              child: Icon(Icons.add),
+              child: Icon(
+                Icons.add,
+                color: CommonColors.introColor,
+              ),
             ),
           ),
         ),

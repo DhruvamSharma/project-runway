@@ -47,64 +47,65 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
               );
             }
           },
-          child: Padding(
-            padding: const EdgeInsets.all(
-              CommonDimens.MARGIN_20,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Spacer(),
-                Text(
-                  "Congratulations,\nYou are all set up to increase your productivity",
-                  style: CommonTextStyles.loginTextStyle(context),
-                  textAlign: TextAlign.center,
-                ),
-                Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: CommonDimens.MARGIN_60,
+          child: Stack(
+            children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Congratulations\n".toUpperCase(),
+                    style: CommonTextStyles.loginTextStyle(context),
+                    textAlign: TextAlign.center,
                   ),
-                  child: SizedBox(
-                    width: 200,
-                    child: RaisedButton(
-                      color: CommonColors.chartColor,
-                      onPressed: () {
-                        if (!isCreatingAccount) {
-                          setState(() {
-                            isCreatingAccount = true;
-                          });
-                          final user = createUser(blocContext, userEntryState);
-                          BlocProvider.of<LoginBloc>(blocContext)
-                              .add(LoginUserEvent(user: user));
-                        }
-                      },
-                      child: Text(
-                        "Let's Begin",
-                        style: CommonTextStyles.taskTextStyle(context),
+                  Text(
+                    "\n You are all set up to increase your productivity",
+                    style: CommonTextStyles.loginTextStyle(context),
+                    textAlign: TextAlign.center,
+                  ),
+                  if (isCreatingAccount)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: CommonDimens.MARGIN_80,
                       ),
-                    ),
-                  ),
-                ),
-                if (isCreatingAccount)
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: CommonDimens.MARGIN_80,
-                    ),
-                    child: SizedBox(
-                      width: 200,
-                      child: Theme(
-                        data: ThemeData.dark().copyWith(
-                          accentColor: CommonColors.chartColor,
-                        ),
-                        child: LinearProgressIndicator(
-                          backgroundColor: appState.currentTheme.accentColor,
+                      child: SizedBox(
+                        width: 200,
+                        child: Theme(
+                          data: ThemeData.dark().copyWith(
+                            accentColor: CommonColors.chartColor,
+                          ),
+                          child: LinearProgressIndicator(
+                            backgroundColor: appState.currentTheme.accentColor,
+                          ),
                         ),
                       ),
                     ),
+                ],
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 40,
+                  child: RaisedButton(
+                    color: CommonColors.chartColor,
+                    onPressed: () {
+                      if (!isCreatingAccount) {
+                        setState(() {
+                          isCreatingAccount = true;
+                        });
+                        final user = createUser(blocContext, userEntryState);
+                        BlocProvider.of<LoginBloc>(blocContext)
+                            .add(LoginUserEvent(user: user));
+                      }
+                    },
+                    child: Text(
+                      "Let's Begin",
+                      style: CommonTextStyles.taskTextStyle(context),
+                    ),
                   ),
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
       ),
