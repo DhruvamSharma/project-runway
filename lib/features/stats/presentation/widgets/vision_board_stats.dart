@@ -60,9 +60,6 @@ class DatumLegendOptions extends StatefulWidget {
           }
         },
         labelAccessorFn: (LinearSales row, _) => '${row.sales} Visions',
-        outsideLabelStyleAccessorFn: (LinearSales row, _) =>
-            charts.TextStyleSpec(
-                color: charts.ColorUtil.fromDartColor(CommonColors.introColor)),
         data: data,
       ),
     ];
@@ -129,9 +126,6 @@ class _DatumLegendOptionsState extends State<DatumLegendOptions> {
                   arcRendererDecorators: [
                     charts.ArcLabelDecorator(
                       labelPosition: charts.ArcLabelPosition.outside,
-                      insideLabelStyleSpec: charts.TextStyleSpec(
-                          color: charts.ColorUtil.fromDartColor(
-                              CommonColors.introColor)),
                       leaderLineColor: charts.ColorUtil.fromDartColor(
                           CommonColors.introColor),
                     ),
@@ -160,12 +154,6 @@ class _DatumLegendOptionsState extends State<DatumLegendOptions> {
                   cellPadding: new EdgeInsets.only(right: 4.0, bottom: 4.0),
                   // Render the legend entry text with custom styles.
                   showMeasures: true,
-                  entryTextStyle: charts.TextStyleSpec(
-                      color: appState.currentTheme == lightTheme
-                          ? charts.MaterialPalette.black
-                          : charts.MaterialPalette.white,
-                      fontFamily: 'Georgia',
-                      fontSize: 13),
                   measureFormatter: (num value) {
                     print(value);
                     return value == null ? '00' : '${value.toInt()}00';
@@ -215,14 +203,13 @@ class _DatumLegendOptionsState extends State<DatumLegendOptions> {
               return charts.ColorUtil.fromDartColor(CommonColors.introColor);
             }
           },
-          labelAccessorFn: (LinearSales row, _) => '${row.sales} Visions',
           outsideLabelStyleAccessorFn: (LinearSales row, _) =>
               charts.TextStyleSpec(
-                  color: appState.currentTheme == lightTheme
-                      ? charts.ColorUtil.fromDartColor(
-                          CommonColors.scaffoldColor)
-                      : charts.ColorUtil.fromDartColor(
-                          CommonColors.introColor)),
+                  color: charts.ColorUtil.fromDartColor(
+                      appState.currentTheme == lightTheme
+                          ? CommonColors.scaffoldColor
+                          : CommonColors.introColor)),
+          labelAccessorFn: (LinearSales row, _) => '${row.sales} Visions',
           data: data,
         ),
       ];

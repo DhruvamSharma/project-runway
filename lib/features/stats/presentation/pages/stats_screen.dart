@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/under_maintainance_widget.dart';
+import 'package:project_runway/core/common_ui/user_not_verified_widget.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys/keys.dart';
@@ -13,7 +14,6 @@ import 'package:project_runway/features/login/data/models/user_model.dart';
 import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 import 'package:project_runway/features/stats/presentation/manager/bloc.dart';
 import 'package:project_runway/features/stats/presentation/widgets/stats_widget.dart';
-import 'package:project_runway/features/stats/presentation/widgets/user_not_verified_widget.dart';
 
 class StatsScreen extends StatelessWidget {
   static const String routeName = "${APP_NAME}_v1_stats_stats-screen";
@@ -77,7 +77,7 @@ class StatsScreen extends StatelessWidget {
                 ),
               ],
             ),
-          if (!user.isVerified) UserNotVerifiedWidget(),
+          if (!user.isVerified) UserNotVerifiedWidget("Statistics"),
         ],
       );
     } else {

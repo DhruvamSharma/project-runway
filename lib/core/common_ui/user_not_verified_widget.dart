@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
-import 'package:project_runway/core/theme/theme_model.dart';
-import 'package:provider/provider.dart';
 
 class UserNotVerifiedWidget extends StatefulWidget {
+  final String title;
+
+  UserNotVerifiedWidget(this.title);
+
   @override
   _UserNotVerifiedWidgetState createState() => _UserNotVerifiedWidgetState();
 }
@@ -15,7 +16,6 @@ class _UserNotVerifiedWidgetState extends State<UserNotVerifiedWidget> {
   bool isLoadingAnimation = true;
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<ThemeModel>(context, listen: false);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -40,6 +40,7 @@ class _UserNotVerifiedWidgetState extends State<UserNotVerifiedWidget> {
                 secondChild: Lottie.asset(
                     "assets/account_not_linked_animation.json",
                     fit: BoxFit.cover,
+                    repeat: false,
                     height: 300, onLoaded: (composition) {
                   setState(() {
                     isLoadingAnimation = false;
@@ -54,13 +55,13 @@ class _UserNotVerifiedWidgetState extends State<UserNotVerifiedWidget> {
           ),
           Padding(
             padding: const EdgeInsets.only(
+              top: CommonDimens.MARGIN_40,
               left: CommonDimens.MARGIN_20,
               right: CommonDimens.MARGIN_20,
             ),
             child: Text(
-              "Statistics tools not turned on",
-              style: CommonTextStyles.loginTextStyle(context)
-                  .copyWith(letterSpacing: 3, fontWeight: FontWeight.w900),
+              "${widget.title} not turned on".toUpperCase(),
+              style: CommonTextStyles.loginTextStyle(context),
               textAlign: TextAlign.center,
             ),
           ),
@@ -71,7 +72,7 @@ class _UserNotVerifiedWidgetState extends State<UserNotVerifiedWidget> {
               top: CommonDimens.MARGIN_20,
             ),
             child: Text(
-              "Go to Settings and link your account to see your stats",
+              "Go to Settings and link your account to access",
               style: CommonTextStyles.taskTextStyle(context).copyWith(
                 fontWeight: FontWeight.w200,
               ),

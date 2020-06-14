@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
@@ -11,13 +12,15 @@ class CustomListTile extends StatelessWidget {
   final String text;
   final Widget trailing;
   final bool isNew;
+  final String iconUrl;
 
   CustomListTile({
-    @required this.leadingIcon,
+    this.leadingIcon,
     @required this.onTap,
     @required this.appState,
     @required this.text,
     this.isNew = false,
+    this.iconUrl,
     this.trailing,
   });
 
@@ -31,11 +34,20 @@ class CustomListTile extends StatelessWidget {
         ),
         leading: Stack(
           children: <Widget>[
-            Icon(
-              leadingIcon,
-              color: appState.currentTheme.accentColor.withOpacity(0.87),
-              size: 30,
-            ),
+            if (iconUrl != null)
+              CachedNetworkImage(
+                imageUrl: iconUrl,
+                height: 30,
+                width: 30,
+                fit: BoxFit.fill,
+                color: appState.currentTheme.iconTheme.color,
+              )
+            else
+              Icon(
+                leadingIcon,
+                color: appState.currentTheme.iconTheme.color,
+                size: 30,
+              ),
             if (isNew)
               Positioned(
                 right: 0,
@@ -48,7 +60,7 @@ class CustomListTile extends StatelessWidget {
         ),
         title: Text(
           text,
-          style: CommonTextStyles.taskTextStyle(context),
+          style: CommonTextStyles.settingListItemStyle(context),
         ),
         onTap: onTap,
         trailing: trailing,

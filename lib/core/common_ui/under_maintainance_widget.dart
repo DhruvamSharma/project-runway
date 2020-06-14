@@ -16,7 +16,7 @@ class UnderMaintenanceWidget extends StatelessWidget {
               repeat: false, reverse: true, fit: BoxFit.fill),
         ),
         Text(
-          "This page is under maintenance",
+          "under maintenance".toUpperCase(),
           style: CommonTextStyles.loginTextStyle(context),
           textAlign: TextAlign.center,
         ),

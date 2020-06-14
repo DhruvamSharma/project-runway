@@ -15,6 +15,7 @@ import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys/keys.dart';
+import 'package:project_runway/core/remote_config/remote_config_service.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/data/models/user_model.dart';
@@ -47,7 +48,7 @@ class ProfileRoute extends StatefulWidget {
 class _ProfileRouteState extends State<ProfileRoute> {
   bool isLoading = false;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
+  RemoteConfigService _remoteConfigService = sl<RemoteConfigService>();
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<ThemeModel>(context, listen: false);
@@ -196,7 +197,7 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                 : CommonColors.dateTextColor,
                           ),
                           CustomListTile(
-                            leadingIcon: Icons.visibility,
+                            iconUrl: "https://imgur.com/XtCHimD.png",
                             onTap: () {
                               Navigator.pushNamed(
                                   context, VisionBoardListRoute.routeName);
@@ -205,57 +206,60 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             text: "Vision Board",
                             isNew: true,
                           ),
-                          Divider(
-                            color: appState.currentTheme == lightTheme
-                                ? CommonColors.dateTextColorLightTheme
-                                : CommonColors.dateTextColor,
-                          ),
-                          CustomListTile(
-                            leadingIcon: Icons.lightbulb_outline,
-                            onTap: () {
-                              if (appState.currentTheme == lightTheme) {
-                                SystemChrome.setSystemUIOverlayStyle(
-                                    SystemUiOverlayStyle(
-                                  statusBarColor: Colors.black87,
-                                ));
-                              } else {
-                                SystemChrome.setSystemUIOverlayStyle(
-                                    SystemUiOverlayStyle(
-                                  statusBarColor: Colors.white,
-                                ));
-                              }
-                              appState.toggleTheme();
-                              AnalyticsUtils.sendAnalyticEvent(
-                                  THEME_CHANGE,
-                                  {
-                                    "changedToTheme":
-                                        appState.currentTheme == lightTheme
-                                            ? "light-theme"
-                                            : "dark-theme"
+                          if (_remoteConfigService.lightThemeOptionEnabled)
+                            Divider(
+                              color: appState.currentTheme == lightTheme
+                                  ? CommonColors.dateTextColorLightTheme
+                                  : CommonColors.dateTextColor,
+                            ),
+                          if (_remoteConfigService.lightThemeOptionEnabled)
+                            CustomListTile(
+                              leadingIcon: Icons.lightbulb_outline,
+                              onTap: () {
+                                if (appState.currentTheme == lightTheme) {
+                                  SystemChrome.setSystemUIOverlayStyle(
+                                      SystemUiOverlayStyle(
+                                    statusBarColor: Colors.black87,
+                                  ));
+                                } else {
+                                  SystemChrome.setSystemUIOverlayStyle(
+                                      SystemUiOverlayStyle(
+                                    statusBarColor: Colors.white,
+                                  ));
+                                }
+                                appState.toggleTheme();
+                                AnalyticsUtils.sendAnalyticEvent(
+                                    THEME_CHANGE,
+                                    {
+                                      "changedToTheme":
+                                          appState.currentTheme == lightTheme
+                                              ? "light-theme"
+                                              : "dark-theme"
+                                    },
+                                    "SETTING_SCREEN");
+                              },
+                              appState: appState,
+                              text: appState.currentTheme == lightTheme
+                                  ? "Want to use dark theme?"
+                                  : "Want to use light theme?",
+                              trailing: Theme(
+                                data: ThemeData(
+                                    unselectedWidgetColor:
+                                        appState.currentTheme.accentColor),
+                                child: Switch.adaptive(
+                                  inactiveTrackColor: Colors.grey,
+                                  activeTrackColor: CommonColors.chartColor,
+                                  value: appState.currentTheme == lightTheme,
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.padded,
+                                  activeColor:
+                                      appState.currentTheme.accentColor,
+                                  onChanged: (value) {
+                                    appState.toggleTheme();
                                   },
-                                  "SETTING_SCREEN");
-                            },
-                            appState: appState,
-                            text: appState.currentTheme == lightTheme
-                                ? "Want to use dark theme?"
-                                : "Want to use light theme?",
-                            trailing: Theme(
-                              data: ThemeData(
-                                  unselectedWidgetColor:
-                                      appState.currentTheme.accentColor),
-                              child: Switch.adaptive(
-                                inactiveTrackColor: Colors.grey,
-                                activeTrackColor: CommonColors.chartColor,
-                                value: appState.currentTheme == lightTheme,
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.padded,
-                                activeColor: appState.currentTheme.accentColor,
-                                onChanged: (value) {
-                                  appState.toggleTheme();
-                                },
+                                ),
                               ),
                             ),
-                          ),
                           Divider(
                             color: appState.currentTheme == lightTheme
                                 ? CommonColors.dateTextColorLightTheme

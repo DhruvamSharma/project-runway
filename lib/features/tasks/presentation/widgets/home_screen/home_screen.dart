@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:project_runway/core/analytics_utils.dart';
@@ -9,6 +10,7 @@ import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys/keys.dart';
+import 'package:project_runway/core/remote_config/remote_config_service.dart';
 import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/login/data/models/user_model.dart';
@@ -16,6 +18,7 @@ import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 import 'package:project_runway/features/login/presentation/pages/profile_route.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -35,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen>
   PageController _controller;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   AnimationController _animationController;
+  RemoteConfigService _remoteConfigService = sl<RemoteConfigService>();
   @override
   void initState() {
     _controller = PageController(
@@ -43,6 +47,16 @@ class _HomeScreenState extends State<HomeScreen>
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 8));
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    final appState = Provider.of<ThemeModel>(context, listen: false);
+    if (!_remoteConfigService.lightThemeOptionEnabled &&
+        appState.currentTheme == lightTheme) {
+      appState.toggleTheme();
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -62,12 +76,32 @@ class _HomeScreenState extends State<HomeScreen>
                   tooltip: "Statistics",
                   icon: Icon(
                     Icons.airplanemode_active,
-                    color: state.currentTheme.accentColor,
+                    color: state.currentTheme.iconTheme.color,
                   ),
                   onPressed: () {
                     AnalyticsUtils.sendAnalyticEvent(
                         SEE_STATS_IN_HOME, {}, "HOME_SCREEN");
                     Navigator.pushNamed(context, StatsScreen.routeName);
+                  }),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: CommonDimens.MARGIN_40,
+              ),
+              child: IconButton(
+                  tooltip: "Vision Board",
+                  icon: CachedNetworkImage(
+                    imageUrl: "https://imgur.com/XtCHimD.png",
+                    color: state.currentTheme.iconTheme.color,
+                    fit: BoxFit.fill,
+                    height: 30,
+                    width: 30,
+                  ),
+                  onPressed: () {
+                    AnalyticsUtils.sendAnalyticEvent(
+                        SEE_STATS_IN_HOME, {}, "HOME_SCREEN");
+                    Navigator.pushNamed(
+                        context, VisionBoardListRoute.routeName);
                   }),
             ),
             Padding(
@@ -77,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen>
                   tooltip: "Settings",
                   icon: Icon(
                     Icons.settings,
-                    color: state.currentTheme.accentColor,
+                    color: state.currentTheme.iconTheme.color,
                   ),
                   onPressed: () async {
                     AnalyticsUtils.sendAnalyticEvent(
@@ -128,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             Padding(
               padding: const EdgeInsets.only(
-                top: 80.0,
+                top: 70.0,
                 bottom: CommonDimens.MARGIN_20,
               ),
               child: PageView(
@@ -183,88 +217,78 @@ class _HomeScreenState extends State<HomeScreen>
 
   void openSecretPuzzleDoor(ThemeModel appState) {
     sharedPreferences.setString(REFRESH_KEY, "secret_puzzle");
-    _scaffoldKey.currentState.showBottomSheet(
-      (context) => Container(
-        decoration: BoxDecoration(
-          color: appState.currentTheme == lightTheme
-              ? CommonColors.bottomSheetColorLightTheme
-              : CommonColors.bottomSheetColor,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10),
-            topRight: Radius.circular(10),
+    showModalBottomSheet(
+      isScrollControlled: false,
+      context: context,
+      builder: (context) {
+        _animationController.forward();
+        return Container(
+          height: 340,
+          decoration: BoxDecoration(
+            color: appState.currentTheme == lightTheme
+                ? CommonColors.bottomSheetColorLightTheme
+                : CommonColors.bottomSheetColor,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
+            ),
           ),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: Theme(
-            data: ThemeData.light().copyWith(canvasColor: Colors.transparent),
-            child: DraggableScrollableSheet(
-              initialChildSize: 0.6,
-              maxChildSize: 1.0,
-              expand: false,
-              builder: (_, controller) {
-                _animationController.forward();
-                return Container(
-                  padding: const EdgeInsets.all(CommonDimens.MARGIN_60 / 2),
-                  width: MediaQuery.of(context).size.width,
-                  child: Stack(
+          child: Container(
+            padding: const EdgeInsets.all(CommonDimens.MARGIN_60 / 2),
+            width: MediaQuery.of(context).size.width,
+            child: Stack(
+              children: <Widget>[
+                if (_animationController.status == AnimationStatus.forward)
+                  Center(
+                    child: Lottie.asset(
+                      "assets/confetti_animation.json",
+                      controller: _animationController,
+                      repeat: true,
+                    ),
+                  ),
+                SingleChildScrollView(
+                  child: Column(
                     children: <Widget>[
-                      if (_animationController.status ==
-                          AnimationStatus.forward)
-                        Center(
-                          child: Lottie.asset(
-                            "assets/confetti_animation.json",
-                            controller: _animationController,
-                            repeat: true,
-                          ),
+                      Text(
+                        "Congratulations",
+                        style: CommonTextStyles.loginTextStyle(context),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_20,
                         ),
-                      SingleChildScrollView(
-                        child: Column(
-                          children: <Widget>[
-                            Text(
-                              "Congratulations",
-                              style: CommonTextStyles.loginTextStyle(context),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: CommonDimens.MARGIN_20,
-                              ),
-                              child: Text(
-                                "You've unlocked the secret puzzle \n\n Now head over to Settings and open the puzzle from there",
-                                style: CommonTextStyles.taskTextStyle(context),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: CommonDimens.MARGIN_40,
-                              ),
-                              child: MaterialButton(
-                                color: appState.currentTheme.accentColor,
-                                child: Text(
-                                  "Go to Settings",
-                                  style: CommonTextStyles.scaffoldTextStyle(
-                                          context)
-                                      .copyWith(),
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Navigator.pushNamed(
-                                      context, ProfileRoute.routeName);
-                                },
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          "You've unlocked the secret puzzle \n\n Now head over to Settings and open the puzzle from there",
+                          style: CommonTextStyles.taskTextStyle(context),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_20,
+                        ),
+                        child: MaterialButton(
+                          color: appState.currentTheme.accentColor,
+                          child: Text(
+                            "Go to Settings",
+                            style: CommonTextStyles.scaffoldTextStyle(context)
+                                .copyWith(),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.pushNamed(
+                                context, ProfileRoute.routeName);
+                          },
                         ),
                       ),
                     ],
                   ),
-                );
-              },
+                ),
+              ],
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

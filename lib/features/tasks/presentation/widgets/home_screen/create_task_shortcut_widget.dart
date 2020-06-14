@@ -7,7 +7,6 @@ import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
-import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
@@ -85,7 +84,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     IconButton(
-                      icon: Icon(Icons.format_paint,
+                      icon: Icon(Icons.gesture,
                           color:
                               buildIconColor(appState, pageState.pageNumber)),
                       onPressed: () async {
@@ -290,18 +289,10 @@ class CreateTaskShortcutWidget extends StatelessWidget {
   }
 
   Color buildIconColor(ThemeModel appState, int pageNumber) {
-    if (appState.currentTheme == darkTheme) {
-      if (pageNumber == 0) {
-        return CommonColors.taskTextColor.withOpacity(0.38);
-      } else {
-        return CommonColors.taskTextColor.withOpacity(0.60);
-      }
+    if (pageNumber == 0) {
+      return appState.currentTheme.iconTheme.color.withOpacity(0.38);
     } else {
-      if (pageNumber == 0) {
-        return CommonColors.scaffoldColor.withOpacity(0.38);
-      } else {
-        return CommonColors.scaffoldColor.withOpacity(0.60);
-      }
+      return appState.currentTheme.iconTheme.color;
     }
   }
 

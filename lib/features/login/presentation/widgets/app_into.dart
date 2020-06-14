@@ -3,6 +3,10 @@ import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/features/login/presentation/widgets/app_intro_37_widget.dart';
+import 'package:project_runway/features/login/presentation/widgets/app_intro_speak_or_draw_widget.dart';
+import 'package:project_runway/features/login/presentation/widgets/app_intro_vision_board_widget.dart';
+import 'package:project_runway/features/login/presentation/widgets/app_intro_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class AppIntroWidget extends StatelessWidget {
@@ -37,201 +41,45 @@ class AppIntroWidget extends StatelessWidget {
                         controller: _controller,
                         physics: BouncingScrollPhysics(),
                         children: <Widget>[
-                          Center(
-                              child: SingleChildScrollView(
-                            child: Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: CommonDimens.MARGIN_20,
-                                  ),
-                                  child: Image.asset(
-                                    "assets/intro_pedestal.png",
-                                    height: 200,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: CommonDimens.MARGIN_20,
-                                  ),
-                                  child: Text(
-                                    "Focused Approach",
-                                    style: CommonTextStyles.loginTextStyle(
-                                        context),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: CommonDimens.MARGIN_20,
-                                    left: CommonDimens.MARGIN_20 / 2,
-                                    right: CommonDimens.MARGIN_20 / 2,
-                                  ),
-                                  child: Text(
-                                    "Reward-based minimal design to enhance your decisiveness",
-                                    style:
-                                        CommonTextStyles.taskTextStyle(context),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
-                          Center(
-                              child: SingleChildScrollView(
-                            child: Column(
-                              children: <Widget>[
-                                Image.asset(
-                                  "assets/intro_graph.png",
-                                  height: 200,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: CommonDimens.MARGIN_20,
-                                  ),
-                                  child: Text(
-                                    "Visualise Growth",
-                                    style: CommonTextStyles.loginTextStyle(
-                                        context),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: CommonDimens.MARGIN_20,
-                                    left: CommonDimens.MARGIN_20 / 2,
-                                    right: CommonDimens.MARGIN_20 / 2,
-                                  ),
-                                  child: Text(
-                                    "Track your progress through exclusive statistics",
-                                    style:
-                                        CommonTextStyles.taskTextStyle(context),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
-                          Center(
-                              child: SingleChildScrollView(
-                            child: Column(
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 200,
-                                  child: Center(
-                                    child: RichText(
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: "3",
-                                            style:
-                                                CommonTextStyles.loginTextStyle(
-                                                        context)
-                                                    .copyWith(fontSize: 90)
-                                                    .copyWith(
-                                                        color: CommonColors
-                                                            .introColor),
-                                          ),
-                                          TextSpan(
-                                            text: " : ",
-                                            style:
-                                                CommonTextStyles.loginTextStyle(
-                                                        context)
-                                                    .copyWith(
-                                                        fontSize: 90,
-                                                        color: CommonColors
-                                                            .chartColor),
-                                          ),
-                                          TextSpan(
-                                            text: "7",
-                                            style:
-                                                CommonTextStyles.loginTextStyle(
-                                                        context)
-                                                    .copyWith(fontSize: 90)
-                                                    .copyWith(
-                                                        color: CommonColors
-                                                            .introColor),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: CommonDimens.MARGIN_20,
-                                  ),
-                                  child: Text(
-                                    "3:7 Rule",
-                                    style: CommonTextStyles.loginTextStyle(
-                                        context),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: CommonDimens.MARGIN_20,
-                                    left: CommonDimens.MARGIN_20 / 2,
-                                    right: CommonDimens.MARGIN_20 / 2,
-                                  ),
-                                  child: Text(
-                                    "View 7 tasks for 3 days for focused prioritization of tasks",
-                                    style:
-                                        CommonTextStyles.taskTextStyle(context),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
-                          Center(
-                              child: Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/intro_puzzle.png",
-                                    height: 200,
-                                    width: MediaQuery.of(context).size.width,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: CommonDimens.MARGIN_20,
-                                    ),
-                                    child: Text(
-                                      "Secret Puzzles",
-                                      style: CommonTextStyles.loginTextStyle(
-                                          context),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: CommonDimens.MARGIN_20,
-                                      left: CommonDimens.MARGIN_20 / 2,
-                                      right: CommonDimens.MARGIN_20 / 2,
-                                    ),
-                                    child: Text(
-                                      "Exercise your intellectual efficiency through puzzles",
-                                      style: CommonTextStyles.taskTextStyle(
-                                          context),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )),
+                          AppIntroShortcutWidget(
+                            imageUrl: "assets/intro_pedestal.png",
+                            title: "Focused Approach",
+                            subtitle:
+                                "Reward-based minimal design to enhance your decisiveness",
+                          ),
+                          AppIntroSpeakOrDrawWidget(),
+                          AppIntroVisionBoardWidget(),
+                          AppIntroShortcutWidget(
+                            imageUrl: "assets/intro_graph.png",
+                            title: "Visualise Growth",
+                            subtitle:
+                                "Track your progress through exclusive statistics",
+                          ),
+                          AppIntro37Widget(),
+                          AppIntroShortcutWidget(
+                            imageUrl: "assets/intro_puzzle.png",
+                            title: "Secret Puzzles",
+                            subtitle:
+                                "Exercise your intellectual efficiency through puzzles",
+                          ),
                         ],
                       ),
                     ),
                     Align(
                       alignment: Alignment.bottomCenter,
-                      child: SmoothPageIndicator(
-                        controller: _controller,
-                        count: 4,
-                        effect: ExpandingDotsEffect(
-                          radius: 10,
-                          dotHeight: 7,
-                          dotWidth: 7,
-                          activeDotColor: CommonColors.chartColor,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_20,
+                        ),
+                        child: SmoothPageIndicator(
+                          controller: _controller,
+                          count: 6,
+                          effect: ExpandingDotsEffect(
+                            radius: 10,
+                            dotHeight: 7,
+                            dotWidth: 7,
+                            activeDotColor: CommonColors.chartColor,
+                          ),
                         ),
                       ),
                     ),

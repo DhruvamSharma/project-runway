@@ -152,7 +152,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         });
         widget.onValueChange(text);
       },
-      style: widget.textStyle ?? buildTextStyle(),
+      style: CommonTextStyles.taskTextStyle(context),
       onFieldSubmitted: (text) {
         setState(() {
           checkForBorderColor(text);
@@ -186,12 +186,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
           borderSide: BorderSide(color: CommonColors.errorTextColor),
         ),
         labelStyle: widget.labelTextStyle ??
-            CommonTextStyles.taskTextStyle(context)
-                .copyWith(color: buildLabelAndHintColor()),
-        hintStyle: widget.hintStyle ??
-            CommonTextStyles.taskTextStyle(context).copyWith(
-              color: buildLabelAndHintColor(),
-            ),
+            CommonTextStyles.textFieldLabelStyle(context),
+        hintStyle: widget.hintStyle ?? CommonTextStyles.taskTextStyle(context),
         labelText: widget.label,
         border: UnderlineInputBorder(
           borderSide: BorderSide(color: borderColor),
@@ -249,24 +245,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
       prefixText = text.data;
     }
     return prefixText;
-  }
-
-  Color buildLabelAndHintColor() {
-    Color hintAndLabelColor;
-    final appTheme =
-        Provider.of<ThemeModel>(context, listen: false).currentTheme;
-    if (widget.enabled != null && !widget.enabled) {
-      if (appTheme == lightTheme) {
-        hintAndLabelColor = CommonColors.scaffoldColor.withOpacity(0.38);
-      } else {
-        hintAndLabelColor = CommonColors.taskTextColor.withOpacity(0.38);
-      }
-    } else {
-      hintAndLabelColor = appTheme == lightTheme
-          ? CommonColors.scaffoldColor.withOpacity(0.50)
-          : CommonColors.taskTextColor.withOpacity(0.50);
-    }
-    return hintAndLabelColor;
   }
 
   String buildErrorText(String newText) {
