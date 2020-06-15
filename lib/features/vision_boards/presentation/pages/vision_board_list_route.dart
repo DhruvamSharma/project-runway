@@ -99,7 +99,7 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
   Widget buildRoute() {
     if (_remoteConfigService.visionBoardEnabled) {
       if (user.isVerified) {
-        return buildVisionBoardRoute();
+        return Scaffold(body: buildVisionBoardRoute());
       } else {
         return Scaffold(
             appBar: AppBar(
