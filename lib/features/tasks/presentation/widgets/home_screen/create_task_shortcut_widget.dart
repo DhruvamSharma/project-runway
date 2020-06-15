@@ -3,20 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
-import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
-import 'package:project_runway/core/theme/theme.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/pages/draw_task/draw_task.dart';
-import 'package:project_runway/features/tasks/presentation/pages/speach_task/speech_task.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/current_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
+import 'package:project_runway/features/tasks/presentation/widgets/speech_task/speech_icon.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:uuid/uuid.dart';
@@ -39,40 +37,63 @@ class CreateTaskShortcutWidget extends StatelessWidget {
       child: Builder(
         builder: (context) => Column(
           children: <Widget>[
-            GestureDetector(
-              onTap: () {
-                if (pageState.pageNumber == 0) {
-                  Scaffold.of(context).removeCurrentSnackBar();
-                  Scaffold.of(context).showSnackBar(
-                    CustomSnackbar.withAnimation(
-                      context,
-                      "Sorry, you cannot create any more tasks",
+            SizedBox(
+              height: 100,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        if (pageState.pageNumber == 0) {
+                          Scaffold.of(context).removeCurrentSnackBar();
+                          Scaffold.of(context).showSnackBar(
+                            CustomSnackbar.withAnimation(
+                              context,
+                              "Sorry, you cannot create any more tasks",
+                            ),
+                          );
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: CommonDimens.MARGIN_40,
+                        ),
+                        child: CustomTextField(
+                          null,
+                          null,
+                          enabled: pageState.pageNumber != 0,
+                          onValueChange: (text) {
+                            Provider.of<InitialTaskTitleProviderModel>(context,
+                                    listen: false)
+                                .assignTaskTitle(text);
+                          },
+                          textFieldValue:
+                              Provider.of<InitialTaskTitleProviderModel>(
+                                      context)
+                                  .taskTitle,
+                          label: buildLabelForTaskField(pageState),
+                          isRequired: false,
+                        ),
+                      ),
                     ),
-                  );
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_40,
-                  left: CommonDimens.MARGIN_40,
-                  right: CommonDimens.MARGIN_40,
-                ),
-                child: CustomTextField(
-                  null,
-                  null,
-                  enabled: pageState.pageNumber != 0,
-                  onValueChange: (text) {
-                    Provider.of<InitialTaskTitleProviderModel>(context,
-                            listen: false)
-                        .assignTaskTitle(text);
-                  },
-                  textFieldValue: Provider.of<InitialTaskTitleProviderModel>(
-                          context,
-                          listen: false)
-                      .taskTitle,
-                  label: buildLabelForTaskField(pageState),
-                  isRequired: false,
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24.0),
+                    child: FloatingActionButton(
+                      mini: true,
+                      onPressed: () {
+                        onCreateTask(context, pageState, taskListState);
+                      },
+                      child: CircleAvatar(
+                        child: Icon(
+                          Icons.add,
+                          color: buildIconColor(appState, pageState.pageNumber),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Align(
@@ -82,72 +103,46 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                   top: CommonDimens.MARGIN_20,
                   right: CommonDimens.MARGIN_20,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.mic,
-                          color:
-                              buildIconColor(appState, pageState.pageNumber)),
-                      onPressed: () async {
-                        if (taskListState.taskList.length <=
-                                TOTAL_TASK_CREATION_LIMIT &&
-                            pageState.pageNumber != 0) {
-                          final response = await Navigator.pushNamed(
-                              context, SpeechTaskRoute.routeName);
-                          print(response);
-                          if (response != null &&
-                              (response as String).isNotEmpty) {
-                            Provider.of<InitialTaskTitleProviderModel>(context,
-                                    listen: false)
-                                .assignTaskTitle(response as String);
+                child: SizedBox(
+                  height: 40,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      SpeechIcon(),
+                      IconButton(
+                        iconSize: 21,
+                        icon: Icon(Icons.format_paint,
+                            color:
+                                buildIconColor(appState, pageState.pageNumber)),
+                        onPressed: () async {
+                          if (taskListState.taskList.length <=
+                                  TOTAL_TASK_CREATION_LIMIT &&
+                              pageState.pageNumber != 0) {
+                            final response = await Navigator.pushNamed(
+                                context, DrawTaskRoute.routeName);
+                            print(response);
+                            if (response != null &&
+                                (response as String).isNotEmpty) {
+                              Provider.of<InitialTaskTitleProviderModel>(
+                                      context,
+                                      listen: false)
+                                  .assignTaskTitle(response as String);
+                            }
+                          } else {
+                            Scaffold.of(context).removeCurrentSnackBar();
+                            Scaffold.of(context).showSnackBar(
+                              CustomSnackbar.withAnimation(
+                                context,
+                                "You cannot create task for yesterday",
+                              ),
+                            );
                           }
-                        } else {
-                          Scaffold.of(context).removeCurrentSnackBar();
-                          Scaffold.of(context).showSnackBar(
-                            CustomSnackbar.withAnimation(
-                              context,
-                              "You cannot create task for yesterday",
-                            ),
-                          );
-                        }
-                      },
-                      tooltip: "Draw Task",
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.format_paint,
-                          color:
-                              buildIconColor(appState, pageState.pageNumber)),
-                      onPressed: () async {
-                        if (taskListState.taskList.length <=
-                                TOTAL_TASK_CREATION_LIMIT &&
-                            pageState.pageNumber != 0) {
-                          final response = await Navigator.pushNamed(
-                              context, DrawTaskRoute.routeName);
-                          print(response);
-                          if (response != null &&
-                              (response as String).isNotEmpty) {
-                            Provider.of<InitialTaskTitleProviderModel>(context,
-                                    listen: false)
-                                .assignTaskTitle(response as String);
-                          }
-                        } else {
-                          Scaffold.of(context).removeCurrentSnackBar();
-                          Scaffold.of(context).showSnackBar(
-                            CustomSnackbar.withAnimation(
-                              context,
-                              "You cannot create task for yesterday",
-                            ),
-                          );
-                        }
-                      },
-                      tooltip: "Draw Task",
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        right: CommonDimens.MARGIN_20,
+                        },
+                        tooltip: "Draw your task",
                       ),
-                      child: IconButton(
+                      IconButton(
+                        iconSize: 21,
                         highlightColor: Colors.transparent,
                         tooltip: "Share List",
                         icon: Icon(Icons.share,
@@ -176,140 +171,54 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                         },
                         visualDensity: VisualDensity.adaptivePlatformDensity,
                       ),
-                    ),
-                    OutlineButton(
-                      highlightedBorderColor: CommonColors.chartColor,
-                      onPressed: () async {
-                        AnalyticsUtils.sendAnalyticEvent(
-                            MORE_DETAILS,
-                            {
-                              "pageNumber": pageState.pageNumber,
-                            },
-                            "SHORTCUT_WIDGET");
-                        if (pageState.pageNumber != 0) {
-                          String taskTitle =
-                              Provider.of<InitialTaskTitleProviderModel>(
-                                      context,
-                                      listen: false)
-                                  .taskTitle;
-                          Provider.of<InitialTaskTitleProviderModel>(context,
-                                  listen: false)
-                              .assignTaskTitle("");
-                          final data = await Navigator.pushNamed(
-                            context,
-                            CreateTaskPage.routeName,
-                            arguments: CreateTaskScreenArguments(
-                              runningDate: pageState.runningDate,
-                              initialTaskTitle: taskTitle,
-                              totalTasksCreated: totalTaskNumber,
-                            ),
-                          );
-                          if (data != null && data is TaskEntity) {
-                            taskListState.insertTaskToList(data);
-                          }
-                        } else {
-                          Scaffold.of(context).removeCurrentSnackBar();
-                          Scaffold.of(context).showSnackBar(
-                            CustomSnackbar.withAnimation(
+                      IconButton(
+                        onPressed: () async {
+                          AnalyticsUtils.sendAnalyticEvent(
+                              MORE_DETAILS,
+                              {
+                                "pageNumber": pageState.pageNumber,
+                              },
+                              "SHORTCUT_WIDGET");
+                          if (pageState.pageNumber != 0) {
+                            String taskTitle =
+                                Provider.of<InitialTaskTitleProviderModel>(
+                                        context,
+                                        listen: false)
+                                    .taskTitle;
+                            Provider.of<InitialTaskTitleProviderModel>(context,
+                                    listen: false)
+                                .assignTaskTitle("");
+                            final data = await Navigator.pushNamed(
                               context,
-                              "You cannot create task for yesterday",
-                            ),
-                          );
-                        }
-                      },
-                      child: Text(
-                        "More Details",
-                        style: CommonTextStyles.disabledTaskTextStyle()
-                            .copyWith(
-                                color: buildIconColor(
-                                    appState, pageState.pageNumber),
-                                letterSpacing: 3,
-                                fontSize: 14),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: CommonDimens.MARGIN_20,
-                      ),
-                      child: IconButton(
-                          tooltip: "Create Task",
-                          icon: Icon(
-                            Icons.send,
-                            color:
-                                buildIconColor(appState, pageState.pageNumber),
-                            semanticLabel: "Create Task",
-                          ),
-                          onPressed: () {
-                            AnalyticsUtils.sendAnalyticEvent(
-                                CREATE_TASK_SHORTCUT,
-                                {
-                                  "pageNumber": pageState.pageNumber,
-                                },
-                                "SHORTCUT_WIDGET");
-                            // check if the user can create the task or not.
-                            if (pageState.pageNumber != 0) {
-                              if (totalTaskNumber <=
-                                  TOTAL_TASK_CREATION_LIMIT) {
-                                String initialTitle;
-                                if (Provider.of<InitialTaskTitleProviderModel>(
-                                            context,
-                                            listen: false)
-                                        .taskTitle !=
-                                    null) {
-                                  initialTitle = Provider.of<
-                                              InitialTaskTitleProviderModel>(
-                                          context,
-                                          listen: false)
-                                      .taskTitle;
-                                }
-                                // check if the task is entered in the field or not
-                                if (initialTitle != null &&
-                                    initialTitle.isNotEmpty) {
-                                  final TaskEntity task =
-                                      createTaskArgs(context, pageState);
-                                  // add to data base
-                                  BlocProvider.of<HomeScreenTaskBloc>(context)
-                                      .add(CreateTaskEvent(task: task));
-                                  // update the list
-                                  try {
-                                    taskListState.insertTaskToList(task);
-                                  } catch (ex) {
-                                    print(ex);
-                                  }
-                                } else {
-                                  Scaffold.of(context).removeCurrentSnackBar();
-                                  Scaffold.of(context).showSnackBar(
-                                    CustomSnackbar.withAnimation(
-                                      context,
-                                      "Please enter title for your task",
-                                    ),
-                                  );
-                                }
-                              } else {
-                                Scaffold.of(context).removeCurrentSnackBar();
-                                Scaffold.of(context).showSnackBar(
-                                  CustomSnackbar.withAnimation(
-                                    context,
-                                    "Sorry, you cannot create any more tasks",
-                                  ),
-                                );
-                              }
-                              Provider.of<InitialTaskTitleProviderModel>(
-                                context,
-                                listen: false,
-                              ).assignTaskTitle("");
-                            } else {
-                              Scaffold.of(context).removeCurrentSnackBar();
-                              Scaffold.of(context).showSnackBar(
-                                CustomSnackbar.withAnimation(
-                                  context,
-                                  "You cannot create task for yesterday",
-                                ),
-                              );
+                              CreateTaskPage.routeName,
+                              arguments: CreateTaskScreenArguments(
+                                runningDate: pageState.runningDate,
+                                initialTaskTitle: taskTitle,
+                                totalTasksCreated: totalTaskNumber,
+                              ),
+                            );
+                            if (data != null && data is TaskEntity) {
+                              taskListState.insertTaskToList(data);
                             }
-                          }),
-                    ),
-                  ],
+                          } else {
+                            Scaffold.of(context).removeCurrentSnackBar();
+                            Scaffold.of(context).showSnackBar(
+                              CustomSnackbar.withAnimation(
+                                context,
+                                "You cannot create task for yesterday",
+                              ),
+                            );
+                          }
+                        },
+                        visualDensity: VisualDensity.adaptivePlatformDensity,
+                        icon: Icon(
+                          Icons.info,
+                          color: buildIconColor(appState, pageState.pageNumber),
+                        ),
+                        iconSize: 21,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -319,19 +228,67 @@ class CreateTaskShortcutWidget extends StatelessWidget {
     );
   }
 
-  Color buildIconColor(ThemeModel appState, int pageNumber) {
-    if (appState.currentTheme == darkTheme) {
-      if (pageNumber == 0) {
-        return CommonColors.taskTextColor.withOpacity(0.38);
+  void onCreateTask(
+      BuildContext context, pageState, TaskListHolderProvider taskListState) {
+    AnalyticsUtils.sendAnalyticEvent(
+        CREATE_TASK_SHORTCUT,
+        {
+          "pageNumber": pageState.pageNumber,
+        },
+        "SHORTCUT_WIDGET");
+    // check if the user can create the task or not.
+    if (pageState.pageNumber != 0) {
+      if (totalTaskNumber <= TOTAL_TASK_CREATION_LIMIT) {
+        String initialTitle;
+        if (Provider.of<InitialTaskTitleProviderModel>(context, listen: false)
+                .taskTitle !=
+            null) {
+          initialTitle =
+              Provider.of<InitialTaskTitleProviderModel>(context, listen: false)
+                  .taskTitle;
+        }
+        // check if the task is entered in the field or not
+        if (initialTitle != null && initialTitle.isNotEmpty) {
+          final TaskEntity task = createTaskArgs(context, pageState);
+          // add to data base
+          BlocProvider.of<HomeScreenTaskBloc>(context)
+              .add(CreateTaskEvent(task: task));
+          // update the list
+          try {
+            taskListState.insertTaskToList(task);
+          } catch (ex) {
+            print(ex);
+          }
+        } else {
+          Scaffold.of(context).removeCurrentSnackBar();
+          Scaffold.of(context).showSnackBar(
+            CustomSnackbar.withAnimation(
+              context,
+              "Please enter title for your task",
+            ),
+          );
+        }
       } else {
-        return CommonColors.taskTextColor.withOpacity(0.60);
+        Scaffold.of(context).removeCurrentSnackBar();
+        Scaffold.of(context).showSnackBar(
+          CustomSnackbar.withAnimation(
+            context,
+            "Sorry, you cannot create any more tasks",
+          ),
+        );
       }
+      Provider.of<InitialTaskTitleProviderModel>(
+        context,
+        listen: false,
+      ).assignTaskTitle("");
     } else {
-      if (pageNumber == 0) {
-        return CommonColors.scaffoldColor.withOpacity(0.38);
-      } else {
-        return CommonColors.scaffoldColor.withOpacity(0.60);
-      }
+      Scaffold.of(context).removeCurrentSnackBar();
+      Scaffold.of(context).showSnackBar(
+        CustomSnackbar.withAnimation(
+          context,
+          "You cannot create task for yesterday",
+        ),
+      );
     }
   }
 

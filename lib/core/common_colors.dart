@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 
 class CommonColors {
   // Theme colors
@@ -73,5 +74,13 @@ class CommonColors {
 
   static MaterialColor _getColor(int primary) {
     return MaterialColor(primary, _color);
+  }
+}
+
+Color buildIconColor(ThemeModel appState, int pageNumber) {
+  if (pageNumber == 0) {
+    return appState.currentTheme.disabledColor;
+  } else {
+    return appState.currentTheme.iconTheme.color;
   }
 }

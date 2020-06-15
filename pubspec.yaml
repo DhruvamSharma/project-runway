@@ -14,7 +14,7 @@ description: A clean and Minimalistic TODO application
 version: 1.1.36+11
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: ">=2.9.0-14.0.dev.flutter-5c1376615e <3.0.0"
 
 dependencies:
   flutter:
