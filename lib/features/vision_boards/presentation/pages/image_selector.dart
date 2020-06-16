@@ -186,7 +186,7 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
                         ),
                         SizedBox(width: 10.0),
                         Text(
-                          "${result.user.firstName} ${result.user.lastName}",
+                          "${result.user.firstName} ${result.user.lastName} on Unsplash",
                           style: CommonTextStyles.scaffoldTextStyle(context)
                               .copyWith(color: CommonColors.accentColor),
                         ),

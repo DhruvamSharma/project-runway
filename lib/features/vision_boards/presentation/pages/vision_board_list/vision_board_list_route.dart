@@ -33,6 +33,10 @@ import 'package:uuid/uuid.dart';
 class VisionBoardListRoute extends StatefulWidget {
   static const String routeName =
       "${APP_NAME}_v1_vision-board_vision-board-list";
+  final int pageNumber;
+
+  VisionBoardListRoute(this.pageNumber);
+
   @override
   _VisionBoardListRouteState createState() => _VisionBoardListRouteState();
 }
@@ -89,17 +93,14 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
           });
         }
       },
-      child: SafeArea(
-        top: false,
-        child: buildRoute(),
-      ),
+      child: buildRoute(),
     );
   }
 
   Widget buildRoute() {
     if (_remoteConfigService.visionBoardEnabled) {
       if (user.isVerified) {
-        return buildVisionBoardRoute();
+        return visionBoardPageRoute();
       } else {
         return Scaffold(
             appBar: AppBar(
@@ -415,6 +416,7 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
           (visions == null || visions.length == TOTAL_VISIONS_LIMIT + 1)
               ? Container()
               : FloatingActionButton.extended(
+                  heroTag: "action_button_${widget.pageNumber}",
                   onPressed: () {
                     moveToCreateVisionRoute();
                   },
@@ -438,7 +440,7 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
           ),
           buildVisionBoardRoute(),
           SizedBox(
-            height: 52,
+            height: 56,
             child: AppBar(
               elevation: 0,
               backgroundColor: Colors.transparent,

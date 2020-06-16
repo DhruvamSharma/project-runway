@@ -23,7 +23,7 @@ import 'package:project_runway/features/tasks/presentation/pages/create_task/cre
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/create_task_shortcut_widget.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_widget.dart';
-import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list/vision_board_list_route.dart';
 import 'package:provider/provider.dart';
 
 class CurrentTaskPage extends StatefulWidget {

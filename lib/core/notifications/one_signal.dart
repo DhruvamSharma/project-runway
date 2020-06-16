@@ -3,7 +3,7 @@ import 'package:project_runway/core/keys/keys.dart';
 import 'package:project_runway/features/login/presentation/pages/profile_route.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/home_screen.dart';
-import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list/vision_board_list_route.dart';
 import 'package:project_runway/main.dart';
 
 Future<Null> oneSignalInit() async {
