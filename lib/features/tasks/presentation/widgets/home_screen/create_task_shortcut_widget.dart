@@ -15,6 +15,7 @@ import 'package:project_runway/features/tasks/presentation/pages/draw_task/draw_
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/current_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/speech_task/speech_icon.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list/vision_board_list_args.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:uuid/uuid.dart';
@@ -82,6 +83,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 24.0),
                     child: FloatingActionButton(
                       mini: true,
+                      heroTag: "action_button_${pageState.pageNumber}",
                       onPressed: () {
                         onCreateTask(context, pageState, taskListState);
                       },
@@ -112,7 +114,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                       SpeechIcon(),
                       IconButton(
                         iconSize: 21,
-                        icon: Icon(Icons.format_paint,
+                        icon: Icon(Icons.palette,
                             color:
                                 buildIconColor(appState, pageState.pageNumber)),
                         onPressed: () async {
@@ -120,7 +122,9 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                                   TOTAL_TASK_CREATION_LIMIT &&
                               pageState.pageNumber != 0) {
                             final response = await Navigator.pushNamed(
-                                context, DrawTaskRoute.routeName);
+                                context, DrawTaskRoute.routeName,
+                                arguments:
+                                    VisionBoardListArgs(pageState.pageNumber));
                             print(response);
                             if (response != null &&
                                 (response as String).isNotEmpty) {

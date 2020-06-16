@@ -209,7 +209,7 @@ class _DatumLegendOptionsState extends State<DatumLegendOptions> {
                       appState.currentTheme == lightTheme
                           ? CommonColors.scaffoldColor
                           : CommonColors.introColor)),
-          labelAccessorFn: (LinearSales row, _) => '${row.sales} Visions',
+          labelAccessorFn: (LinearSales row, _) => '${row.sales}',
           data: data,
         ),
       ];

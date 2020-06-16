@@ -262,16 +262,16 @@ class _StatsWidgetState extends State<StatsWidget> {
       // the end.
       // assign data to respective lists
       for (int i = 0; i < arrangementList.length; i++) {
-        int dayOfTheWeek = arrangementList[i];
+        int dayOfTheWeek = i;
         createdTaskData.add(TaskAction(
-            weekTranslator(dayOfTheWeek),
-            statsTable.dayStats[dayOfTheWeek - 1].tasksCreated,
+            weekTranslator(dayOfTheWeek + 1),
+            statsTable.dayStats[dayOfTheWeek].tasksCreated,
             CommonColors.chartColor));
 //        deletedTaskData.add(TaskAction(weekTranslator(dayOfTheWeek),
 //            statsTable.dayStats[dayOfTheWeek - 1].tasksDeleted, Colors.indigo));
         completedTaskData.add(TaskAction(
-          weekTranslator(dayOfTheWeek),
-          statsTable.dayStats[dayOfTheWeek - 1].tasksCompleted,
+          weekTranslator(dayOfTheWeek + 1),
+          statsTable.dayStats[dayOfTheWeek].tasksCompleted,
           CommonColors.introColor,
         ));
       }

@@ -119,7 +119,7 @@ packages:
       name: crypto
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.5"
+    version: "2.1.4"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -148,13 +148,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
-  fake_async:
-    dependency: transitive
-    description:
-      name: fake_async
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
   file:
     dependency: transitive
     description:
@@ -366,6 +359,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.4"
+  image:
+    dependency: transitive
+    description:
+      name: image
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.12"
   image_gallery_saver:
     dependency: "direct main"
     description:
@@ -477,7 +477,7 @@ packages:
       name: path
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.7.0"
+    version: "1.6.4"
   path_provider:
     dependency: transitive
     description:
@@ -527,6 +527,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  petitparser:
+    dependency: transitive
+    description:
+      name: petitparser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.4.0"
   platform:
     dependency: transitive
     description:
@@ -713,7 +720,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.16"
+    version: "0.2.15"
   typed_data:
     dependency: transitive
     description:
@@ -777,6 +784,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.0"
+  xml:
+    dependency: transitive
+    description:
+      name: xml
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.6.1"
 sdks:
-  dart: ">=2.9.0-14.0.dev.flutter-5c1376615e <3.0.0"
+  dart: ">=2.8.4 <3.0.0"
   flutter: ">=1.17.0 <2.0.0"

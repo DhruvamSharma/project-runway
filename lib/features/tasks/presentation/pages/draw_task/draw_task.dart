@@ -28,6 +28,10 @@ class DrawTaskRoute extends StatelessWidget {
       FirebaseVision.instance.textRecognizer();
   final ScreenshotController _screenshotController = ScreenshotController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final int pageNumber;
+
+  DrawTaskRoute(this.pageNumber);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,6 +134,7 @@ class DrawTaskRoute extends StatelessWidget {
               bottom: CommonDimens.MARGIN_20,
             ),
             child: FloatingActionButton(
+              heroTag: "action_button_$pageNumber",
               onPressed: () async {
                 mlTheHellOutOfImage(providerContext);
               },
@@ -172,11 +177,11 @@ class DrawTaskRoute extends StatelessWidget {
       _scaffoldKey.currentState.showSnackBar(
         CustomSnackbar.withAnimation(
           context,
-          "Your task title is empty",
+          "Sorry, we couldn't recognise that",
         ),
       );
     } else {
-      await showModalBottomSheet(
+      final response = await showModalBottomSheet(
         context: context,
         builder: (_) => Container(
           color: CommonColors.bottomSheetColor,
@@ -216,7 +221,9 @@ class DrawTaskRoute extends StatelessWidget {
           ),
         ),
       );
-      Navigator.pop(context, taskTitle);
+      if (response != null && response is String) {
+        Navigator.pop(context, taskTitle);
+      }
     }
   }
 }

@@ -194,7 +194,7 @@ class ViewVisionBoardDetailsWidget extends StatelessWidget {
                                             ),
                                             Expanded(
                                               child: Text(
-                                                "On Unsplash",
+                                                " On Unsplash",
                                                 style: CommonTextStyles
                                                         .scaffoldTextStyle(
                                                             context)
@@ -217,7 +217,7 @@ class ViewVisionBoardDetailsWidget extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 52,
+                height: 56,
                 child: AppBar(
                   automaticallyImplyLeading: false,
                   leading: IconButton(

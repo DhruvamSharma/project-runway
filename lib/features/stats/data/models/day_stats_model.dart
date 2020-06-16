@@ -43,6 +43,16 @@ class DayStatsModel extends Equatable {
     return dayStatsModel;
   }
 
+  DayStatsModel reset(DateTime dateTime) {
+    // rest of all the params are automatically zero
+    return DayStatsModel(
+      runningDate: dateTime,
+    );
+  }
+
+  @override
+  bool get stringify => super.stringify;
+
   String toJson() {
     return "$tasksCreated$STATS_BREAK_KEY$tasksDeleted$STATS_BREAK_KEY$tasksCompleted$STATS_BREAK_KEY${runningDate.toString()}";
   }

@@ -18,7 +18,8 @@ import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 import 'package:project_runway/features/login/presentation/pages/profile_route.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/task_page.dart';
-import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list/vision_board_list_args.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list/vision_board_list_route.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -100,8 +101,10 @@ class _HomeScreenState extends State<HomeScreen>
                   onPressed: () {
                     AnalyticsUtils.sendAnalyticEvent(
                         SEE_STATS_IN_HOME, {}, "HOME_SCREEN");
-                    Navigator.pushNamed(
-                        context, VisionBoardListRoute.routeName);
+                    Navigator.pushNamed(context, VisionBoardListRoute.routeName,
+                        arguments: VisionBoardListArgs(
+                          _controller.page.floor(),
+                        ));
                   }),
             ),
             Padding(

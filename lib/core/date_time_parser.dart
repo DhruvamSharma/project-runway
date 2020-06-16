@@ -24,6 +24,11 @@ bool checkIsTaskIsOfPast(DateTime runningDate) {
   }
 }
 
+// Builds date of the format: 2020-05-17 00:00:00.000
+DateTime buildEmptyHMSDate(DateTime dateTime) {
+  return DateTime(dateTime.year, dateTime.month, dateTime.day);
+}
+
 DateTime dateParser(String formattedString) {
   DateTime dateTime;
   try {

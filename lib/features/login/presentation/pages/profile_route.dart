@@ -28,7 +28,8 @@ import 'package:project_runway/features/login/presentation/widgets/app_into.dart
 import 'package:project_runway/features/login/presentation/widgets/custom_list_tile.dart';
 import 'package:project_runway/features/stats/presentation/pages/stats_screen.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/secret_puzzle_widget.dart';
-import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list/vision_board_list_args.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list/vision_board_list_route.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -200,7 +201,8 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             iconUrl: "https://imgur.com/XtCHimD.png",
                             onTap: () {
                               Navigator.pushNamed(
-                                  context, VisionBoardListRoute.routeName);
+                                  context, VisionBoardListRoute.routeName,
+                                  arguments: VisionBoardListArgs(1));
                             },
                             appState: appState,
                             text: "Vision Board",

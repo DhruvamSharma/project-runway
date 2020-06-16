@@ -74,4 +74,7 @@ class ManagedStatsTable extends Equatable {
     dayStats.insert(5, DayStatsModel.fromJson(map["daySix"]));
     dayStats.insert(6, DayStatsModel.fromJson(map["daySeven"]));
   }
+
+  @override
+  bool get stringify => super.stringify;
 }

@@ -13,7 +13,6 @@ import 'package:project_runway/features/stats/presentation/pages/stats_screen.da
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_screen_arguments.dart';
 import 'package:project_runway/features/tasks/presentation/pages/draw_task/draw_task.dart';
-import 'package:project_runway/features/tasks/presentation/pages/speach_task/speech_task.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/home_screen.dart';
 import 'package:project_runway/features/vision_boards/presentation/manager/bloc.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/create_vision_board/create_vision_board.dart';
@@ -23,7 +22,8 @@ import 'package:project_runway/features/vision_boards/presentation/pages/edit_vi
 import 'package:project_runway/features/vision_boards/presentation/pages/image_selector.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/view_vision_details/view_vision_details.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/view_vision_details/view_vision_details_args.dart';
-import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list_route.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list/vision_board_list_args.dart';
+import 'package:project_runway/features/vision_boards/presentation/pages/vision_board_list/vision_board_list_route.dart';
 import 'package:provider/provider.dart';
 
 class RouteGenerator {
@@ -40,9 +40,17 @@ class RouteGenerator {
       case HomeScreen.routeName:
         return _transitionRoute(HomeScreen());
       case DrawTaskRoute.routeName:
-        return _transitionRoute(DrawTaskRoute());
-      case SpeechTaskRoute.routeName:
-        return _transitionRoute(SpeechTaskRoute());
+        int pageNumber;
+        try {
+          final VisionBoardListArgs args = settings.arguments;
+          pageNumber = args.pageNumber;
+          if (pageNumber == null) {
+            pageNumber = 1;
+          }
+        } catch (ex) {
+          pageNumber = 1;
+        }
+        return _transitionRoute(DrawTaskRoute(pageNumber));
       case ProfileRoute.routeName:
         return _transitionRoute(ProfileRoute());
       case SecretPuzzleRoute.routeName:
@@ -72,10 +80,20 @@ class RouteGenerator {
       case ImageSelectorRoute.routeName:
         return _transitionRoute(ImageSelectorRoute());
       case VisionBoardListRoute.routeName:
+        int pageNumber;
+        try {
+          final VisionBoardListArgs args = settings.arguments;
+          pageNumber = args.pageNumber;
+          if (pageNumber == null) {
+            pageNumber = 1;
+          }
+        } catch (ex) {
+          pageNumber = 1;
+        }
         return _transitionRoute(
           BlocProvider<VisionBoardBloc>(
             create: (_) => sl<VisionBoardBloc>(),
-            child: VisionBoardListRoute(),
+            child: VisionBoardListRoute(pageNumber),
           ),
         );
       case CreateVisionBoardRoute.routeName:

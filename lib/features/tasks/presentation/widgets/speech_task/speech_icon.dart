@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_runway/core/common_colors.dart';
+import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
@@ -43,7 +44,8 @@ class _SpeechIconState extends State<SpeechIcon> {
                 await initSpeechState();
               } catch (ex) {
                 // Show error on screen
-                print("error occurred");
+                showErrorFlow(
+                    "Some error occurred, please try again or give the necessary permissions");
               }
             } else {
               Scaffold.of(context).removeCurrentSnackBar();
@@ -82,7 +84,7 @@ class _SpeechIconState extends State<SpeechIcon> {
         _startSpeaking = true;
       });
     } else {
-      print("The user has denied the use of speech recognition.");
+      showErrorFlow("You have denied the use of speech recognition.");
     }
     // some time later...
     Future.delayed(Duration(seconds: 5), () {
@@ -96,7 +98,7 @@ class _SpeechIconState extends State<SpeechIcon> {
   }
 
   void errorListener(SpeechRecognitionError error) {
-    print("Received error status: $error, listening: ${speech.isListening}");
+    showErrorFlow(error.errorMsg);
   }
 
   void statusListener(String status) {}
@@ -110,5 +112,21 @@ class _SpeechIconState extends State<SpeechIcon> {
             .assignTaskTitle(response);
       }
     });
+  }
+
+  showErrorFlow(String title) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            color: CommonColors.bottomSheetColor,
+            height: 300,
+            child: Center(
+                child: Text(
+              title,
+              style: CommonTextStyles.scaffoldTextStyle(context),
+            )),
+          );
+        });
   }
 }
