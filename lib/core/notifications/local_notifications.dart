@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:provider/provider.dart';
@@ -8,8 +11,9 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 Future<void> initLocalNotifications() async {
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-  var initializationSettingsAndroid =
-      AndroidInitializationSettings('ic_stat_onesignal_default');
+  var initializationSettingsAndroid = AndroidInitializationSettings(
+    'app_icon',
+  );
   var initializationSettingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification: onDidReceiveLocalNotification);
   var initializationSettings = InitializationSettings(
@@ -33,8 +37,20 @@ Future<void> scheduleNotification(
   if (taskId != null &&
       taskTitle != null &&
       scheduledNotificationTime != null) {
+    // vibration
+    var vibrationPattern = Int64List(4);
+    vibrationPattern[0] = 0;
+    vibrationPattern[1] = 1000;
+    vibrationPattern[2] = 5000;
+    vibrationPattern[3] = 2000;
+
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        TASK_CHANNEL_ID, TASK_CHANNEL_NAME, 'your other channel description');
+        TASK_CHANNEL_ID, TASK_CHANNEL_NAME, 'your other channel description',
+        largeIcon: DrawableResourceAndroidBitmap("app_icon"),
+        vibrationPattern: vibrationPattern,
+        importance: Importance.High,
+        color: CommonColors.scaffoldColor,
+        priority: Priority.High);
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     NotificationDetails platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
