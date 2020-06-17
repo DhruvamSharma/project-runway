@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
@@ -120,6 +121,14 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
   }
 
   void saveVisionBoardToGallery() async {
+    try {
+      AnalyticsUtils.sendAnalyticEvent(
+          DOWNLOAD_VISION_BOARD,
+          {
+            "vision count": visions.length.toString(),
+          },
+          "DOWNLOAD_VISION_BOARD");
+    } catch (Ex) {}
     if (await Permission.storage.request().isGranted) {
       // To turn off landscape mode
       await SystemChrome.setPreferredOrientations(

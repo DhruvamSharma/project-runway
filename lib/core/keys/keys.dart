@@ -22,7 +22,7 @@ const String NOTIFICATION_OPEN_ID = "open_id";
 const String STATS_ROUTE_KEY = "stats";
 const String PROFILE_ROUTE_KEY = "profile";
 const String HOME_ROUTE_KEY = "home";
-const String VISION_BOARD_ROUTE_KEY = "vision-board";
+const String VISION_BOARD_ROUTE_KEY = "vision";
 
 // First entries
 const String FIRST_HOME_ENTRY = "home_entry";

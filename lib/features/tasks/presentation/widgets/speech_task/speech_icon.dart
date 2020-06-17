@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_runway/core/analytics_utils.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_snackbar.dart';
@@ -38,6 +39,14 @@ class _SpeechIconState extends State<SpeechIcon> {
           icon: Icon(Icons.mic,
               color: buildIconColor(appState, pageState.pageNumber)),
           onPressed: () async {
+            try {
+              AnalyticsUtils.sendAnalyticEvent(
+                  MIC_SHORTCUT,
+                  {
+                    "pageNumber": pageState.pageNumber,
+                  },
+                  "MIC_WIDGET");
+            } catch (ex) {}
             if (taskListState.taskList.length <= TOTAL_TASK_CREATION_LIMIT &&
                 pageState.pageNumber != 0) {
               try {
@@ -97,9 +106,7 @@ class _SpeechIconState extends State<SpeechIcon> {
     });
   }
 
-  void errorListener(SpeechRecognitionError error) {
-    showErrorFlow(error.errorMsg);
-  }
+  void errorListener(SpeechRecognitionError error) {}
 
   void statusListener(String status) {}
 
@@ -124,7 +131,8 @@ class _SpeechIconState extends State<SpeechIcon> {
             child: Center(
                 child: Text(
               title,
-              style: CommonTextStyles.scaffoldTextStyle(context),
+              textAlign: TextAlign.center,
+              style: CommonTextStyles.taskTextStyle(context),
             )),
           );
         });

@@ -32,13 +32,13 @@ class RouteGenerator {
       case UserEntryRoute.routeName:
         String user = sharedPreferences.getString(USER_KEY);
         if (user == null) {
-          return _transitionRoute(UserEntryRoute());
+          return _transitionRoute(UserEntryRoute(), "User Entry Route");
         } else {
-          return _transitionRoute(HomeScreen());
+          return _transitionRoute(HomeScreen(), "Home Route");
         }
         break;
       case HomeScreen.routeName:
-        return _transitionRoute(HomeScreen());
+        return _transitionRoute(HomeScreen(), "Home Route");
       case DrawTaskRoute.routeName:
         int pageNumber;
         try {
@@ -50,35 +50,42 @@ class RouteGenerator {
         } catch (ex) {
           pageNumber = 1;
         }
-        return _transitionRoute(DrawTaskRoute(pageNumber));
+        return _transitionRoute(DrawTaskRoute(pageNumber), "Draw Task Route");
       case ProfileRoute.routeName:
-        return _transitionRoute(ProfileRoute());
+        return _transitionRoute(ProfileRoute(), "Profile Route");
       case SecretPuzzleRoute.routeName:
-        return _transitionRoute(BlocProvider<LoginBloc>(
-          create: (_) => sl<LoginBloc>(),
-          child: BlocProvider<StatsBloc>(
-              create: (_) => sl<StatsBloc>(), child: SecretPuzzleRoute()),
-        ));
+        return _transitionRoute(
+            BlocProvider<LoginBloc>(
+              create: (_) => sl<LoginBloc>(),
+              child: BlocProvider<StatsBloc>(
+                  create: (_) => sl<StatsBloc>(), child: SecretPuzzleRoute()),
+            ),
+            "Secret Puzzle Route");
       case AppIntroWidget.routeName:
-        return _transitionRoute(Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-          ),
-          body: AppIntroWidget(),
-        ));
+        return _transitionRoute(
+            Scaffold(
+              appBar: AppBar(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+              ),
+              body: AppIntroWidget(),
+            ),
+            "App intro Route");
       case CreateTaskPage.routeName:
         final CreateTaskScreenArguments args = settings.arguments;
-        return _transitionRoute(CreateTaskPage(
-          runningDate: args.runningDate,
-          initialTaskTitle: args.initialTaskTitle,
-          totalTasksCreated: args.totalTasksCreated,
-        ));
+        return _transitionRoute(
+            CreateTaskPage(
+              runningDate: args.runningDate,
+              initialTaskTitle: args.initialTaskTitle,
+              totalTasksCreated: args.totalTasksCreated,
+            ),
+            "Create Task Route");
       case StatsScreen.routeName:
-        return _transitionRoute(StatsScreen());
+        return _transitionRoute(StatsScreen(), "Statistics Route");
 
       case ImageSelectorRoute.routeName:
-        return _transitionRoute(ImageSelectorRoute());
+        return _transitionRoute(
+            ImageSelectorRoute(), "Unsplash Image Selector Route");
       case VisionBoardListRoute.routeName:
         int pageNumber;
         try {
@@ -91,44 +98,46 @@ class RouteGenerator {
           pageNumber = 1;
         }
         return _transitionRoute(
-          BlocProvider<VisionBoardBloc>(
-            create: (_) => sl<VisionBoardBloc>(),
-            child: VisionBoardListRoute(pageNumber),
-          ),
-        );
+            BlocProvider<VisionBoardBloc>(
+              create: (_) => sl<VisionBoardBloc>(),
+              child: VisionBoardListRoute(pageNumber),
+            ),
+            "View Vision Board Route");
       case CreateVisionBoardRoute.routeName:
         final CreateVisionBoardArgs args = settings.arguments;
-        return _transitionRoute(BlocProvider<VisionBoardBloc>(
-          create: (_) => sl<VisionBoardBloc>(),
-          child: CreateVisionBoardRoute(
-            visionBoardId: args.visionBoardId,
-          ),
-        ));
+        return _transitionRoute(
+            BlocProvider<VisionBoardBloc>(
+              create: (_) => sl<VisionBoardBloc>(),
+              child: CreateVisionBoardRoute(
+                visionBoardId: args.visionBoardId,
+              ),
+            ),
+            "Create Vision Board Route");
       case EditVisionRoute.routeName:
         final EditVisionArgs args = settings.arguments;
         return _transitionRoute(
-          ChangeNotifierProvider<VisionUploadProviderModel>.value(
-            value: VisionUploadProviderModel(),
-            child: BlocProvider<VisionBoardBloc>(
-              create: (_) => sl<VisionBoardBloc>(),
-              child: EditVisionRoute(
-                visionBoardId: args.visionBoardId,
-                visionImageUrl: args.imageUrl,
+            ChangeNotifierProvider<VisionUploadProviderModel>.value(
+              value: VisionUploadProviderModel(),
+              child: BlocProvider<VisionBoardBloc>(
+                create: (_) => sl<VisionBoardBloc>(),
+                child: EditVisionRoute(
+                  visionBoardId: args.visionBoardId,
+                  visionImageUrl: args.imageUrl,
+                ),
               ),
             ),
-          ),
-        );
+            "Create/Edit Vision Route");
 
       case ViewVisionDetailsRoute.routeName:
         final ViewVisionDetailsArgs args = settings.arguments;
         return _transitionRoute(
-          BlocProvider<VisionBoardBloc>(
-            create: (_) => sl<VisionBoardBloc>(),
-            child: ViewVisionDetailsRoute(
-              vision: args.vision,
+            BlocProvider<VisionBoardBloc>(
+              create: (_) => sl<VisionBoardBloc>(),
+              child: ViewVisionDetailsRoute(
+                vision: args.vision,
+              ),
             ),
-          ),
-        );
+            "View Vision Route");
       default:
         // If there is no such named route in the switch statement, e.g. /third
         return _errorRoute();
@@ -148,7 +157,7 @@ class RouteGenerator {
     });
   }
 
-  static PageRoute _transitionRoute(Widget route) {
+  static PageRoute _transitionRoute(Widget route, String screenName) {
     return PageRouteBuilder(
         transitionDuration: Duration(milliseconds: 300),
         pageBuilder: (context, primaryAnimation, secondaryAnimation) {
@@ -157,6 +166,7 @@ class RouteGenerator {
             child: route,
           );
         },
+        settings: RouteSettings(name: screenName),
         transitionsBuilder: (context, firstAnimation, secondAnimation, child) {
           return FadeTransition(
             opacity: firstAnimation,

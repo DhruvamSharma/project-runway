@@ -12,15 +12,15 @@ class CustomQuickActions {
       const ShortcutItem(
           type: VIEW_STATS,
           localizedTitle: 'View Statistics',
-          icon: 'ic_launcher'),
+          icon: 'stats_quick_action_icon'),
       const ShortcutItem(
           type: CREATE_VISION,
           localizedTitle: 'Create Vision',
-          icon: 'ic_launcher'),
+          icon: 'vision_board_quick_action_icon'),
       const ShortcutItem(
         type: CREATE_TASK,
         localizedTitle: 'New Task',
-        icon: 'ic_launcher',
+        icon: 'add_task_quick_action_icon',
       ),
     ]);
   }
