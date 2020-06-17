@@ -118,6 +118,16 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                             color:
                                 buildIconColor(appState, pageState.pageNumber)),
                         onPressed: () async {
+                          try {
+                            AnalyticsUtils.sendAnalyticEvent(
+                                DRAW_SHORTCUT,
+                                {
+                                  "pageNumber": pageState.pageNumber,
+                                },
+                                "DRAW_WIDGET");
+                          } catch (Ex) {
+                            // failed logging event
+                          }
                           if (taskListState.taskList.length <=
                                   TOTAL_TASK_CREATION_LIMIT &&
                               pageState.pageNumber != 0) {
@@ -125,7 +135,6 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                                 context, DrawTaskRoute.routeName,
                                 arguments:
                                     VisionBoardListArgs(pageState.pageNumber));
-                            print(response);
                             if (response != null &&
                                 (response as String).isNotEmpty) {
                               Provider.of<InitialTaskTitleProviderModel>(

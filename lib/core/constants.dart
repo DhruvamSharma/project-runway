@@ -45,3 +45,6 @@ const String READ_PUZZLE = "read_puzzle";
 const String LOG_OUT = "log_out";
 const String LEVEL_UP = "puzzle_level_up";
 const String CREATE_TASK_SHORTCUT = "create_task_through_shortcut";
+const String MIC_SHORTCUT = "create_task_through_mic";
+const String DRAW_SHORTCUT = "create_task_through_drawing";
+const String DOWNLOAD_VISION_BOARD = "download_vision_board";
