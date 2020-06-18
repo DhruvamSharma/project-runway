@@ -20,70 +20,56 @@ class AppIntroWidget extends StatelessWidget {
         padding: const EdgeInsets.only(
           top: CommonDimens.MARGIN_60,
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: CommonDimens.MARGIN_20,
+          ),
+          child: Stack(
             children: <Widget>[
-              Text(
-                "Runway".toUpperCase(),
-                style: CommonTextStyles.headerTextStyle(context),
-                textAlign: TextAlign.center,
+              PageView(
+                controller: _controller,
+                physics: BouncingScrollPhysics(),
+                children: <Widget>[
+                  AppIntroShortcutWidget(
+                    imageUrl: "assets/intro_pedestal.png",
+                    title: "Focused\nApproach",
+                    subtitle:
+                        "Reward-based minimal design to enhance your decisiveness",
+                  ),
+                  AppIntroSpeakOrDrawWidget(),
+                  AppIntroVisionBoardWidget(),
+                  AppIntroShortcutWidget(
+                    imageUrl: "assets/intro_graph.png",
+                    title: "Visualise\nGrowth",
+                    subtitle:
+                        "Track your progress through exclusive statistics",
+                  ),
+                  AppIntro37Widget(),
+                  AppIntroShortcutWidget(
+                    imageUrl: "assets/intro_puzzle.png",
+                    title: "Secret\nPuzzles",
+                    subtitle:
+                        "Exercise your intellectual efficiency through puzzles",
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_20,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 400,
-                      child: PageView(
-                        controller: _controller,
-                        physics: BouncingScrollPhysics(),
-                        children: <Widget>[
-                          AppIntroShortcutWidget(
-                            imageUrl: "assets/intro_pedestal.png",
-                            title: "Focused Approach",
-                            subtitle:
-                                "Reward-based minimal design to enhance your decisiveness",
-                          ),
-                          AppIntroSpeakOrDrawWidget(),
-                          AppIntroVisionBoardWidget(),
-                          AppIntroShortcutWidget(
-                            imageUrl: "assets/intro_graph.png",
-                            title: "Visualise Growth",
-                            subtitle:
-                                "Track your progress through exclusive statistics",
-                          ),
-                          AppIntro37Widget(),
-                          AppIntroShortcutWidget(
-                            imageUrl: "assets/intro_puzzle.png",
-                            title: "Secret Puzzles",
-                            subtitle:
-                                "Exercise your intellectual efficiency through puzzles",
-                          ),
-                        ],
-                      ),
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_80 * 1.5,
+                    right: CommonDimens.MARGIN_40,
+                  ),
+                  child: SmoothPageIndicator(
+                    controller: _controller,
+                    count: 6,
+                    effect: ExpandingDotsEffect(
+                      radius: 10,
+                      dotHeight: 7,
+                      dotWidth: 7,
+                      activeDotColor: CommonColors.chartColor,
                     ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: CommonDimens.MARGIN_20,
-                        ),
-                        child: SmoothPageIndicator(
-                          controller: _controller,
-                          count: 6,
-                          effect: ExpandingDotsEffect(
-                            radius: 10,
-                            dotHeight: 7,
-                            dotWidth: 7,
-                            activeDotColor: CommonColors.chartColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],

@@ -88,9 +88,11 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                         onCreateTask(context, pageState, taskListState);
                       },
                       child: CircleAvatar(
+                        backgroundColor: buildIconColor(appState, pageState.pageNumber),
                         child: Icon(
                           Icons.add,
-                          color: buildIconColor(appState, pageState.pageNumber),
+                          color: appState.currentTheme.scaffoldBackgroundColor,
+                          size: 21,
                         ),
                       ),
                     ),
@@ -228,6 +230,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                           Icons.info,
                           color: buildIconColor(appState, pageState.pageNumber),
                         ),
+                        tooltip: "More Detail",
                         iconSize: 21,
                       ),
                     ],

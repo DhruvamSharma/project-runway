@@ -10,6 +10,13 @@ import 'date_time_parser.dart';
 class CommonTextStyles {
   static final TextStyle _googleFontStyle = GoogleFonts.baumans();
 
+  static TextStyle defineTextStyle(BuildContext context) {
+    return Provider.of<ThemeModel>(context, listen: true)
+        .currentTheme
+        .textTheme
+        .headline2;
+  }
+
   static TextStyle headerTextStyle(BuildContext context) {
     return Provider.of<ThemeModel>(context, listen: true)
         .currentTheme
@@ -42,7 +49,9 @@ class CommonTextStyles {
     return Provider.of<ThemeModel>(context, listen: true)
         .currentTheme
         .textTheme
-        .headline2;
+        .headline2.copyWith(
+      color: CommonColors.rotatedDesignTextColor.withOpacity(0.38)
+    );
   }
 
   static TextStyle taskTextStyle(BuildContext context) {

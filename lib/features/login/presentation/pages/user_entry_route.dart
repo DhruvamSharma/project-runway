@@ -92,25 +92,31 @@ class UserEntryRoute extends StatelessWidget {
                       0)
                     Align(
                         alignment: Alignment.bottomCenter,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: MaterialButton(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: CommonDimens.MARGIN_40,
-                              vertical: CommonDimens.MARGIN_20 / 2,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: CommonDimens.MARGIN_20,),
+                          child: Container(
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(CommonDimens.MARGIN_20))
                             ),
-                            onPressed: () {
-                              onForwardClick(providerContext);
-                            },
-                            child: Text(
-                              "Get Started",
-                              style: CommonTextStyles.taskTextStyle(context)
-                                  .copyWith(
-                                color: appState
-                                    .currentTheme.scaffoldBackgroundColor,
+                            child: MaterialButton(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: CommonDimens.MARGIN_40,
+                                vertical: CommonDimens.MARGIN_20 / 2,
                               ),
+                              onPressed: () {
+                                onForwardClick(providerContext);
+                              },
+                              child: Text(
+                                "Get Started",
+                                style: CommonTextStyles.taskTextStyle(context)
+                                    .copyWith(
+                                  color: appState
+                                      .currentTheme.scaffoldBackgroundColor,
+                                ),
+                              ),
+                              color: appState.currentTheme.accentColor,
                             ),
-                            color: appState.currentTheme.accentColor,
                           ),
                         )),
                   if (Provider.of<UserEntryProviderHolder>(

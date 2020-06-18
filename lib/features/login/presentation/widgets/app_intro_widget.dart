@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 
@@ -15,45 +16,57 @@ class AppIntroShortcutWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(
-                right: CommonDimens.MARGIN_20,
-              ),
-              child: Image.asset(
-                imageUrl,
-                height: 200,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: CommonDimens.MARGIN_60,
-              ),
-              child: Text(
-                title,
-                style: CommonTextStyles.loginTextStyle(
-                  context,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(left: CommonDimens.MARGIN_20, bottom: CommonDimens.MARGIN_20,),
+            child: Text(title, style: CommonTextStyles.defineTextStyle(context),),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: const EdgeInsets.only(left: CommonDimens.MARGIN_20, right: CommonDimens.MARGIN_20,),
+              child: Container(
+                color: CommonColors.scaffoldColor,
+                height: MediaQuery.of(context).size.height/2,
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  color: CommonColors.darkGreyColor,
+                  elevation: 24,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(CommonDimens.MARGIN_20,),),
+                  ),
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: CommonDimens.MARGIN_40,
+                            left: CommonDimens.MARGIN_20,
+                            right: CommonDimens.MARGIN_20,
+                          ),
+                          child: Text(
+                            "View 7 tasks for 3 days for focused prioritization of tasks",
+                            style: CommonTextStyles.disabledTaskTextStyle(),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: CommonDimens.MARGIN_20,),
+                          child: Image.asset(
+                            imageUrl,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: CommonDimens.MARGIN_20,
-                left: CommonDimens.MARGIN_20 / 2,
-                right: CommonDimens.MARGIN_20 / 2,
-              ),
-              child: Text(
-                subtitle,
-                style: CommonTextStyles.taskTextStyle(context),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

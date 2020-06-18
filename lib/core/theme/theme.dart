@@ -19,14 +19,14 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   textTheme: GoogleFonts.baumansTextTheme().copyWith(
     headline1: GoogleFonts.baumans().copyWith(
         height: 1.5,
-        color: CommonColors.headerTextColor.withOpacity(0.60),
-        letterSpacing: 25,
+        color: CommonColors.taskTextColor,
+        letterSpacing: 5,
         fontSize: 70),
     // Used for background rotated text
     headline2: GoogleFonts.baumans().copyWith(
       height: 1.5,
-      color: CommonColors.rotatedDesignTextColor.withOpacity(0.60),
-      letterSpacing: 24,
+      color: CommonColors.taskTextColor,
+      letterSpacing: 5,
       fontSize: 40,
     ),
     // Used for headers
