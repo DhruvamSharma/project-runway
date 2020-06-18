@@ -5,9 +5,10 @@ class CommonColors {
   // Theme colors
   static final Color primarySwatch = chartColor;
   static final Color accentColor = _getColor(0xffFFFFFF);
-  static final Color scaffoldColor = _getColor(0xff121212);
+  static final Color scaffoldColor = _getColor(0xff000000);
   static final Color toggleableActiveColor = Colors.transparent;
   static final Color cursorColor = Colors.grey;
+  static final Color darkGreyColor = _getColor(0xff121212);
 
   // Text Colors
 

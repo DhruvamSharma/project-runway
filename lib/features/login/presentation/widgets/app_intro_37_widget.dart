@@ -6,62 +6,83 @@ import 'package:project_runway/core/common_text_styles.dart';
 class AppIntro37Widget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: SingleChildScrollView(
+    return SingleChildScrollView(
       child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 200,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "3",
-                      style: CommonTextStyles.loginTextStyle(context)
-                          .copyWith(fontSize: 90)
-                          .copyWith(color: CommonColors.introColor),
+        crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Padding(
+        padding: const EdgeInsets.only(left: CommonDimens.MARGIN_20, bottom: CommonDimens.MARGIN_20,),
+        child: Text("The 3:7\nRule", style: CommonTextStyles.defineTextStyle(context),),
+      ),
+      Align(
+        alignment: Alignment.center,
+        child: Padding(
+          padding: const EdgeInsets.only(left: CommonDimens.MARGIN_20, right: CommonDimens.MARGIN_20,),
+          child: Container(
+            color: CommonColors.scaffoldColor,
+            height: MediaQuery.of(context).size.height/2,
+            child: Card(
+              clipBehavior: Clip.antiAlias,
+              color: CommonColors.darkGreyColor,
+              elevation: 24,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(CommonDimens.MARGIN_20,),),
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: CommonDimens.MARGIN_40,
+                        left: CommonDimens.MARGIN_20,
+                        right: CommonDimens.MARGIN_20,
+                      ),
+                      child: Text(
+                        "View 7 tasks for 3 days for focused prioritization of tasks",
+                        style: CommonTextStyles.disabledTaskTextStyle(),
+                      ),
                     ),
-                    TextSpan(
-                      text: " : ",
-                      style: CommonTextStyles.loginTextStyle(context).copyWith(
-                          fontSize: 90, color: CommonColors.chartColor),
-                    ),
-                    TextSpan(
-                      text: "7",
-                      style: CommonTextStyles.loginTextStyle(context)
-                          .copyWith(fontSize: 90)
-                          .copyWith(color: CommonColors.introColor),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: CommonDimens.MARGIN_40,),
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "3",
+                                style: CommonTextStyles.loginTextStyle(context)
+                                    .copyWith(fontSize: 90)
+                                    .copyWith(color: CommonColors.introColor),
+                              ),
+                              TextSpan(
+                                text: " : ",
+                                style: CommonTextStyles.loginTextStyle(context).copyWith(
+                                    fontSize: 90, color: CommonColors.chartColor),
+                              ),
+                              TextSpan(
+                                text: "7",
+                                style: CommonTextStyles.loginTextStyle(context)
+                                    .copyWith(fontSize: 90)
+                                    .copyWith(color: CommonColors.introColor),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: CommonDimens.MARGIN_60,
-            ),
-            child: Text(
-              "3:7 Rule",
-              style: CommonTextStyles.loginTextStyle(context),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: CommonDimens.MARGIN_20,
-              left: CommonDimens.MARGIN_20 / 2,
-              right: CommonDimens.MARGIN_20 / 2,
-            ),
-            child: Text(
-              "View 7 tasks for 3 days for focused prioritization of tasks",
-              style: CommonTextStyles.taskTextStyle(context),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
+        ),
       ),
-    ));
+    ],
+      ),
+    );
   }
 }

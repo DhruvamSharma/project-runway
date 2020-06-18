@@ -78,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen>
                   icon: Icon(
                     Icons.airplanemode_active,
                     color: state.currentTheme.iconTheme.color,
+                    size: 21,
                   ),
                   onPressed: () {
                     AnalyticsUtils.sendAnalyticEvent(
@@ -87,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             Padding(
               padding: const EdgeInsets.only(
-                left: CommonDimens.MARGIN_40,
+                left: CommonDimens.MARGIN_20,
               ),
               child: IconButton(
                   tooltip: "Vision Board",
@@ -95,8 +96,8 @@ class _HomeScreenState extends State<HomeScreen>
                     imageUrl: "https://imgur.com/XtCHimD.png",
                     color: state.currentTheme.iconTheme.color,
                     fit: BoxFit.fill,
-                    height: 30,
-                    width: 30,
+                    height: 21,
+                    width: 21,
                   ),
                   onPressed: () {
                     AnalyticsUtils.sendAnalyticEvent(
@@ -108,13 +109,14 @@ class _HomeScreenState extends State<HomeScreen>
                   }),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: CommonDimens.MARGIN_20),
+              padding: const EdgeInsets.only(
+                  right: CommonDimens.MARGIN_20),
               child: IconButton(
                   tooltip: "Settings",
                   icon: Icon(
                     Icons.settings,
                     color: state.currentTheme.iconTheme.color,
+                    size: 21,
                   ),
                   onPressed: () async {
                     AnalyticsUtils.sendAnalyticEvent(
@@ -139,27 +141,30 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             Align(
               alignment: Alignment.topCenter,
-              child: GestureDetector(
-                onTap: () {
-                  if (!sharedPreferences.containsKey(REFRESH_KEY) &&
-                      widget.user.score == null) {
-                    int days = 0;
-                    try {
-                      days = DateTime.now()
-                          .difference(widget.user.createdAt)
-                          .inDays;
-                    } catch (ex) {
-                      // Do nothing
+              child: Padding(
+                padding: const EdgeInsets.only(top: CommonDimens.MARGIN_20,),
+                child: GestureDetector(
+                  onTap: () {
+                    if (!sharedPreferences.containsKey(REFRESH_KEY) &&
+                        widget.user.score == null) {
+                      int days = 0;
+                      try {
+                        days = DateTime.now()
+                            .difference(widget.user.createdAt)
+                            .inDays;
+                      } catch (ex) {
+                        // Do nothing
+                      }
+                      AnalyticsUtils.sendAnalyticEvent(
+                          FOUND_PUZZLE, {"numberOfDays": days}, "HOME_SCREEN");
+                      openSecretPuzzleDoor(state);
                     }
-                    AnalyticsUtils.sendAnalyticEvent(
-                        FOUND_PUZZLE, {"numberOfDays": days}, "HOME_SCREEN");
-                    openSecretPuzzleDoor(state);
-                  }
-                },
-                child: Text(
-                  APP_NAME.toUpperCase(),
-                  style: CommonTextStyles.headerTextStyle(context),
-                  textAlign: TextAlign.center,
+                  },
+                  child: Text(
+                    APP_NAME.toUpperCase(),
+                    style: CommonTextStyles.headerTextStyle(context),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ),

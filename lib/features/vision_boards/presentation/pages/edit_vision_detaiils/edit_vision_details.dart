@@ -87,6 +87,7 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
   Widget buildCreateVisionRoute() {
     final uploadState =
         Provider.of<VisionUploadProviderModel>(context, listen: false);
+    final appState = Provider.of<ThemeModel>(context, listen: false);
     return Stack(
       children: <Widget>[
         Align(
@@ -164,18 +165,29 @@ class _EditVisionRouteState extends State<EditVisionRoute> {
                 padding: const EdgeInsets.only(
                   top: CommonDimens.MARGIN_40,
                 ),
-                child: MaterialButton(
-                  color: uploadState.response != null
-                      ? CommonColors.chartColor
-                      : CommonColors.disabledTaskTextColor,
-                  onPressed: uploadState.response != null
-                      ? () {
-                          createVision();
-                        }
-                      : null,
-                  child: Text("Create Vision"),
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(CommonDimens.MARGIN_20*3,),),
+                  ),
+                  child: MaterialButton(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: CommonDimens.MARGIN_40,
+                      vertical: CommonDimens.MARGIN_20 / 2,
+                    ),
+                    textColor: CommonColors.darkGreyColor,
+                    color: uploadState.response != null
+                        ? CommonColors.accentColor
+                        : CommonColors.disabledTaskTextColor,
+                    onPressed: uploadState.response != null
+                        ? () {
+                            createVision();
+                          }
+                        : null,
+                    child: Text("Create Vision"),
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         ),

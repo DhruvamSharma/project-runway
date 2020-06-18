@@ -120,11 +120,12 @@ class _TaskWidgetState extends State<TaskWidget> {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: CircleAvatar(
                       radius: 10,
-                      backgroundColor: Colors.black,
+                      backgroundColor: appState.currentTheme.iconTheme.color,
                       child: Text(
                         taskState.taskEntity.urgency.toString(),
-                        style: CommonTextStyles.badgeTextStyle(context)
-                            .copyWith(color: CommonColors.accentColor),
+                        style: CommonTextStyles.badgeTextStyle(context).copyWith(
+                          color: appState.currentTheme.scaffoldBackgroundColor
+                        ),
                       ),
                     ),
                   ),
