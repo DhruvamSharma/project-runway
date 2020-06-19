@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:project_runway/features/login/domain/entities/user_entity.dart';
 
@@ -39,8 +40,10 @@ class UserModel extends UserEntity {
       phoneNumber: map["phoneNumber"],
       age: map["age"],
       gender: map["gender"],
-      createdAt: map["createdAt"] == null? null: DateTime.parse(map["createdAt"]),
-      score: map["score"] == null? null: double.parse((map["score"]).toString()),
+      createdAt:
+          map["createdAt"] == null ? null : DateTime.parse(map["createdAt"]),
+      score:
+          map["score"] == null ? null : double.parse((map["score"]).toString()),
       isVerified: map["isVerified"],
       isDeleted: map["isDeleted"],
       isLoggedIn: map["isLoggedIn"],
@@ -59,7 +62,7 @@ class UserModel extends UserEntity {
       "age": age,
       "gender": gender,
       "userPhotoUrl": userPhotoUrl,
-      "createdAt": createdAt == null? null: createdAt.toString(),
+      "createdAt": createdAt == null ? null : createdAt.toString(),
       "score": score,
       "isVerified": isVerified,
       "isDeleted": isDeleted,

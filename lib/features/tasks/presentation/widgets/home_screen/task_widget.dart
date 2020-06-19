@@ -49,7 +49,7 @@ class _TaskWidgetState extends State<TaskWidget> {
             isScrollControlled: true,
             builder: (_) {
               return Container(
-                height: 0.9 * MediaQuery.of(context).size.height,
+                height: 0.8 * MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
                   color: appState.currentTheme == lightTheme
                       ? CommonColors.bottomSheetColorLightTheme
@@ -123,9 +123,10 @@ class _TaskWidgetState extends State<TaskWidget> {
                       backgroundColor: appState.currentTheme.iconTheme.color,
                       child: Text(
                         taskState.taskEntity.urgency.toString(),
-                        style: CommonTextStyles.badgeTextStyle(context).copyWith(
-                          color: appState.currentTheme.scaffoldBackgroundColor
-                        ),
+                        style: CommonTextStyles.badgeTextStyle(context)
+                            .copyWith(
+                                color: appState
+                                    .currentTheme.scaffoldBackgroundColor),
                       ),
                     ),
                   ),

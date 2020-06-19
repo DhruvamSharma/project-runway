@@ -26,7 +26,8 @@ const int PUZZLE_ID_INCREMENT_NUMBER = 13;
 
 // Notifications
 const String TASK_CHANNEL_ID = "TASK_NOTIFICATION";
-const String TASK_CHANNEL_NAME = "Task";
+const String TASK_CHANNEL_NAME = "Task Notifications";
+const String DAILY_TASK_CHANNEL_NAME = "Daily Notifications";
 
 // EVENT NAMES
 const String SIGN_IN = "sign_in";

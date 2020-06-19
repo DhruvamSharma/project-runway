@@ -157,11 +157,11 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
 
   String buildText(
       BuildContext blocContext, UserEntryProviderHolder userEntryState) {
-    String initialText = "Hey ${userEntryState.userName},";
+    String initialText = "Hey,";
     if (userEntryState.isVerified) {
       return "$initialText your progress will be saved";
     } else {
-      return "$initialText Let's sign in to save our progress?";
+      return "$initialText let's sign in to save our progress?";
     }
   }
 

@@ -48,6 +48,9 @@ class UserEntryRoute extends StatelessWidget {
                   Container(
                     child: CongratulatoryWidget(),
                   ),
+                  Container(
+                    child: CongratulatoryWidget(),
+                  ),
                 ],
               ),
               if (Provider.of<UserEntryProviderHolder>(
@@ -93,12 +96,14 @@ class UserEntryRoute extends StatelessWidget {
                     Align(
                         alignment: Alignment.bottomCenter,
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: CommonDimens.MARGIN_20,),
+                          padding: const EdgeInsets.only(
+                            bottom: CommonDimens.MARGIN_20,
+                          ),
                           child: Container(
                             clipBehavior: Clip.antiAlias,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(CommonDimens.MARGIN_20))
-                            ),
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(CommonDimens.MARGIN_20))),
                             child: MaterialButton(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: CommonDimens.MARGIN_40,
@@ -211,19 +216,16 @@ class UserEntryRoute extends StatelessWidget {
           curve: Curves.easeOutCubic,
         );
       }
-      String userName =
+      TimeOfDay notificationTime =
           Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
-              .userName;
+              .time;
 
-      if (userName != null) {
-        userName = userName.trim();
+      if (notificationTime != null) {
         Provider.of<UserEntryProviderHolder>(providerContext, listen: false)
-            .assignUserName(userName);
+            .assignNotificationTime(notificationTime);
       }
 
-      if (_pageController.page.toInt() == 1 &&
-          userName != null &&
-          userName.isNotEmpty) {
+      if (_pageController.page.toInt() == 1 && notificationTime != null) {
         _pageController.animateToPage(
           buildPageNumber(providerContext),
           duration: Duration(milliseconds: 400),
@@ -247,12 +249,11 @@ class UserEntryRoute extends StatelessWidget {
         );
       }
 
-      if (_pageController.page.toInt() == 1 &&
-          (userName == null || userName.isEmpty)) {
+      if (_pageController.page.toInt() == 1 && (notificationTime == null)) {
         _scaffoldKey.currentState.showSnackBar(
           CustomSnackbar.withAnimation(
             providerContext,
-            "Please enter your name",
+            "Please enter the time that we should remind you",
           ),
         );
       }
@@ -261,7 +262,7 @@ class UserEntryRoute extends StatelessWidget {
 }
 
 class UserEntryProviderHolder extends ChangeNotifier {
-  String userName;
+  TimeOfDay time;
   String googleId;
   String userPhotoUrl;
   String emailId;
@@ -276,8 +277,8 @@ class UserEntryProviderHolder extends ChangeNotifier {
   bool isNewUser = true;
   final PageController controller;
 
-  void assignUserName(String userName) {
-    this.userName = userName;
+  void assignNotificationTime(TimeOfDay timeOfNotification) {
+    this.time = timeOfNotification;
     notifyListeners();
   }
 
