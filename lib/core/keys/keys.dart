@@ -23,6 +23,8 @@ const String STATS_ROUTE_KEY = "stats";
 const String PROFILE_ROUTE_KEY = "profile";
 const String HOME_ROUTE_KEY = "home";
 const String VISION_BOARD_ROUTE_KEY = "vision";
+const String DAILY_NOTIFICATION_ID = "daily-notifications";
+const String DAILY_NOTIFICATION_TIME = "daily-notification-time";
 
 // First entries
 const String FIRST_HOME_ENTRY = "home_entry";

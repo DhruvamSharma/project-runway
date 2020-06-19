@@ -34,6 +34,7 @@ import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wiredash/wiredash.dart';
+import 'package:project_runway/core/notifications/local_notifications.dart';
 
 class ProfileRoute extends StatefulWidget {
   static const String routeName = "${APP_NAME}_v1_user_profile-screen";
@@ -208,6 +209,46 @@ class _ProfileRouteState extends State<ProfileRoute> {
                             text: "Vision Board",
                             isNew: true,
                           ),
+                          Divider(
+                            color: appState.currentTheme == lightTheme
+                                ? CommonColors.dateTextColorLightTheme
+                                : CommonColors.dateTextColor,
+                          ),
+                          CustomListTile(
+                            leadingIcon: Icons.notifications_active,
+                            onTap: () async {
+                              try {
+                                TimeOfDay timeOfDay = await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now(),
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: ThemeData.dark().copyWith(
+                                          accentColor: CommonColors.chartColor
+                                              .withOpacity(0.50),
+                                        ),
+                                        child: child,
+                                      );
+                                    });
+                                setState(() {
+                                  if (timeOfDay != null) {
+                                    scheduleDailyNotification(
+                                        context, timeOfDay);
+                                  }
+                                });
+                              } catch (ex) {
+                                _scaffoldKey.currentState.showSnackBar(
+                                  CustomSnackbar.withAnimation(
+                                    context,
+                                    "Sorry, a problem occurred, please try again later",
+                                  ),
+                                );
+                              }
+                            },
+                            appState: appState,
+                            trailing: buildDailyNotificationTime(),
+                            text: "Daily Notification",
+                          ),
                           if (_remoteConfigService.lightThemeOptionEnabled)
                             Divider(
                               color: appState.currentTheme == lightTheme
@@ -275,6 +316,8 @@ class _ProfileRouteState extends State<ProfileRoute> {
                                     BUG_REPORT, {}, "SETTING_SCREEN");
                                 Wiredash.of(context).show();
                               } catch (ex) {
+                                _scaffoldKey.currentState
+                                    .removeCurrentSnackBar();
                                 _scaffoldKey.currentState.showSnackBar(
                                   CustomSnackbar.withAnimation(
                                     context,
@@ -442,5 +485,17 @@ class _ProfileRouteState extends State<ProfileRoute> {
         ),
       ),
     );
+  }
+
+  Widget buildDailyNotificationTime() {
+    final time = sharedPreferences.getString(DAILY_NOTIFICATION_TIME);
+    if (time != null) {
+      return Text(
+        time,
+        style: CommonTextStyles.disabledTaskTextStyle(),
+      );
+    } else {
+      return null;
+    }
   }
 }

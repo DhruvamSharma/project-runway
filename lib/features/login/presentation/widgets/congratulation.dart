@@ -50,9 +50,10 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
           child: Stack(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(left: CommonDimens.MARGIN_20,),
+                padding: const EdgeInsets.only(
+                  left: CommonDimens.MARGIN_20,
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
@@ -62,6 +63,7 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
                     Text(
                       "\nYou are all set up to increase your productivity",
                       style: CommonTextStyles.loginTextStyle(context),
+                      textAlign: TextAlign.center,
                     ),
                     if (isCreatingAccount)
                       Padding(
@@ -75,7 +77,8 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
                               accentColor: CommonColors.chartColor,
                             ),
                             child: LinearProgressIndicator(
-                              backgroundColor: appState.currentTheme.accentColor,
+                              backgroundColor:
+                                  appState.currentTheme.accentColor,
                             ),
                           ),
                         ),
@@ -86,12 +89,14 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
               Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: CommonDimens.MARGIN_20,),
+                    padding: const EdgeInsets.only(
+                      bottom: CommonDimens.MARGIN_20,
+                    ),
                     child: Container(
                       clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(CommonDimens.MARGIN_20))
-                      ),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(CommonDimens.MARGIN_20))),
                       child: MaterialButton(
                         padding: const EdgeInsets.symmetric(
                           horizontal: CommonDimens.MARGIN_40,
@@ -102,17 +107,18 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
                             setState(() {
                               isCreatingAccount = true;
                             });
-                            final user = createUser(blocContext, userEntryState);
+                            final user =
+                                createUser(blocContext, userEntryState);
                             BlocProvider.of<LoginBloc>(blocContext)
                                 .add(LoginUserEvent(user: user));
                           }
                         },
                         child: Text(
                           "Let's Begin",
-                          style: CommonTextStyles.taskTextStyle(context)
-                              .copyWith(
-                            color: appState
-                                .currentTheme.scaffoldBackgroundColor,
+                          style:
+                              CommonTextStyles.taskTextStyle(context).copyWith(
+                            color:
+                                appState.currentTheme.scaffoldBackgroundColor,
                           ),
                         ),
                         color: appState.currentTheme.accentColor,
@@ -131,7 +137,7 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
     return UserEntity(
       userId: sharedPreferences.getString(USER_KEY),
       googleId: userEntryState.googleId,
-      userName: userEntryState.userName,
+      userName: null,
       phoneNumber: null,
       age: userEntryState.age,
       gender: null,

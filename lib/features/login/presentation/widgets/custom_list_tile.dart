@@ -63,7 +63,11 @@ class CustomListTile extends StatelessWidget {
           style: CommonTextStyles.settingListItemStyle(context),
         ),
         onTap: onTap,
-        trailing: trailing,
+        trailing: trailing ??
+            SizedBox(
+              height: 1,
+              width: 1,
+            ),
       ),
     );
   }

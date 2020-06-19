@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/keys/keys.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:provider/provider.dart';
 
@@ -93,7 +95,7 @@ void selectTimeForNotification(BuildContext newContext, runningDate,
       builder: (context, child) {
         return Theme(
           data: ThemeData.dark().copyWith(
-            accentColor: Colors.amber,
+            accentColor: CommonColors.chartColor,
           ),
           child: child,
         );
@@ -112,6 +114,34 @@ void selectTimeForNotification(BuildContext newContext, runningDate,
       }
     }
   }
+}
+
+void scheduleDailyNotification(
+    BuildContext context, TimeOfDay dailyTime) async {
+  final time = Time(dailyTime.hour, dailyTime.minute);
+  flutterLocalNotificationsPlugin.cancel(12321122);
+  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'repeatDailyAtTime channel id',
+      DAILY_TASK_CHANNEL_NAME,
+      'repeatDailyAtTime description');
+  var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+  var platformChannelSpecifics = NotificationDetails(
+      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+  await flutterLocalNotificationsPlugin.showDailyAtTime(
+      12321122,
+      'Remember to mark your tasks as completed',
+      'Your runway to success is not far off',
+      time,
+      platformChannelSpecifics);
+  sharedPreferences.setInt(DAILY_NOTIFICATION_ID, 12321122);
+  sharedPreferences.setString(
+      DAILY_NOTIFICATION_TIME, dailyTime.format(context));
+}
+
+printAllNotifications() async {
+  final response =
+      await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+  print(response.length);
 }
 
 updateDateForNotification(

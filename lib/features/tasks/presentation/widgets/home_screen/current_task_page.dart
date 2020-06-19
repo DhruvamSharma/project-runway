@@ -326,6 +326,13 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
       );
     }
 
+    if (state is LoadedEditScreenState) {
+      // sort the task
+      Provider.of<TaskListHolderProvider>(providerContext, listen: false)
+          .taskList
+          .sort((a, b) => compareListItems(a, b));
+    }
+
     if (state is ErrorCreateScreenCreateTaskState) {
 //                print(state.message);
     }
@@ -485,9 +492,9 @@ int compareListItems(TaskEntity a, TaskEntity b) {
 
   if (!a.isCompleted && !b.isCompleted) {
     if (a.urgency > b.urgency) {
-      positiveOrNegativeIndex = 1;
-    } else if (a.urgency < b.urgency) {
       positiveOrNegativeIndex = -1;
+    } else if (a.urgency < b.urgency) {
+      positiveOrNegativeIndex = 1;
     } else {
       if (a.createdAt.difference(b.createdAt).inMinutes > 0) {
         positiveOrNegativeIndex = -1;

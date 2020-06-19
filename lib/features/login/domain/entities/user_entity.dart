@@ -1,20 +1,21 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class UserEntity extends Equatable {
-   String userId;
-   String googleId;
-   String userName;
-   String phoneNumber;
-   String emailId;
-   int age;
-   String gender;
-   DateTime createdAt;
-   String userPhotoUrl;
-   double score;
-   bool isVerified;
-   bool isDeleted;
-   bool isLoggedIn;
+  String userId;
+  String googleId;
+  String userName;
+  String phoneNumber;
+  String emailId;
+  int age;
+  String gender;
+  DateTime createdAt;
+  String userPhotoUrl;
+  double score;
+  bool isVerified;
+  bool isDeleted;
+  bool isLoggedIn;
 
   UserEntity({
     @required this.userId,
