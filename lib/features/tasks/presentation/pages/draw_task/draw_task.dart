@@ -166,7 +166,11 @@ class DrawTaskRoute extends StatelessWidget {
         taskTitle += text;
         taskTitle += " ";
       }
-      showFinalText(taskTitle.trim(), context);
+      if (taskTitle != null) {
+        showFinalText(taskTitle.replaceAll("\n", " ").trim(), context);
+      } else {
+        showFinalText(null, context);
+      }
     }).catchError((onError) {
       print(onError);
     });
