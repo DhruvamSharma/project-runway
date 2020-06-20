@@ -25,6 +25,7 @@ class AppIntroSpeakOrDrawWidget extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(
                 left: CommonDimens.MARGIN_20,
+                top: CommonDimens.MARGIN_20,
                 right: CommonDimens.MARGIN_20,
               ),
               child: Container(
@@ -56,7 +57,9 @@ class AppIntroSpeakOrDrawWidget extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: CommonDimens.MARGIN_40,),
+                        padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_40,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[

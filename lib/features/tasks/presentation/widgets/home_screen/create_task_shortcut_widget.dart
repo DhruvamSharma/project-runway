@@ -80,19 +80,28 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 24.0),
-                    child: FloatingActionButton(
-                      mini: true,
-                      heroTag: "action_button_${pageState.pageNumber}",
-                      onPressed: () {
-                        onCreateTask(context, pageState, taskListState);
-                      },
-                      child: CircleAvatar(
-                        backgroundColor: buildIconColor(appState, pageState.pageNumber),
-                        child: Icon(
-                          Icons.add,
-                          color: appState.currentTheme.scaffoldBackgroundColor,
-                          size: 21,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: CommonDimens.MARGIN_20,
+                    ),
+                    child: SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: FloatingActionButton(
+                        mini: true,
+                        tooltip: "Create Task",
+                        heroTag: "action_button_${pageState.pageNumber}",
+                        onPressed: () {
+                          onCreateTask(context, pageState, taskListState);
+                        },
+                        child: CircleAvatar(
+                          backgroundColor:
+                              buildIconColor(appState, pageState.pageNumber),
+                          child: Icon(
+                            Icons.add,
+                            color:
+                                appState.currentTheme.scaffoldBackgroundColor,
+                            size: 21,
+                          ),
                         ),
                       ),
                     ),
