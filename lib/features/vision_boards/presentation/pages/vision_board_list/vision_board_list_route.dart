@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:project_runway/core/analytics_utils.dart';
@@ -267,17 +269,22 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
                                       child: CachedNetworkImage(
                                         imageUrl:
                                             visions[index].profileImageUrl,
-                                        height: isTakingScreenshot ? 10 : 20,
-                                        width: isTakingScreenshot ? 10 : 20,
+                                        height: isTakingScreenshot ? 10 : 15,
+                                        width: isTakingScreenshot ? 10 : 15,
                                       ),
                                       borderRadius: BorderRadius.circular(15.0),
                                     ),
-                                    SizedBox(width: 10.0),
                                     Expanded(
-                                      child: Text(
-                                        visions[index].fullName,
-                                        style: CommonTextStyles.badgeTextStyle(
-                                            context),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(width: 10.0),
+                                          Text(
+                                            visions[index].fullName,
+                                            style:
+                                                CommonTextStyles.badgeTextStyle(
+                                                    context),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
@@ -310,66 +317,89 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
       padding: const EdgeInsets.only(
         top: CommonDimens.MARGIN_80,
       ),
-      child: Column(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.topCenter,
-            child: Text(
-              screenName.toUpperCase(),
-              style: CommonTextStyles.headerTextStyle(context),
-              textAlign: TextAlign.center,
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.topCenter,
+              child: Text(
+                screenName.toUpperCase(),
+                style: CommonTextStyles.headerTextStyle(context),
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(
-              top: CommonDimens.MARGIN_40,
-              left: CommonDimens.MARGIN_20,
-              right: CommonDimens.MARGIN_20,
+            Card(
+              margin: const EdgeInsets.only(
+                top: CommonDimens.MARGIN_40,
+                left: CommonDimens.MARGIN_20,
+                right: CommonDimens.MARGIN_20,
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: CachedNetworkImage(
+                imageUrl:
+                    "https://images.unsplash.com/photo-1507361617237-221d9f2c84f7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1106&q=80",
+              ),
             ),
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-                color: CommonColors.accentColor,
-                borderRadius: BorderRadius.all(Radius.circular(15))),
-            child: CachedNetworkImage(
-              imageUrl:
-                  "https://images.unsplash.com/photo-1507361617237-221d9f2c84f7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1106&q=80",
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: CommonDimens.MARGIN_40,
-            ),
-            child: Text(
-              "Vision Boards",
-              textAlign: TextAlign.center,
-              style: CommonTextStyles.loginTextStyle(context),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: CommonDimens.MARGIN_20,
-            ),
-            child: Text(
-              "keep your productivity\nAt an all-time high",
-              textAlign: TextAlign.center,
-              style: CommonTextStyles.taskTextStyle(context),
-            ),
-          ),
-          if (visionBoards.isEmpty)
             Padding(
               padding: const EdgeInsets.only(
-                top: CommonDimens.MARGIN_40,
+                top: CommonDimens.MARGIN_60,
               ),
-              child: MaterialButton(
-                onPressed: () async {
-                  createVisionBoard();
-                  moveToCreateVisionRoute();
-                },
-                child: Text("Create"),
-                color: CommonColors.chartColor,
+              child: SizedBox(
+                width: 200,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("Build",
+                        style: CommonTextStyles.taskTextStyle(context)),
+                    Expanded(
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(left: CommonDimens.MARGIN_20),
+                        child: RotateAnimatedTextKit(
+                          totalRepeatCount: 4,
+                          repeatForever:
+                              true, //this will ignore [totalRepeatCount]
+                          pause: Duration(milliseconds: 1000),
+                          text: ["VISIONS", "GOALS", "ABILITY"],
+                          textStyle: GoogleFonts.anton().copyWith(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 28,
+                              color: CommonColors.chartColor),
+                          displayFullTextOnTap: true, // or Alignment.topLeft
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(
+                top: CommonDimens.MARGIN_20,
+              ),
+              child: Text(
+                "keep your productivity\nAt an all-time high",
+                textAlign: TextAlign.center,
+                style: CommonTextStyles.taskTextStyle(context),
+              ),
+            ),
+            if (visionBoards.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_40,
+                ),
+                child: MaterialButton(
+                  onPressed: () async {
+                    createVisionBoard();
+                    moveToCreateVisionRoute();
+                  },
+                  child: Text("Create"),
+                  color: CommonColors.chartColor,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -448,11 +478,13 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
             ),
           ),
           buildVisionBoardRoute(),
-          SizedBox(
-            height: 56,
-            child: AppBar(
-              elevation: 0,
-              backgroundColor: Colors.transparent,
+          SafeArea(
+            child: SizedBox(
+              height: 56,
+              child: AppBar(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+              ),
             ),
           ),
           if (visions != null && visions.isNotEmpty)

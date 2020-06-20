@@ -11,22 +11,36 @@ class AppIntroVisionBoardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(left: CommonDimens.MARGIN_20, bottom: CommonDimens.MARGIN_20,),
-            child: Text("Vision\nBoards", style: CommonTextStyles.defineTextStyle(context),),
+            padding: const EdgeInsets.only(
+              left: CommonDimens.MARGIN_20,
+              bottom: CommonDimens.MARGIN_20,
+            ),
+            child: Text(
+              "Vision\nBoards",
+              style: CommonTextStyles.defineTextStyle(context),
+            ),
           ),
           Align(
             alignment: Alignment.center,
             child: Padding(
-              padding: const EdgeInsets.only(left: CommonDimens.MARGIN_20, right: CommonDimens.MARGIN_20,),
+              padding: const EdgeInsets.only(
+                left: CommonDimens.MARGIN_20,
+                right: CommonDimens.MARGIN_20,
+                top: CommonDimens.MARGIN_20,
+              ),
               child: Container(
                 color: CommonColors.scaffoldColor,
-                height: MediaQuery.of(context).size.height/2,
+                height: MediaQuery.of(context).size.height / 2,
                 child: Card(
                   clipBehavior: Clip.antiAlias,
                   color: CommonColors.darkGreyColor,
                   elevation: 24,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(CommonDimens.MARGIN_20,),),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(
+                        CommonDimens.MARGIN_20,
+                      ),
+                    ),
                   ),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
@@ -47,7 +61,10 @@ class AppIntroVisionBoardWidget extends StatelessWidget {
                         Align(
                           alignment: Alignment.center,
                           child: Padding(
-                            padding: const EdgeInsets.only(right: CommonDimens.MARGIN_20, top: CommonDimens.MARGIN_40,),
+                            padding: const EdgeInsets.only(
+                              right: CommonDimens.MARGIN_20,
+                              top: CommonDimens.MARGIN_40,
+                            ),
                             child: Icon(
                               Icons.grid_on,
                               size: 150,

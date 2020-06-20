@@ -32,7 +32,7 @@ class ViewVisionBoardDetailsWidget extends StatelessWidget {
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
                   ),
-                  color: CommonColors.chartColor,
+                  color: CommonColors.scaffoldColor,
                 ),
                 child: ListView(
                   shrinkWrap: true,
@@ -162,6 +162,7 @@ class ViewVisionBoardDetailsWidget extends StatelessWidget {
                                     },
                                     child: Container(
                                       height: 50,
+                                      width: MediaQuery.of(context).size.width,
                                       color: Colors.transparent,
                                       child: Padding(
                                         padding: const EdgeInsets.only(
@@ -183,24 +184,30 @@ class ViewVisionBoardDetailsWidget extends StatelessWidget {
                                                   BorderRadius.circular(25.0),
                                             ),
                                             SizedBox(width: 10.0),
-                                            Text(
-                                              vision.fullName,
-                                              style: CommonTextStyles
-                                                      .scaffoldTextStyle(
-                                                          context)
-                                                  .copyWith(
-                                                      color: CommonColors
-                                                          .accentColor),
-                                            ),
                                             Expanded(
-                                              child: Text(
-                                                " On Unsplash",
-                                                style: CommonTextStyles
-                                                        .scaffoldTextStyle(
-                                                            context)
-                                                    .copyWith(
-                                                        color: CommonColors
-                                                            .accentColor),
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    vision.fullName,
+                                                    style: CommonTextStyles
+                                                            .scaffoldTextStyle(
+                                                                context)
+                                                        .copyWith(
+                                                            color: CommonColors
+                                                                .accentColor),
+                                                  ),
+                                                  Expanded(
+                                                    child: Text(
+                                                      " On Unsplash",
+                                                      style: CommonTextStyles
+                                                              .scaffoldTextStyle(
+                                                                  context)
+                                                          .copyWith(
+                                                              color: CommonColors
+                                                                  .accentColor),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],
@@ -216,22 +223,24 @@ class ViewVisionBoardDetailsWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 56,
-                child: AppBar(
-                  automaticallyImplyLeading: false,
-                  leading: IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(
-                            context,
-                            Provider.of<MarVisionWidgetDirtyModel>(
-                                    providerContext,
-                                    listen: false)
-                                .isDirty);
-                      }),
-                  elevation: 0,
-                  backgroundColor: Colors.transparent,
+              SafeArea(
+                child: SizedBox(
+                  height: 56,
+                  child: AppBar(
+                    automaticallyImplyLeading: false,
+                    leading: IconButton(
+                        icon: Icon(Icons.arrow_back),
+                        onPressed: () {
+                          Navigator.pop(
+                              context,
+                              Provider.of<MarVisionWidgetDirtyModel>(
+                                      providerContext,
+                                      listen: false)
+                                  .isDirty);
+                        }),
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                  ),
                 ),
               ),
             ],

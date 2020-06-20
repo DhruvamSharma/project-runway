@@ -21,22 +21,36 @@ class AppIntroShortcutWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(left: CommonDimens.MARGIN_20, bottom: CommonDimens.MARGIN_20,),
-            child: Text(title, style: CommonTextStyles.defineTextStyle(context),),
+            padding: const EdgeInsets.only(
+              left: CommonDimens.MARGIN_20,
+              bottom: CommonDimens.MARGIN_20,
+            ),
+            child: Text(
+              title,
+              style: CommonTextStyles.defineTextStyle(context),
+            ),
           ),
           Align(
             alignment: Alignment.center,
             child: Padding(
-              padding: const EdgeInsets.only(left: CommonDimens.MARGIN_20, right: CommonDimens.MARGIN_20,),
+              padding: const EdgeInsets.only(
+                top: CommonDimens.MARGIN_20,
+                left: CommonDimens.MARGIN_20,
+                right: CommonDimens.MARGIN_20,
+              ),
               child: Container(
                 color: CommonColors.scaffoldColor,
-                height: MediaQuery.of(context).size.height/2,
+                height: MediaQuery.of(context).size.height / 2,
                 child: Card(
                   clipBehavior: Clip.antiAlias,
                   color: CommonColors.darkGreyColor,
                   elevation: 24,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(CommonDimens.MARGIN_20,),),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(
+                        CommonDimens.MARGIN_20,
+                      ),
+                    ),
                   ),
                   child: Container(
                     child: Column(
@@ -49,12 +63,15 @@ class AppIntroShortcutWidget extends StatelessWidget {
                             right: CommonDimens.MARGIN_20,
                           ),
                           child: Text(
-                            "View 7 tasks for 3 days for focused prioritization of tasks",
-                            style: CommonTextStyles.disabledTaskTextStyle(),
+                            subtitle,
+                            style: CommonTextStyles.taskTextStyle(context),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(right: CommonDimens.MARGIN_20,),
+                          padding: const EdgeInsets.only(
+                            right: CommonDimens.MARGIN_20,
+                            top: CommonDimens.MARGIN_20,
+                          ),
                           child: Image.asset(
                             imageUrl,
                           ),

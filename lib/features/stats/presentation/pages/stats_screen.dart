@@ -31,27 +31,27 @@ class StatsScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: CommonColors.appBarColor,
         ),
-        body: GlowingOverscrollIndicator(
-          axisDirection: AxisDirection.down,
-          color: CommonColors.chartColor,
-          child: SingleChildScrollView(
-            child: Stack(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.center,
-                  child: RotatedBox(
-                    quarterTurns: 3,
-                    child: Text(
-                      APP_NAME.toUpperCase(),
-                      style: CommonTextStyles.rotatedDesignTextStyle(context),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+        body: Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: RotatedBox(
+                quarterTurns: 3,
+                child: Text(
+                  APP_NAME.toUpperCase(),
+                  style: CommonTextStyles.rotatedDesignTextStyle(context),
+                  textAlign: TextAlign.center,
                 ),
-                buildRoute(context),
-              ],
+              ),
             ),
-          ),
+            GlowingOverscrollIndicator(
+              axisDirection: AxisDirection.down,
+              color: CommonColors.chartColor,
+              child: SingleChildScrollView(
+                child: buildRoute(context),
+              ),
+            ),
+          ],
         ),
       ),
     );

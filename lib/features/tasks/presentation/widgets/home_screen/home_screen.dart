@@ -109,8 +109,7 @@ class _HomeScreenState extends State<HomeScreen>
                   }),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  right: CommonDimens.MARGIN_20),
+              padding: const EdgeInsets.only(right: CommonDimens.MARGIN_20),
               child: IconButton(
                   tooltip: "Settings",
                   icon: Icon(
@@ -142,7 +141,9 @@ class _HomeScreenState extends State<HomeScreen>
             Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.only(top: CommonDimens.MARGIN_20,),
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_20,
+                ),
                 child: GestureDetector(
                   onTap: () {
                     if (!sharedPreferences.containsKey(REFRESH_KEY) &&
