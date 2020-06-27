@@ -56,7 +56,7 @@ class AppIntro37Widget extends StatelessWidget {
                           ),
                           child: Text(
                             "View 7 tasks for 3 days for focused prioritization of tasks",
-                            style: CommonTextStyles.disabledTaskTextStyle(),
+                            style: CommonTextStyles.taskTextStyle(context),
                           ),
                         ),
                         Align(

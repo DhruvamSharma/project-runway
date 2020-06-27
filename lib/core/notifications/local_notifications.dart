@@ -93,12 +93,7 @@ void selectTimeForNotification(BuildContext newContext, runningDate,
       context: newContext,
       initialTime: TimeOfDay.now(),
       builder: (context, child) {
-        return Theme(
-          data: ThemeData.dark().copyWith(
-            accentColor: CommonColors.chartColor,
-          ),
-          child: child,
-        );
+        return child;
       });
   if (timeOfDay != null) {
     if (runningDate.day - DateTime.now().day > 0) {

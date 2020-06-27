@@ -14,9 +14,7 @@ class HomeScreenBloc {
   }
 
   Stream<Photos> photosList() {
-    print("in photo list");
     return _query.stream
-        .debounceTime(Duration(milliseconds: 300))
         .where((String value) => value.isNotEmpty)
         .distinct()
         .transform(streamTransformer);
@@ -24,7 +22,6 @@ class HomeScreenBloc {
 
   final streamTransformer = StreamTransformer<String, Photos>.fromHandlers(
       handleData: (query, sink) async {
-    print(query);
     PhotosState state = await _repository.imageData(query);
     if (state is SuccessState) {
       sink.add(state.value);

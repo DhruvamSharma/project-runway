@@ -270,15 +270,22 @@ class CreateTaskWidget extends StatelessWidget {
                                 top: CommonDimens.MARGIN_40,
                                 bottom: CommonDimens.MARGIN_20,
                               ),
-                              child: MaterialButton(
-                                color: appState.currentTheme.accentColor,
-                                onPressed: () {
-                                  createTask(newContext, appState);
-                                },
-                                child: Text(
-                                  "Create",
-                                  style: CommonTextStyles.scaffoldTextStyle(
-                                      context),
+                              child: Container(
+                                clipBehavior: Clip.antiAlias,
+                                decoration: BoxDecoration(
+                                    color: CommonColors.accentColor,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                                child: MaterialButton(
+                                  visualDensity: VisualDensity.compact,
+                                  onPressed: () {
+                                    createTask(newContext, appState);
+                                  },
+                                  child: Text(
+                                    "Create",
+                                    style: CommonTextStyles.scaffoldTextStyle(
+                                        context),
+                                  ),
                                 ),
                               ),
                             ),

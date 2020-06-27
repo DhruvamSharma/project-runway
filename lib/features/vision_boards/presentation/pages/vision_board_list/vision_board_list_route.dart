@@ -278,11 +278,12 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
                                       child: Row(
                                         children: [
                                           SizedBox(width: 10.0),
-                                          Text(
-                                            visions[index].fullName,
-                                            style:
-                                                CommonTextStyles.badgeTextStyle(
-                                                    context),
+                                          Expanded(
+                                            child: Text(
+                                              visions[index].fullName,
+                                              style: CommonTextStyles
+                                                  .badgeTextStyle(context),
+                                            ),
                                           ),
                                         ],
                                       ),

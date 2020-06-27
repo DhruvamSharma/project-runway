@@ -67,25 +67,22 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
         child: Container(
           child: Column(
             children: <Widget>[
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: CommonDimens.MARGIN_40,
-                    vertical: CommonDimens.MARGIN_20,
-                  ),
-                  child: CustomTextField(
-                    null,
-                    null,
-                    label: "Search",
-                    isRequired: false,
-                    onValueChange: (value) {
-                      bloc.changeQuery(value);
-                    },
-                  ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: CommonDimens.MARGIN_40,
+                  vertical: CommonDimens.MARGIN_20,
+                ),
+                child: CustomTextField(
+                  null,
+                  null,
+                  label: "Search",
+                  isRequired: false,
+                  onValueChange: (value) {
+                    bloc.changeQuery(value);
+                  },
                 ),
               ),
               Expanded(
-                flex: 5,
                 child: StreamBuilder(
                     stream: bloc.photosList(),
                     builder: (context, AsyncSnapshot<Photos> snapshot) {
@@ -185,10 +182,12 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
                           borderRadius: BorderRadius.circular(25.0),
                         ),
                         SizedBox(width: 10.0),
-                        Text(
-                          "${result.user.firstName} ${result.user.lastName} on Unsplash",
-                          style: CommonTextStyles.scaffoldTextStyle(context)
-                              .copyWith(color: CommonColors.accentColor),
+                        Expanded(
+                          child: Text(
+                            "${result.user.firstName} ${result.user.lastName} on Unsplash",
+                            style: CommonTextStyles.scaffoldTextStyle(context)
+                                .copyWith(color: CommonColors.accentColor),
+                          ),
                         ),
                       ],
                     )),
