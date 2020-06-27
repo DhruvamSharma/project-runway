@@ -43,6 +43,7 @@ class TaskDetailProviderModel extends ChangeNotifier {
   String description;
   String tag;
   DateTime notificationTime;
+  bool isCreating = false;
 
   TaskDetailProviderModel({
     this.taskTitle,
@@ -69,6 +70,11 @@ class TaskDetailProviderModel extends ChangeNotifier {
 
   assignTaskUrgency(String urgency) {
     this.urgency = urgency;
+    notifyListeners();
+  }
+
+  assignIsCreating(bool isCreating) {
+    this.isCreating = isCreating;
     notifyListeners();
   }
 

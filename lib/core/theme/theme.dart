@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project_runway/core/common_colors.dart';
+import 'package:project_runway/core/common_dimens.dart';
 
 final TextStyle _themeTextStyle = GoogleFonts.bellotaText();
 final TextTheme _themeTextTheme = GoogleFonts.bellotaTextTextTheme();
@@ -11,6 +12,7 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   primaryColor: CommonColors.primarySwatch,
   accentColor: Colors.white,
   brightness: Brightness.light,
+  textSelectionColor: CommonColors.chartColor.withOpacity(0.38),
   scaffoldBackgroundColor: CommonColors.scaffoldColor,
   canvasColor: Colors.transparent,
   iconTheme: IconThemeData(color: Colors.white.withOpacity(0.60)),
@@ -18,6 +20,13 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   accentIconTheme: IconThemeData(color: Colors.white),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     backgroundColor: CommonColors.chartColor,
+  ),
+  tooltipTheme: TooltipThemeData(
+    decoration: BoxDecoration(
+        color: CommonColors.chartColor,
+        borderRadius: BorderRadius.all(Radius.circular(
+          CommonDimens.MARGIN_20,
+        ))),
   ),
   textTheme: _themeTextTheme.copyWith(
     headline1: GoogleFonts.anton().copyWith(
@@ -107,10 +116,14 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
       letterSpacing: 4,
     ),
   ),
+  timePickerTheme: TimePickerThemeData(
+    dialHandColor: CommonColors.accentColor,
+  ),
   sliderTheme: SliderThemeData(
-      thumbColor: CommonColors.chartColor,
-      activeTrackColor: CommonColors.chartColor,
-      showValueIndicator: ShowValueIndicator.always),
+    thumbColor: CommonColors.chartColor,
+    activeTrackColor: CommonColors.chartColor,
+    showValueIndicator: ShowValueIndicator.always,
+  ),
   inputDecorationTheme: InputDecorationTheme(
     errorBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: Colors.red),

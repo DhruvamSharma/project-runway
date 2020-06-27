@@ -97,31 +97,34 @@ class _CongratulatoryWidgetState extends State<CongratulatoryWidget> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(
                               Radius.circular(CommonDimens.MARGIN_20))),
-                      child: MaterialButton(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: CommonDimens.MARGIN_40,
-                          vertical: CommonDimens.MARGIN_20 / 2,
-                        ),
-                        onPressed: () {
-                          if (!isCreatingAccount) {
-                            setState(() {
-                              isCreatingAccount = true;
-                            });
-                            final user =
-                                createUser(blocContext, userEntryState);
-                            BlocProvider.of<LoginBloc>(blocContext)
-                                .add(LoginUserEvent(user: user));
-                          }
-                        },
-                        child: Text(
-                          "Let's Begin",
-                          style:
-                              CommonTextStyles.taskTextStyle(context).copyWith(
-                            color:
-                                appState.currentTheme.scaffoldBackgroundColor,
+                      child: Tooltip(
+                        message: "Start the app",
+                        child: MaterialButton(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: CommonDimens.MARGIN_40,
+                            vertical: CommonDimens.MARGIN_20 / 2,
                           ),
+                          onPressed: () {
+                            if (!isCreatingAccount) {
+                              setState(() {
+                                isCreatingAccount = true;
+                              });
+                              final user =
+                                  createUser(blocContext, userEntryState);
+                              BlocProvider.of<LoginBloc>(blocContext)
+                                  .add(LoginUserEvent(user: user));
+                            }
+                          },
+                          child: Text(
+                            "Let's Begin",
+                            style: CommonTextStyles.taskTextStyle(context)
+                                .copyWith(
+                              color:
+                                  appState.currentTheme.scaffoldBackgroundColor,
+                            ),
+                          ),
+                          color: appState.currentTheme.accentColor,
                         ),
-                        color: appState.currentTheme.accentColor,
                       ),
                     ),
                   )),

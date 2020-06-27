@@ -6,6 +6,7 @@ import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/keys/keys.dart';
+import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/presentation/pages/create_task/create_task_page.dart';
 import 'package:provider/provider.dart';
 
@@ -89,14 +90,13 @@ Future<void> sendNotificationForFCM(
 
 void selectTimeForNotification(BuildContext newContext, runningDate,
     Function onDateError, Function onSuccess) async {
+  final appState = Provider.of<ThemeModel>(newContext, listen: false);
   TimeOfDay timeOfDay = await showTimePicker(
       context: newContext,
       initialTime: TimeOfDay.now(),
       builder: (context, child) {
         return Theme(
-          data: ThemeData.dark().copyWith(
-            accentColor: CommonColors.chartColor,
-          ),
+          data: appState.currentTheme,
           child: child,
         );
       });

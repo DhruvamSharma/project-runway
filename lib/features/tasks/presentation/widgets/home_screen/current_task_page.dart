@@ -66,7 +66,6 @@ class _CurrentTaskPageState extends State<CurrentTaskPage>
   ) async {
     var sharedData = await platform.invokeMethod("getSharedText");
     String emptyText = "empty_8ebddc3a-a5d8-11ea-bb37-0242ac130002";
-    print("fetched data from native layer");
     if (sharedData != emptyText) {
       print(sharedData);
       if (sharedData != null && sharedData.toString().isNotEmpty) {

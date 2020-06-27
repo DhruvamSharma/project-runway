@@ -103,6 +103,7 @@ class DrawTaskRoute extends StatelessWidget {
               backgroundColor: Colors.transparent,
               actions: <Widget>[
                 IconButton(
+                    tooltip: "Erase",
                     icon: Icon(
                       Icons.delete,
                     ),
@@ -134,6 +135,7 @@ class DrawTaskRoute extends StatelessWidget {
               bottom: CommonDimens.MARGIN_20,
             ),
             child: FloatingActionButton(
+              tooltip: "Recognise the text",
               heroTag: "action_button_$pageNumber",
               onPressed: () async {
                 mlTheHellOutOfImage(providerContext);
@@ -213,12 +215,22 @@ class DrawTaskRoute extends StatelessWidget {
                 padding: const EdgeInsets.only(
                   top: CommonDimens.MARGIN_40,
                 ),
-                child: MaterialButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(taskTitle);
-                  },
-                  color: Colors.black,
-                  child: Text("Confirm Title"),
+                child: Tooltip(
+                  message: "Confirm your title",
+                  child: MaterialButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(
+                      CommonDimens.MARGIN_20,
+                    ))),
+                    onPressed: () {
+                      Navigator.of(context).pop(taskTitle);
+                    },
+                    color: CommonColors.accentColor,
+                    child: Text(
+                      "Confirm Title",
+                      style: CommonTextStyles.scaffoldTextStyle(context),
+                    ),
+                  ),
                 ),
               ),
             ],

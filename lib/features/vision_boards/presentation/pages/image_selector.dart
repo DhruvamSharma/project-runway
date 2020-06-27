@@ -48,6 +48,7 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
         backgroundColor: Colors.transparent,
       ),
       floatingActionButton: FloatingActionButton.extended(
+        tooltip: "Select the image",
         onPressed: () {
           triggerDownloadEventForUnsplash();
           Navigator.pop(context, [
@@ -67,25 +68,22 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
         child: Container(
           child: Column(
             children: <Widget>[
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: CommonDimens.MARGIN_40,
-                    vertical: CommonDimens.MARGIN_20,
-                  ),
-                  child: CustomTextField(
-                    null,
-                    null,
-                    label: "Search",
-                    isRequired: false,
-                    onValueChange: (value) {
-                      bloc.changeQuery(value);
-                    },
-                  ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: CommonDimens.MARGIN_40,
+                  vertical: CommonDimens.MARGIN_20,
+                ),
+                child: CustomTextField(
+                  null,
+                  null,
+                  label: "Search",
+                  isRequired: false,
+                  onValueChange: (value) {
+                    bloc.changeQuery(value);
+                  },
                 ),
               ),
               Expanded(
-                flex: 5,
                 child: StreamBuilder(
                     stream: bloc.photosList(),
                     builder: (context, AsyncSnapshot<Photos> snapshot) {
@@ -135,7 +133,7 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
           imageUrl = result.urls.regular;
           selectedIndex = index;
           profileImageUrl = result.user.profileImage.small;
-          fullName = "${result.user.firstName} ${result.user.lastName}";
+          fullName = buildFirstName(result.user);
         });
       },
       child: SizedBox(
@@ -185,10 +183,12 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
                           borderRadius: BorderRadius.circular(25.0),
                         ),
                         SizedBox(width: 10.0),
-                        Text(
-                          "${result.user.firstName} ${result.user.lastName} on Unsplash",
-                          style: CommonTextStyles.scaffoldTextStyle(context)
-                              .copyWith(color: CommonColors.accentColor),
+                        Expanded(
+                          child: Text(
+                            "${result.user.firstName} ${result.user.lastName} on Unsplash",
+                            style: CommonTextStyles.scaffoldTextStyle(context)
+                                .copyWith(color: CommonColors.accentColor),
+                          ),
                         ),
                       ],
                     )),
@@ -205,6 +205,14 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
       await http.get("$downloadLink?client_id=$UNSPLASH_KEY");
     } catch (ex) {
       // Do nothing
+    }
+  }
+
+  String buildFirstName(User user) {
+    if (user.lastName != null) {
+      return "${user.firstName} ${user.lastName}";
+    } else {
+      return user.firstName;
     }
   }
 }

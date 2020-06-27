@@ -94,10 +94,15 @@ class ViewVisionBoardDetailsWidget extends StatelessWidget {
                           vertical: CommonDimens.MARGIN_60 / 2),
                       child: VisionCompleteStatus(vision: vision),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: CommonDimens.MARGIN_20 / 2),
+                    Tooltip(
+                      message: "Delete your vision",
                       child: MaterialButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                          Radius.circular(
+                            CommonDimens.MARGIN_20,
+                          ),
+                        )),
                         onPressed: () {
                           Provider.of<MarVisionWidgetDirtyModel>(
                                   providerContext,
@@ -119,9 +124,9 @@ class ViewVisionBoardDetailsWidget extends StatelessWidget {
                 ),
               );
             },
-            initialChildSize: 0.20,
-            minChildSize: 0.20,
-            maxChildSize: 0.5,
+            initialChildSize: 0.18,
+            minChildSize: 0.18,
+            maxChildSize: 0.45,
           ),
           body: Stack(
             children: <Widget>[
@@ -185,19 +190,23 @@ class ViewVisionBoardDetailsWidget extends StatelessWidget {
                                             ),
                                             SizedBox(width: 10.0),
                                             Expanded(
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    vision.fullName,
-                                                    style: CommonTextStyles
-                                                            .scaffoldTextStyle(
-                                                                context)
-                                                        .copyWith(
-                                                            color: CommonColors
-                                                                .accentColor),
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(
+                                              child: SizedBox(
+                                                height: 50,
+                                                child: ListView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  shrinkWrap: true,
+                                                  children: [
+                                                    Text(
+                                                      vision.fullName,
+                                                      style: CommonTextStyles
+                                                              .scaffoldTextStyle(
+                                                                  context)
+                                                          .copyWith(
+                                                              color: CommonColors
+                                                                  .accentColor),
+                                                    ),
+                                                    Text(
                                                       " On Unsplash",
                                                       style: CommonTextStyles
                                                               .scaffoldTextStyle(
@@ -206,8 +215,8 @@ class ViewVisionBoardDetailsWidget extends StatelessWidget {
                                                               color: CommonColors
                                                                   .accentColor),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -229,6 +238,7 @@ class ViewVisionBoardDetailsWidget extends StatelessWidget {
                   child: AppBar(
                     automaticallyImplyLeading: false,
                     leading: IconButton(
+                        tooltip: "Back",
                         icon: Icon(Icons.arrow_back),
                         onPressed: () {
                           Navigator.pop(

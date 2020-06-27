@@ -93,39 +93,42 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                     padding: const EdgeInsets.all(
                       CommonDimens.MARGIN_20 / 2,
                     ),
-                    child: FlatButton(
-                        onPressed: () async {
-                          // start showing a loader
-                          setState(() {
-                            isSigningInAnonymously = true;
-                          });
-                          AnalyticsUtils.sendAnalyticEvent(
-                              SIGN_IN, {"signIn": "ANONYMOUS"}, "SIGN_UP_USER");
-                          // login the user anonymously so that the
-                          // user can still user firebase products
-                          final firebaseUser =
-                              await AuthService.signInAnonymously();
-                          if (firebaseUser != null) {
-                            userEntryState.disableForwardButton(false);
-                            userEntryState.googleId = firebaseUser.uid;
-                            userEntryState.isVerified = false;
+                    child: Tooltip(
+                      message: "Skip the sign up process",
+                      child: FlatButton(
+                          onPressed: () async {
+                            // start showing a loader
+                            setState(() {
+                              isSigningInAnonymously = true;
+                            });
+                            AnalyticsUtils.sendAnalyticEvent(SIGN_IN,
+                                {"signIn": "ANONYMOUS"}, "SIGN_UP_USER");
+                            // login the user anonymously so that the
+                            // user can still user firebase products
+                            final firebaseUser =
+                                await AuthService.signInAnonymously();
+                            if (firebaseUser != null) {
+                              userEntryState.disableForwardButton(false);
+                              userEntryState.googleId = firebaseUser.uid;
+                              userEntryState.isVerified = false;
 
-                            userEntryState.animatedToNextPage();
-                          } else {
-                            Scaffold.of(context).showSnackBar(
-                              CustomSnackbar.withAnimation(
-                                context,
-                                "Sorry, a problem occurred, please try again",
-                              ),
-                            );
-                          }
-                          // stop showing a loader
-                          setState(() {
-                            isSigningInAnonymously = false;
-                          });
-                        },
-                        child: Text("Skip",
-                            style: CommonTextStyles.taskTextStyle(context))),
+                              userEntryState.animatedToNextPage();
+                            } else {
+                              Scaffold.of(context).showSnackBar(
+                                CustomSnackbar.withAnimation(
+                                  context,
+                                  "Sorry, a problem occurred, please try again",
+                                ),
+                              );
+                            }
+                            // stop showing a loader
+                            setState(() {
+                              isSigningInAnonymously = false;
+                            });
+                          },
+                          child: Text("Skip",
+                              style: CommonTextStyles.taskTextStyle(context))),
+                    ),
                   ),
                 if (isSigningInAnonymously)
                   Padding(
@@ -167,132 +170,136 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
 
   Widget buildSignInButton(BuildContext blocContext, ThemeModel appState,
       UserEntryProviderHolder userEntryState) {
-    return AnimatedCrossFade(
-      firstChild: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: CommonDimens.MARGIN_20,
-        ),
-        child: Material(
-          color: CommonColors.chartColor,
-          borderRadius: BorderRadius.circular(5),
-          child: InkWell(
+    return Tooltip(
+      message: "Sign in",
+      child: AnimatedCrossFade(
+        firstChild: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: CommonDimens.MARGIN_20,
+          ),
+          child: Material(
+            color: CommonColors.chartColor,
             borderRadius: BorderRadius.circular(5),
-            onTap: null,
-            child: Container(
-              padding: const EdgeInsets.all(
-                CommonDimens.MARGIN_20 / 2,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(5),
+              onTap: null,
+              child: Container(
+                padding: const EdgeInsets.all(
+                  CommonDimens.MARGIN_20 / 2,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(
+                      "assets/google-logo-png-open-2000.png",
+                      height: 20,
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: CommonDimens.MARGIN_20,
+                        ),
+                        child: Text(
+                          "Signed in with Google",
+                          style:
+                              CommonTextStyles.badgeTextStyle(context).copyWith(
+                            color: CommonColors.accentColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    "assets/google-logo-png-open-2000.png",
-                    height: 20,
-                    width: 20,
+            ),
+          ),
+        ),
+        secondChild: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: CommonDimens.MARGIN_20,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(5),
+              onTap: () async {
+                setState(() {
+                  isFindingUser = true;
+                });
+                AnalyticsUtils.sendAnalyticEvent(
+                    SIGN_IN,
+                    {
+                      "signIn": "GOOGLE",
+                    },
+                    "SIGN_UP_USER");
+                await AuthService.signOutOfGoogle();
+                final firebaseUser = await AuthService.signInWithGoogle();
+                if (firebaseUser != null) {
+                  userEntryState.disableForwardButton(true);
+                  userEntryState.userPhotoUrl = firebaseUser.photoUrl;
+                  userEntryState.googleId = firebaseUser.uid;
+                  userEntryState.emailId = firebaseUser.email;
+                  userEntryState.isVerified = true;
+                  BlocProvider.of<LoginBloc>(blocContext)
+                      .add(CheckIfUserExistsEvent(googleId: firebaseUser.uid));
+                } else {
+                  Scaffold.of(context).showSnackBar(
+                    CustomSnackbar.withAnimation(
+                      context,
+                      "Sorry, a problem occurred, please try again",
+                    ),
+                  );
+                  setState(() {
+                    isFindingUser = false;
+                  });
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  border: Border.all(
+                    width: 1.0,
+                    color: CommonColors.disabledTaskTextColor,
                   ),
-                  Expanded(
-                    child: Padding(
+                ),
+                padding: const EdgeInsets.all(
+                  CommonDimens.MARGIN_20 / 2,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(
+                      "assets/google-logo-png-open-2000.png",
+                      height: 20,
+                      width: 20,
+                    ),
+                    Padding(
                       padding: const EdgeInsets.only(
                         left: CommonDimens.MARGIN_20,
                       ),
                       child: Text(
-                        "Signed in with Google",
+                        "Sign in with Google",
                         style:
                             CommonTextStyles.badgeTextStyle(context).copyWith(
-                          color: CommonColors.accentColor,
+                          color: appState.currentTheme.accentColor,
                           fontSize: 16,
                         ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-      secondChild: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: CommonDimens.MARGIN_20,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(5),
-            onTap: () async {
-              setState(() {
-                isFindingUser = true;
-              });
-              AnalyticsUtils.sendAnalyticEvent(
-                  SIGN_IN,
-                  {
-                    "signIn": "GOOGLE",
-                  },
-                  "SIGN_UP_USER");
-              await AuthService.signOutOfGoogle();
-              final firebaseUser = await AuthService.signInWithGoogle();
-              if (firebaseUser != null) {
-                userEntryState.disableForwardButton(true);
-                userEntryState.userPhotoUrl = firebaseUser.photoUrl;
-                userEntryState.googleId = firebaseUser.uid;
-                userEntryState.emailId = firebaseUser.email;
-                userEntryState.isVerified = true;
-                BlocProvider.of<LoginBloc>(blocContext)
-                    .add(CheckIfUserExistsEvent(googleId: firebaseUser.uid));
-              } else {
-                Scaffold.of(context).showSnackBar(
-                  CustomSnackbar.withAnimation(
-                    context,
-                    "Sorry, a problem occurred, please try again",
-                  ),
-                );
-                setState(() {
-                  isFindingUser = false;
-                });
-              }
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(5)),
-                border: Border.all(
-                  width: 1.0,
-                  color: CommonColors.disabledTaskTextColor,
+                    )
+                  ],
                 ),
               ),
-              padding: const EdgeInsets.all(
-                CommonDimens.MARGIN_20 / 2,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    "assets/google-logo-png-open-2000.png",
-                    height: 20,
-                    width: 20,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: CommonDimens.MARGIN_20,
-                    ),
-                    child: Text(
-                      "Sign in with Google",
-                      style: CommonTextStyles.badgeTextStyle(context).copyWith(
-                        color: appState.currentTheme.accentColor,
-                        fontSize: 16,
-                      ),
-                    ),
-                  )
-                ],
-              ),
             ),
           ),
         ),
-      ),
-      crossFadeState: userEntryState.isVerified
-          ? CrossFadeState.showFirst
-          : CrossFadeState.showSecond,
-      duration: Duration(
-        milliseconds: 300,
+        crossFadeState: userEntryState.isVerified
+            ? CrossFadeState.showFirst
+            : CrossFadeState.showSecond,
+        duration: Duration(
+          milliseconds: 300,
+        ),
       ),
     );
   }

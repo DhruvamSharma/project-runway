@@ -278,11 +278,12 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
                                       child: Row(
                                         children: [
                                           SizedBox(width: 10.0),
-                                          Text(
-                                            visions[index].fullName,
-                                            style:
-                                                CommonTextStyles.badgeTextStyle(
-                                                    context),
+                                          Expanded(
+                                            child: Text(
+                                              visions[index].fullName,
+                                              style: CommonTextStyles
+                                                  .badgeTextStyle(context),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -389,13 +390,23 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
                 padding: const EdgeInsets.only(
                   top: CommonDimens.MARGIN_40,
                 ),
-                child: MaterialButton(
-                  onPressed: () async {
-                    createVisionBoard();
-                    moveToCreateVisionRoute();
-                  },
-                  child: Text("Create"),
-                  color: CommonColors.chartColor,
+                child: Tooltip(
+                  message: "Create a vision board",
+                  child: MaterialButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(
+                          CommonDimens.MARGIN_20,
+                        ),
+                      ),
+                    ),
+                    onPressed: () async {
+                      createVisionBoard();
+                      moveToCreateVisionRoute();
+                    },
+                    child: Text("Create"),
+                    color: CommonColors.chartColor,
+                  ),
                 ),
               ),
           ],
@@ -455,6 +466,7 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
           (visions == null || visions.length == TOTAL_VISIONS_LIMIT + 1)
               ? Container()
               : FloatingActionButton.extended(
+                  tooltip: "Add visions to the vision board",
                   heroTag: "action_button_${widget.pageNumber}",
                   onPressed: () {
                     moveToCreateVisionRoute();
@@ -500,6 +512,7 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
                   backgroundColor: Colors.black,
                   child: Center(
                     child: IconButton(
+                        tooltip: "Download the vision board",
                         visualDensity: VisualDensity.compact,
                         padding: const EdgeInsets.all(0),
                         icon: Icon(
