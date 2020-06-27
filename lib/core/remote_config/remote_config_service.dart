@@ -12,6 +12,8 @@ class RemoteConfigService {
     VIEW_VISION_BOARD_DETAILS_ENABLED_KEY: true,
     CREATE_VISION_ENABLED_KEY: true,
     LIGHT_THEME_OPTION_ENABLED_KEY: true,
+    MAX_TASK_CREATION_LIMIT: 6,
+    MAX_VISION_CREATION_LIMIT: 9,
   };
   static RemoteConfigService _instance;
   static Future<RemoteConfigService> getInstance() async {
@@ -37,12 +39,14 @@ class RemoteConfigService {
       _remoteConfig.getBool(CREATE_VISION_ENABLED_KEY);
   bool get lightThemeOptionEnabled =>
       _remoteConfig.getBool(LIGHT_THEME_OPTION_ENABLED_KEY);
+  int get maxTaskLimit => _remoteConfig.getInt(MAX_TASK_CREATION_LIMIT);
+  int get maxVisionLimit => _remoteConfig.getInt(MAX_VISION_CREATION_LIMIT);
 
   Future initialiseRemoteConfig() async {
     try {
       await _remoteConfig.setDefaults(defaults);
       await _remoteConfig.fetch(
-        expiration: Duration(hours: 6),
+        expiration: Duration(seconds: 0),
       );
       await _remoteConfig.activateFetched();
     } on FetchThrottledException catch (ex) {

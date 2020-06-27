@@ -6,6 +6,8 @@ import 'package:project_runway/core/common_dimens.dart';
 import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/remote_config/remote_config_service.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
 import 'package:project_runway/features/tasks/presentation/manager/bloc.dart';
@@ -22,6 +24,7 @@ import 'package:uuid/uuid.dart';
 
 class CreateTaskShortcutWidget extends StatelessWidget {
   final int totalTaskNumber;
+  final RemoteConfigService remoteConfigService = sl<RemoteConfigService>();
   CreateTaskShortcutWidget({
     @required this.totalTaskNumber,
   });
@@ -140,7 +143,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                             // failed logging event
                           }
                           if (taskListState.taskList.length <=
-                                  TOTAL_TASK_CREATION_LIMIT &&
+                                  remoteConfigService.maxTaskLimit &&
                               pageState.pageNumber != 0) {
                             final response = await Navigator.pushNamed(
                                 context, DrawTaskRoute.routeName,
@@ -263,7 +266,7 @@ class CreateTaskShortcutWidget extends StatelessWidget {
         "SHORTCUT_WIDGET");
     // check if the user can create the task or not.
     if (pageState.pageNumber != 0) {
-      if (totalTaskNumber <= TOTAL_TASK_CREATION_LIMIT) {
+      if (totalTaskNumber <= remoteConfigService.maxTaskLimit) {
         String initialTitle;
         if (Provider.of<InitialTaskTitleProviderModel>(context, listen: false)
                 .taskTitle !=

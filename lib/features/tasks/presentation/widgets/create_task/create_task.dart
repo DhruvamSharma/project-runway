@@ -9,6 +9,7 @@ import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/date_time_parser.dart';
 import 'package:project_runway/core/injection_container.dart';
 import 'package:project_runway/core/notifications/local_notifications.dart';
+import 'package:project_runway/core/remote_config/remote_config_service.dart';
 import 'package:project_runway/core/task_utility.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/domain/entities/task_entity.dart';
@@ -22,6 +23,7 @@ class CreateTaskWidget extends StatelessWidget {
   final DateTime runningDate;
   final String initialTaskTitle;
   final int totalTasksCreated;
+  final RemoteConfigService remoteConfigService = sl<RemoteConfigService>();
 
   CreateTaskWidget({
     this.runningDate,
@@ -312,7 +314,7 @@ class CreateTaskWidget extends StatelessWidget {
     final state =
         Provider.of<TaskDetailProviderModel>(newContext, listen: false);
     state.assignIsCreating(true);
-    if (totalTasksCreated <= TOTAL_TASK_CREATION_LIMIT) {
+    if (totalTasksCreated <= remoteConfigService.maxTaskLimit) {
       if (state.taskTitle != null && state.taskTitle.isNotEmpty) {
         DateTime createdAt = DateTime.now();
         final task = TaskEntity(

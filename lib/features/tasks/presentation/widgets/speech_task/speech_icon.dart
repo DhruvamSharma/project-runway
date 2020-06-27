@@ -4,6 +4,8 @@ import 'package:project_runway/core/common_colors.dart';
 import 'package:project_runway/core/common_text_styles.dart';
 import 'package:project_runway/core/common_ui/custom_snackbar.dart';
 import 'package:project_runway/core/constants.dart';
+import 'package:project_runway/core/injection_container.dart';
+import 'package:project_runway/core/remote_config/remote_config_service.dart';
 import 'package:project_runway/core/theme/theme_model.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/create_task_shortcut_widget.dart';
 import 'package:project_runway/features/tasks/presentation/widgets/home_screen/current_task_page.dart';
@@ -23,6 +25,7 @@ class _SpeechIconState extends State<SpeechIcon> {
   bool _hasSpeech = false;
   bool _startSpeaking = false;
   String lastWords;
+  final RemoteConfigService remoteConfigService = sl<RemoteConfigService>();
   Color progressColor = CommonColors.disabledTaskTextColor;
   @override
   Widget build(BuildContext context) {
@@ -47,7 +50,8 @@ class _SpeechIconState extends State<SpeechIcon> {
                   },
                   "MIC_WIDGET");
             } catch (ex) {}
-            if (taskListState.taskList.length <= TOTAL_TASK_CREATION_LIMIT &&
+            if (taskListState.taskList.length <=
+                    remoteConfigService.maxTaskLimit &&
                 pageState.pageNumber != 0) {
               try {
                 await initSpeechState();
