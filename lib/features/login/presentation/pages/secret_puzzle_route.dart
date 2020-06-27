@@ -200,15 +200,25 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                       padding: const EdgeInsets.only(
                         top: CommonDimens.MARGIN_40,
                       ),
-                      child: MaterialButton(
-                        color: appState.currentTheme.accentColor,
-                        child: Text(
-                          "Go Back",
-                          style: CommonTextStyles.scaffoldTextStyle(context),
+                      child: Tooltip(
+                        message: "Back",
+                        child: MaterialButton(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(
+                                CommonDimens.MARGIN_20,
+                              ),
+                            ),
+                          ),
+                          color: appState.currentTheme.accentColor,
+                          child: Text(
+                            "Go Back",
+                            style: CommonTextStyles.scaffoldTextStyle(context),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
                       ),
                     ),
                 ],
@@ -223,6 +233,7 @@ class _SecretPuzzleRouteState extends State<SecretPuzzleRoute> {
                     bottom: CommonDimens.MARGIN_20,
                   ),
                   child: FloatingActionButton.extended(
+                    tooltip: "Submit your answer",
                     onPressed: () {
                       // check for nullability
                       if (puzzleSolution != null && puzzleSolution.isNotEmpty) {

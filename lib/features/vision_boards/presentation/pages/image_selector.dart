@@ -48,6 +48,7 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
         backgroundColor: Colors.transparent,
       ),
       floatingActionButton: FloatingActionButton.extended(
+        tooltip: "Select the image",
         onPressed: () {
           triggerDownloadEventForUnsplash();
           Navigator.pop(context, [
@@ -132,7 +133,7 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
           imageUrl = result.urls.regular;
           selectedIndex = index;
           profileImageUrl = result.user.profileImage.small;
-          fullName = "${result.user.firstName} ${result.user.lastName}";
+          fullName = buildFirstName(result.user);
         });
       },
       child: SizedBox(
@@ -204,6 +205,14 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
       await http.get("$downloadLink?client_id=$UNSPLASH_KEY");
     } catch (ex) {
       // Do nothing
+    }
+  }
+
+  String buildFirstName(User user) {
+    if (user.lastName != null) {
+      return "${user.firstName} ${user.lastName}";
+    } else {
+      return user.firstName;
     }
   }
 }

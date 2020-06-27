@@ -38,30 +38,33 @@ class UserNameWidget extends StatelessWidget {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(
                       Radius.circular(CommonDimens.MARGIN_20))),
-              child: MaterialButton(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: CommonDimens.MARGIN_40,
-                  vertical: CommonDimens.MARGIN_20 / 2,
-                ),
-                onPressed: () async {
-                  TimeOfDay timeOfDay = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                      builder: (context, child) {
-                        return child;
-                      });
-                  if (timeOfDay != null) {
-                    scheduleDailyNotification(context, timeOfDay);
-                    userEntryModel.assignNotificationTime(timeOfDay);
-                  }
-                },
-                child: Text(
-                  buildButtonText(userEntryModel, context),
-                  style: CommonTextStyles.taskTextStyle(context).copyWith(
-                    color: buildButtonTextColor(appState, userEntryModel),
+              child: Tooltip(
+                message: "Set a notification time",
+                child: MaterialButton(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: CommonDimens.MARGIN_40,
+                    vertical: CommonDimens.MARGIN_20 / 2,
                   ),
+                  onPressed: () async {
+                    TimeOfDay timeOfDay = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                        builder: (context, child) {
+                          return child;
+                        });
+                    if (timeOfDay != null) {
+                      scheduleDailyNotification(context, timeOfDay);
+                      userEntryModel.assignNotificationTime(timeOfDay);
+                    }
+                  },
+                  child: Text(
+                    buildButtonText(userEntryModel, context),
+                    style: CommonTextStyles.taskTextStyle(context).copyWith(
+                      color: buildButtonTextColor(appState, userEntryModel),
+                    ),
+                  ),
+                  color: buildButtonColor(appState, userEntryModel),
                 ),
-                color: buildButtonColor(appState, userEntryModel),
               ),
             ),
           ),

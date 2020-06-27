@@ -271,15 +271,18 @@ class CreateTaskWidget extends StatelessWidget {
                                     color: CommonColors.accentColor,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(20))),
-                                child: MaterialButton(
-                                  visualDensity: VisualDensity.compact,
-                                  onPressed: () {
-                                    createTask(newContext, appState);
-                                  },
-                                  child: Text(
-                                    "Create",
-                                    style: CommonTextStyles.scaffoldTextStyle(
-                                        context),
+                                child: Tooltip(
+                                  message: "Create the task",
+                                  child: MaterialButton(
+                                    visualDensity: VisualDensity.compact,
+                                    onPressed: () {
+                                      createTask(newContext, appState);
+                                    },
+                                    child: Text(
+                                      "Create",
+                                      style: CommonTextStyles.scaffoldTextStyle(
+                                          context),
+                                    ),
                                   ),
                                 ),
                               ),

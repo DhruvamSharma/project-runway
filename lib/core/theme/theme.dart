@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project_runway/core/common_colors.dart';
+import 'package:project_runway/core/common_dimens.dart';
 
 final TextStyle _themeTextStyle = GoogleFonts.bellotaText();
 final TextTheme _themeTextTheme = GoogleFonts.bellotaTextTextTheme();
@@ -19,6 +20,13 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   accentIconTheme: IconThemeData(color: Colors.white),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     backgroundColor: CommonColors.chartColor,
+  ),
+  tooltipTheme: TooltipThemeData(
+    decoration: BoxDecoration(
+        color: CommonColors.chartColor,
+        borderRadius: BorderRadius.all(Radius.circular(
+          CommonDimens.MARGIN_20,
+        ))),
   ),
   textTheme: _themeTextTheme.copyWith(
     headline1: GoogleFonts.anton().copyWith(
