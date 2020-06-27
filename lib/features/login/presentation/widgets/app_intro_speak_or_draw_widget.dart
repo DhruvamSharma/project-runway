@@ -52,7 +52,7 @@ class AppIntroSpeakOrDrawWidget extends StatelessWidget {
                           right: CommonDimens.MARGIN_20,
                         ),
                         child: Text(
-                          "Our Machine Learning Models will translate them for you",
+                          "Speak or draw your tasks and our Machine Learning Models will translate them for you",
                           style: CommonTextStyles.taskTextStyle(context),
                         ),
                       ),
