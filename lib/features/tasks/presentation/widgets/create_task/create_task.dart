@@ -48,12 +48,7 @@ class CreateTaskWidget extends StatelessWidget {
               return BlocListener<HomeScreenTaskBloc, TaskBlocState>(
                 listener: (_, state) {
                   if (state is LoadedCreateScreenCreateTaskState) {
-                    Scaffold.of(newContext).showSnackBar(
-                      SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text("Your task has been created"),
-                      ),
-                    );
+                    taskDetailState.assignIsCreating(false);
                     Navigator.pop(context, state.taskEntity);
                   }
 
@@ -293,6 +288,13 @@ class CreateTaskWidget extends StatelessWidget {
                         ],
                       ),
                     ),
+                    if (taskDetailState.isCreating)
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: LinearProgressIndicator(
+                          minHeight: 5,
+                        ),
+                      ),
                   ],
                 ),
               );
@@ -306,6 +308,7 @@ class CreateTaskWidget extends StatelessWidget {
   void createTask(BuildContext newContext, ThemeModel appState) {
     final state =
         Provider.of<TaskDetailProviderModel>(newContext, listen: false);
+    state.assignIsCreating(true);
     if (totalTasksCreated <= TOTAL_TASK_CREATION_LIMIT) {
       if (state.taskTitle != null && state.taskTitle.isNotEmpty) {
         DateTime createdAt = DateTime.now();
