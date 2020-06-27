@@ -46,7 +46,7 @@ class RemoteConfigService {
     try {
       await _remoteConfig.setDefaults(defaults);
       await _remoteConfig.fetch(
-        expiration: Duration(seconds: 0),
+        expiration: Duration(hours: 6),
       );
       await _remoteConfig.activateFetched();
     } on FetchThrottledException catch (ex) {
