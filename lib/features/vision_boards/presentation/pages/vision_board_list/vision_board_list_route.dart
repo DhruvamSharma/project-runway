@@ -462,20 +462,20 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
   Widget visionBoardPageRoute() {
     return Scaffold(
       key: _scaffoldKey,
-      floatingActionButton:
-          (visions == null || visions.length == TOTAL_VISIONS_LIMIT + 1)
-              ? Container()
-              : FloatingActionButton.extended(
-                  tooltip: "Add visions to the vision board",
-                  heroTag: "action_button_${widget.pageNumber}",
-                  onPressed: () {
-                    moveToCreateVisionRoute();
-                  },
-                  label: Text(
-                    "Add More",
-                    style: CommonTextStyles.scaffoldTextStyle(context)
-                        .copyWith(color: Colors.white),
-                  )),
+      floatingActionButton: (visions == null ||
+              visions.length >= _remoteConfigService.maxVisionLimit + 1)
+          ? Container()
+          : FloatingActionButton.extended(
+              tooltip: "Add visions to the vision board",
+              heroTag: "action_button_${widget.pageNumber}",
+              onPressed: () {
+                moveToCreateVisionRoute();
+              },
+              label: Text(
+                "Add More",
+                style: CommonTextStyles.scaffoldTextStyle(context)
+                    .copyWith(color: Colors.white),
+              )),
       body: Stack(
         children: <Widget>[
           Align(
