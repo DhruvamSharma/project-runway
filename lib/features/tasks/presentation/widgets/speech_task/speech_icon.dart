@@ -61,11 +61,15 @@ class _SpeechIconState extends State<SpeechIcon> {
                     "Some error occurred, please try again or give the necessary permissions");
               }
             } else {
+              String errorMessage = "Sorry, you cannot create any more tasks";
+              if (pageState.pageNumber == 0) {
+                errorMessage = "You cannot create task for yesterday";
+              }
               Scaffold.of(context).removeCurrentSnackBar();
               Scaffold.of(context).showSnackBar(
                 CustomSnackbar.withAnimation(
                   context,
-                  "You cannot create task for yesterday",
+                  errorMessage,
                 ),
               );
             }
