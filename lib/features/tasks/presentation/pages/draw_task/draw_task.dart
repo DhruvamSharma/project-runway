@@ -233,6 +233,13 @@ class DrawTaskRoute extends StatelessWidget {
                   ),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "You can edit the title later",
+                  style: CommonTextStyles.badgeTextStyle(context),
+                ),
+              )
             ],
           ),
         ),

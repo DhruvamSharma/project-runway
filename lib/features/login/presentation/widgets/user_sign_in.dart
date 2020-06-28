@@ -22,6 +22,7 @@ class UserSignInWidget extends StatefulWidget {
 class _UserSignInWidgetState extends State<UserSignInWidget> {
   bool isFindingUser = false;
   bool isSigningInAnonymously = false;
+  bool isSigningInWihGoogle = false;
 
   @override
   Widget build(BuildContext context) {
@@ -71,9 +72,13 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                   padding: const EdgeInsets.only(
                     top: CommonDimens.MARGIN_60,
                   ),
-                  child:
-                      buildSignInButton(blocContext, appState, userEntryState),
                 ),
+                if (!isSigningInAnonymously)
+                  buildSignInButton(
+                    blocContext,
+                    appState,
+                    userEntryState,
+                  ),
                 if (isFindingUser)
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -88,7 +93,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                       ),
                     ),
                   ),
-                if (!isFindingUser)
+                if (!isSigningInWihGoogle)
                   Padding(
                     padding: const EdgeInsets.all(
                       CommonDimens.MARGIN_20 / 2,
@@ -184,8 +189,9 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
               borderRadius: BorderRadius.circular(5),
               onTap: null,
               child: Container(
-                padding: const EdgeInsets.all(
-                  CommonDimens.MARGIN_20 / 2,
+                padding: const EdgeInsets.only(
+                  top: CommonDimens.MARGIN_20 / 2,
+                  bottom: CommonDimens.MARGIN_20 / 2,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -195,18 +201,16 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
                       height: 20,
                       width: 20,
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: CommonDimens.MARGIN_20,
-                        ),
-                        child: Text(
-                          "Signed in with Google",
-                          style:
-                              CommonTextStyles.badgeTextStyle(context).copyWith(
-                            color: CommonColors.accentColor,
-                            fontSize: 16,
-                          ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: CommonDimens.MARGIN_20,
+                      ),
+                      child: Text(
+                        "Signed in with Google",
+                        style:
+                            CommonTextStyles.badgeTextStyle(context).copyWith(
+                          color: CommonColors.accentColor,
+                          fontSize: 16,
                         ),
                       ),
                     )
@@ -227,6 +231,7 @@ class _UserSignInWidgetState extends State<UserSignInWidget> {
               onTap: () async {
                 setState(() {
                   isFindingUser = true;
+                  isSigningInWihGoogle = true;
                 });
                 AnalyticsUtils.sendAnalyticEvent(
                     SIGN_IN,

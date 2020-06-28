@@ -49,7 +49,8 @@ class _TaskWidgetState extends State<TaskWidget> {
             isScrollControlled: true,
             builder: (_) {
               return Container(
-                height: 0.8 * MediaQuery.of(context).size.height,
+                height:
+                    600, // fixed height for making sure it works on all devices
                 decoration: BoxDecoration(
                   color: appState.currentTheme == lightTheme
                       ? CommonColors.bottomSheetColorLightTheme

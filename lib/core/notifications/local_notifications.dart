@@ -40,17 +40,9 @@ Future<void> scheduleNotification(
   if (taskId != null &&
       taskTitle != null &&
       scheduledNotificationTime != null) {
-    // vibration
-    var vibrationPattern = Int64List(4);
-    vibrationPattern[0] = 0;
-    vibrationPattern[1] = 1000;
-    vibrationPattern[2] = 5000;
-    vibrationPattern[3] = 2000;
-
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         TASK_CHANNEL_ID, TASK_CHANNEL_NAME, 'your other channel description',
         largeIcon: DrawableResourceAndroidBitmap("app_icon"),
-        vibrationPattern: vibrationPattern,
         importance: Importance.High,
         color: CommonColors.scaffoldColor,
         priority: Priority.High);
