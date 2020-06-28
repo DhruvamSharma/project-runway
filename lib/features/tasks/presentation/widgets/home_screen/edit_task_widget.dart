@@ -49,6 +49,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
         child: Stack(
           children: <Widget>[
             ListView(
+              shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               children: <Widget>[
                 Padding(

@@ -109,7 +109,8 @@ class _HomeScreenState extends State<HomeScreen>
                   }),
             ),
             Padding(
-              padding: const EdgeInsets.only(right: CommonDimens.MARGIN_20),
+              padding:
+                  const EdgeInsets.only(right: CommonDimens.MARGIN_20, top: 2),
               child: IconButton(
                   tooltip: "Settings",
                   icon: Icon(
@@ -140,32 +141,27 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             Align(
               alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_20,
-                ),
-                child: GestureDetector(
-                  onTap: () {
-                    if (!sharedPreferences.containsKey(REFRESH_KEY) &&
-                        widget.user.score == null) {
-                      int days = 0;
-                      try {
-                        days = DateTime.now()
-                            .difference(widget.user.createdAt)
-                            .inDays;
-                      } catch (ex) {
-                        // Do nothing
-                      }
-                      AnalyticsUtils.sendAnalyticEvent(
-                          FOUND_PUZZLE, {"numberOfDays": days}, "HOME_SCREEN");
-                      openSecretPuzzleDoor(state);
+              child: GestureDetector(
+                onTap: () {
+                  if (!sharedPreferences.containsKey(REFRESH_KEY) &&
+                      widget.user.score == null) {
+                    int days = 0;
+                    try {
+                      days = DateTime.now()
+                          .difference(widget.user.createdAt)
+                          .inDays;
+                    } catch (ex) {
+                      // Do nothing
                     }
-                  },
-                  child: Text(
-                    APP_NAME.toUpperCase(),
-                    style: CommonTextStyles.headerTextStyle(context),
-                    textAlign: TextAlign.center,
-                  ),
+                    AnalyticsUtils.sendAnalyticEvent(
+                        FOUND_PUZZLE, {"numberOfDays": days}, "HOME_SCREEN");
+                    openSecretPuzzleDoor(state);
+                  }
+                },
+                child: Text(
+                  APP_NAME.toUpperCase(),
+                  style: CommonTextStyles.headerTextStyle(context),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
