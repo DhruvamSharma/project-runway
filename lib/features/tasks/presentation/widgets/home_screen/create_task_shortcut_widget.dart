@@ -157,11 +157,17 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                                   .assignTaskTitle(response as String);
                             }
                           } else {
+                            String errorMessage =
+                                "Sorry, you cannot create any more tasks";
+                            if (pageState.pageNumber == 0) {
+                              errorMessage =
+                                  "You cannot create task for yesterday";
+                            }
                             Scaffold.of(context).removeCurrentSnackBar();
                             Scaffold.of(context).showSnackBar(
                               CustomSnackbar.withAnimation(
                                 context,
-                                "You cannot create task for yesterday",
+                                errorMessage,
                               ),
                             );
                           }
@@ -228,11 +234,17 @@ class CreateTaskShortcutWidget extends StatelessWidget {
                               taskListState.insertTaskToList(data);
                             }
                           } else {
+                            String errorMessage =
+                                "Sorry, you cannot create any more tasks";
+                            if (pageState.pageNumber == 0) {
+                              errorMessage =
+                                  "You cannot create task for yesterday";
+                            }
                             Scaffold.of(context).removeCurrentSnackBar();
                             Scaffold.of(context).showSnackBar(
                               CustomSnackbar.withAnimation(
                                 context,
-                                "You cannot create task for yesterday",
+                                errorMessage,
                               ),
                             );
                           }
