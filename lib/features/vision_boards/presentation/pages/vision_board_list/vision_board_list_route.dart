@@ -31,6 +31,7 @@ import 'package:project_runway/features/vision_boards/presentation/pages/edit_vi
 import 'package:project_runway/features/vision_boards/presentation/pages/view_vision_details/view_vision_details.dart';
 import 'package:project_runway/features/vision_boards/presentation/pages/view_vision_details/view_vision_details_args.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class VisionBoardListRoute extends StatefulWidget {
@@ -122,6 +123,82 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
     }
   }
 
+  void showVisionBoardInfo() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (_) {
+          return Container(
+            height: 700,
+            padding: const EdgeInsets.symmetric(
+              horizontal: CommonDimens.MARGIN_20,
+              vertical: CommonDimens.MARGIN_40,
+            ),
+            decoration: BoxDecoration(
+              color: CommonColors.bottomSheetColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(CommonDimens.MARGIN_20),
+                topRight: Radius.circular(
+                  CommonDimens.MARGIN_20,
+                ),
+              ),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  "What is a Vision Board?",
+                  style: CommonTextStyles.loginTextStyle(context),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: CommonDimens.MARGIN_40,
+                  ),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(
+                          CommonDimens.MARGIN_20 / 2,
+                        ),
+                      ),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: SizedBox(
+                      height: 250,
+                      child: buildVisionItem(
+                        "https://images.unsplash.com/photo-1504805572947-34fad45aed93?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+                        "Clark Tibbs on Unsplash",
+                        false,
+                        "https://images.unsplash.com/profile-1539490885789-925542b900c4?dpr=1&auto=format&fit=crop&w=150&h=150&q=60&crop=faces&bg=fff",
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  "A vision board or dream board is a collage of images, pictures, and affirmations of one's dreams and desires, designed to serve as a source of inspiration and motivation, and to use the law of attraction to attain goals.",
+                  style: CommonTextStyles.taskTextStyle(context),
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () async {
+                      final sourceLink =
+                          "https://en.wikipedia.org/wiki/Dream_board";
+                      if (await canLaunch(sourceLink)) {
+                        launch(sourceLink);
+                      }
+                    },
+                    child: Text(
+                      "Source",
+                      style: CommonTextStyles.linkTextStyle(context),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   void saveVisionBoardToGallery() async {
     try {
       AnalyticsUtils.sendAnalyticEvent(
@@ -171,7 +248,9 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
     if (isLoadingVisionBoards) {
       return buildLoadingList();
     } else {
-      if (visionBoards == null || visionBoards.isEmpty) {
+      if (visionBoards == null ||
+          visionBoards.isEmpty ||
+          (visions != null && visions.isEmpty)) {
         return buildEmptyList();
       } else {
         if (visions == null) {
@@ -224,76 +303,11 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
               child: Hero(
                 tag: visions[index].imageUrl,
                 child: Material(
-                  child: Stack(
-                    children: <Widget>[
-                      CachedNetworkImage(
-                        imageUrl: visions[index].imageUrl,
-                        fit: BoxFit.cover,
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                      ),
-                      if (visions[index].isCompleted)
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                right: CommonDimens.MARGIN_20 / 2,
-                                top: CommonDimens.MARGIN_20 / 2),
-                            child: CircleAvatar(
-                                backgroundColor: CommonColors.chartColor,
-                                radius: 10,
-                                child: Center(
-                                    child: Icon(
-                                  Icons.check,
-                                  size: 14,
-                                ))),
-                          ),
-                        ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          alignment: Alignment.bottomCenter,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.black, Colors.transparent],
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.center,
-                            ),
-                          ),
-                          height: 400,
-                          child: visions[index].profileImageUrl != null
-                              ? Row(
-                                  children: <Widget>[
-                                    ClipRRect(
-                                      child: CachedNetworkImage(
-                                        imageUrl:
-                                            visions[index].profileImageUrl,
-                                        height: isTakingScreenshot ? 10 : 15,
-                                        width: isTakingScreenshot ? 10 : 15,
-                                      ),
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          SizedBox(width: 10.0),
-                                          Expanded(
-                                            child: Text(
-                                              visions[index].fullName,
-                                              style: CommonTextStyles
-                                                  .badgeTextStyle(context),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : Container(),
-                        ),
-                      ),
-                    ],
+                  child: buildVisionItem(
+                    visions[index].imageUrl,
+                    visions[index].fullName,
+                    visions[index].isCompleted,
+                    visions[index].profileImageUrl,
                   ),
                 ),
               ),
@@ -318,99 +332,124 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
       padding: const EdgeInsets.only(
         top: CommonDimens.MARGIN_80,
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Align(
-              alignment: Alignment.topCenter,
-              child: Text(
-                screenName.toUpperCase(),
-                style: CommonTextStyles.headerTextStyle(context),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Card(
-              margin: const EdgeInsets.only(
-                top: CommonDimens.MARGIN_40,
-                left: CommonDimens.MARGIN_20,
-                right: CommonDimens.MARGIN_20,
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: CachedNetworkImage(
-                imageUrl:
-                    "https://images.unsplash.com/photo-1507361617237-221d9f2c84f7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1106&q=80",
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: CommonDimens.MARGIN_60,
-              ),
-              child: SizedBox(
-                width: 200,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text("Build",
-                        style: CommonTextStyles.taskTextStyle(context)),
-                    Expanded(
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.only(left: CommonDimens.MARGIN_20),
-                        child: RotateAnimatedTextKit(
-                          totalRepeatCount: 4,
-                          repeatForever:
-                              true, //this will ignore [totalRepeatCount]
-                          pause: Duration(milliseconds: 1000),
-                          text: ["VISIONS", "GOALS", "ABILITY"],
-                          textStyle: GoogleFonts.anton().copyWith(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 28,
-                              color: CommonColors.chartColor),
-                          displayFullTextOnTap: true, // or Alignment.topLeft
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: CommonDimens.MARGIN_20,
-              ),
-              child: Text(
-                "keep your productivity\nAt an all-time high",
-                textAlign: TextAlign.center,
-                style: CommonTextStyles.taskTextStyle(context),
-              ),
-            ),
-            if (visionBoards.isEmpty)
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_40,
-                ),
-                child: Tooltip(
-                  message: "Create a vision board",
-                  child: MaterialButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(
-                          CommonDimens.MARGIN_20,
-                        ),
-                      ),
-                    ),
-                    onPressed: () async {
-                      createVisionBoard();
-                      moveToCreateVisionRoute();
-                    },
-                    child: Text("Create"),
-                    color: CommonColors.chartColor,
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    screenName.toUpperCase(),
+                    style: CommonTextStyles.headerTextStyle(context),
+                    textAlign: TextAlign.center,
                   ),
                 ),
+                Card(
+                  margin: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_40,
+                    left: CommonDimens.MARGIN_20,
+                    right: CommonDimens.MARGIN_20,
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        "https://images.unsplash.com/photo-1507361617237-221d9f2c84f7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1106&q=80",
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_60,
+                  ),
+                  child: SizedBox(
+                    width: 200,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text("Build",
+                            style: CommonTextStyles.taskTextStyle(context)),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: CommonDimens.MARGIN_20),
+                            child: RotateAnimatedTextKit(
+                              totalRepeatCount: 4,
+                              repeatForever:
+                                  true, //this will ignore [totalRepeatCount]
+                              pause: Duration(milliseconds: 1000),
+                              text: ["VISIONS", "GOALS", "ABILITY"],
+                              textStyle: GoogleFonts.anton().copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 28,
+                                  color: CommonColors.chartColor),
+                              displayFullTextOnTap:
+                                  true, // or Alignment.topLeft
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: CommonDimens.MARGIN_20,
+                  ),
+                  child: Text(
+                    "keep your productivity\nAt an all-time high",
+                    textAlign: TextAlign.center,
+                    style: CommonTextStyles.taskTextStyle(context),
+                  ),
+                ),
+                if (visionBoards.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: CommonDimens.MARGIN_40,
+                    ),
+                    child: Tooltip(
+                      message: "Create a vision board",
+                      child: MaterialButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(
+                              CommonDimens.MARGIN_20,
+                            ),
+                          ),
+                        ),
+                        onPressed: () async {
+                          createVisionBoard();
+                          moveToCreateVisionRoute();
+                        },
+                        child: Text("Create"),
+                        color: CommonColors.chartColor,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.all(
+                CommonDimens.MARGIN_20,
               ),
-          ],
-        ),
+              child: CircleAvatar(
+                radius: 12,
+                backgroundColor: Colors.white,
+                child: Center(
+                  child: IconButton(
+                      tooltip: "Download the vision board",
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.all(0),
+                      icon: Text("i"),
+                      onPressed: showVisionBoardInfo),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -462,10 +501,9 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
   Widget visionBoardPageRoute() {
     return Scaffold(
       key: _scaffoldKey,
-      floatingActionButton: (visions == null ||
-              visions.length >= _remoteConfigService.maxVisionLimit + 1)
-          ? Container()
-          : FloatingActionButton.extended(
+      floatingActionButton: (!(visions == null ||
+              visions.length >= _remoteConfigService.maxVisionLimit + 1))
+          ? FloatingActionButton.extended(
               tooltip: "Add visions to the vision board",
               heroTag: "action_button_${widget.pageNumber}",
               onPressed: () {
@@ -475,7 +513,8 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
                 "Add More",
                 style: CommonTextStyles.scaffoldTextStyle(context)
                     .copyWith(color: Colors.white),
-              )),
+              ))
+          : Container(),
       body: Stack(
         children: <Widget>[
           Align(
@@ -504,28 +543,123 @@ class _VisionBoardListRouteState extends State<VisionBoardListRoute> {
               alignment: Alignment.topRight,
               child: Padding(
                 padding: const EdgeInsets.only(
-                  top: CommonDimens.MARGIN_20 + 10,
+                  top: CommonDimens.MARGIN_20 * 2,
                   right: CommonDimens.MARGIN_20,
                 ),
-                child: CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Colors.black,
-                  child: Center(
-                    child: IconButton(
-                        tooltip: "Download the vision board",
-                        visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.all(0),
-                        icon: Icon(
-                          Icons.save_alt,
-                          size: 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 12,
+                      backgroundColor: Colors.black,
+                      child: Center(
+                        child: IconButton(
+                            tooltip: "Download the vision board",
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.all(0),
+                            icon: Text("i"),
+                            onPressed: showVisionBoardInfo),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: CommonDimens.MARGIN_20 / 2),
+                      child: CircleAvatar(
+                        radius: 24,
+                        backgroundColor: Colors.black,
+                        child: Center(
+                          child: IconButton(
+                              tooltip: "Download the vision board",
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.all(0),
+                              icon: Icon(
+                                Icons.save_alt,
+                                size: 20,
+                              ),
+                              onPressed: saveVisionBoardToGallery),
                         ),
-                        onPressed: saveVisionBoardToGallery),
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            )
+            ),
         ],
       ),
+    );
+  }
+
+  buildVisionItem(String imageUrl, String fullName, bool isCompleted,
+      String profileImageUrl) {
+    return Stack(
+      children: <Widget>[
+        CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+        ),
+        if (isCompleted)
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  right: CommonDimens.MARGIN_20 / 2,
+                  top: CommonDimens.MARGIN_20 / 2),
+              child: CircleAvatar(
+                  backgroundColor: CommonColors.chartColor,
+                  radius: 10,
+                  child: Center(
+                      child: Icon(
+                    Icons.check,
+                    size: 14,
+                  ))),
+            ),
+          ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            alignment: Alignment.bottomCenter,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black, Colors.transparent],
+                begin: Alignment.bottomCenter,
+                end: Alignment.center,
+              ),
+            ),
+            height: 400,
+            child: profileImageUrl != null
+                ? Row(
+                    children: <Widget>[
+                      ClipRRect(
+                        child: CachedNetworkImage(
+                          imageUrl: profileImageUrl,
+                          height: isTakingScreenshot ? 10 : 15,
+                          width: isTakingScreenshot ? 10 : 15,
+                        ),
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            SizedBox(width: 10.0),
+                            Expanded(
+                              child: Text(
+                                fullName,
+                                style: CommonTextStyles.badgeTextStyle(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(),
+          ),
+        ),
+      ],
     );
   }
 }

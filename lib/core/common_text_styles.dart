@@ -60,6 +60,17 @@ class CommonTextStyles {
         .headline6;
   }
 
+  static TextStyle linkTextStyle(BuildContext context) {
+    return Provider.of<ThemeModel>(context, listen: true)
+        .currentTheme
+        .textTheme
+        .bodyText1
+        .copyWith(
+          color: Colors.blueAccent,
+          decoration: TextDecoration.underline,
+        );
+  }
+
   static TextStyle scoreTextStyle(BuildContext context) {
     return Provider.of<ThemeModel>(context, listen: true)
         .currentTheme
