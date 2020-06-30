@@ -99,6 +99,7 @@ dependencies:
   # animated texts
   animated_text_kit: ^2.2.0                                 #40
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

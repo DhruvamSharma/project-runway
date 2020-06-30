@@ -7,46 +7,29 @@ import 'package:rxdart/rxdart.dart';
 
 class HomeScreenBloc {
   static PhotosRepository _repository = PhotosRepository();
-  PublishSubject<String> _query;
+  PublishSubject<Photos> _query;
 
   init() {
-    _query = PublishSubject<String>();
+    _query = PublishSubject<Photos>();
   }
 
   Stream<Photos> photosList() {
-    return _query.stream
-        .where((String value) => value.isNotEmpty)
-        .distinct()
-        .transform(streamTransformer);
+    return _query.stream;
   }
 
-  final streamTransformer = StreamTransformer<String, Photos>.fromHandlers(
-      handleData: (query, sink) async {
+  void findPhotos(String query) async {
     PhotosState state = await _repository.imageData(query);
     if (state is SuccessState) {
-      sink.add(state.value);
+      print(query);
+      _query.sink.add(state.value);
     } else {
-      sink.addError((state as ErrorState).msg);
+      _query.sink.addError((state as ErrorState).msg);
     }
-  });
-
-  Function(String) get changeQuery => _query.sink.add;
+  }
 
   void dispose() {
     _query.close();
   }
-
-  String getDescription(Result result) {
-    return (result.description == null || result.description.isEmpty)
-        ? result.altDescription
-        : result.description;
-  }
-
-//  void shareImage(String url) {
-//    _repository.getImageToShare(url).then((Uint8List value) async {
-//      await Share.file("Share via:","image.png",value,"image/png");
-//    });
-//  }
 }
 
 final bloc = HomeScreenBloc();
