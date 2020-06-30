@@ -8,7 +8,10 @@ import 'package:project_runway/core/common_ui/custom_text_field.dart';
 import 'package:project_runway/core/constants.dart';
 import 'package:project_runway/core/keys/keys.dart';
 import 'package:project_runway/features/vision_boards/data/models/retreived_photo_model.dart';
+import 'package:project_runway/features/vision_boards/data/repositories/photo_repository.dart';
+import 'package:project_runway/features/vision_boards/data/repositories/photos_state.dart';
 import 'package:project_runway/features/vision_boards/presentation/manager/photos_bloc.dart';
+import 'package:provider/provider.dart';
 
 class ImageSelectorRoute extends StatefulWidget {
   static const String routeName = "${APP_NAME}_v1";
@@ -19,12 +22,6 @@ class ImageSelectorRoute extends StatefulWidget {
 class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  int selectedIndex;
-  String imageUrl;
-  String profileImageUrl;
-  String fullName;
-  String downloadLink;
-  String profileLink;
   @override
   void initState() {
     super.initState();
@@ -39,101 +36,127 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(''),
-        automaticallyImplyLeading: true,
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        tooltip: "Select the image",
-        onPressed: () {
-          triggerDownloadEventForUnsplash();
-          Navigator.pop(context, [
-            imageUrl,
-            profileImageUrl,
-            fullName,
-            profileLink,
-          ]);
-        },
-        label: Text(
-          "Copy image",
-          style: CommonTextStyles.scaffoldTextStyle(context)
-              .copyWith(color: Colors.white),
-        ),
-      ),
-      body: Center(
-        child: Container(
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: CommonDimens.MARGIN_40,
-                  vertical: CommonDimens.MARGIN_20,
-                ),
-                child: CustomTextField(
-                  null,
-                  null,
-                  label: "Search",
-                  isRequired: false,
-                  onValueChange: (value) {
-                    bloc.changeQuery(value);
-                  },
-                ),
+    return ChangeNotifierProvider<PhotoSelector>(
+      create: (_) => PhotoSelector(),
+      child: Builder(
+        builder: (BuildContext providerContext) {
+          final photoState =
+              Provider.of<PhotoSelector>(providerContext, listen: false);
+          return Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              title: Text(''),
+              automaticallyImplyLeading: true,
+              elevation: 0.0,
+              backgroundColor: Colors.transparent,
+            ),
+            floatingActionButton: FloatingActionButton.extended(
+              tooltip: "Select the image",
+              onPressed: () {
+                triggerDownloadEventForUnsplash(photoState);
+                Navigator.pop(context, [
+                  photoState.imageUrl,
+                  photoState.profileImageUrl,
+                  photoState.fullName,
+                  photoState.profileLink,
+                ]);
+              },
+              label: Text(
+                "Copy image",
+                style: CommonTextStyles.scaffoldTextStyle(context)
+                    .copyWith(color: Colors.white),
               ),
-              Expanded(
-                child: StreamBuilder(
-                    stream: bloc.photosList(),
-                    builder: (context, AsyncSnapshot<Photos> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.active &&
-                          !snapshot.hasData) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (snapshot.hasData) {
-                        return ListView.builder(
-                            itemCount: snapshot.data.results.length,
-                            itemBuilder: (context, index) {
-                              return listItem(
-                                  snapshot.data.results[index], index);
-                            });
-                      } else {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SizedBox(height: 20.0),
-                              Flexible(
-                                  child: Text(
-                                'Type a word',
-                                style: CommonTextStyles.disabledTaskTextStyle(),
-                              ))
-                            ],
+            ),
+            body: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: CommonDimens.MARGIN_40,
+                      vertical: CommonDimens.MARGIN_20,
+                    ),
+                    child: CustomTextField(
+                      null,
+                      null,
+                      label: "Search",
+                      trailingWidget: IconButton(
+                          visualDensity: VisualDensity.compact,
+                          icon: Icon(
+                            Icons.search,
+                            size: 21,
+                            color: CommonColors.accentColor,
                           ),
-                        );
-                      }
-                    }),
+                          onPressed: () {
+                            bloc.findPhotos(photoState.query);
+                          }),
+                      isRequired: false,
+                      onValueChange: (query) {
+                        photoState.query = query;
+                      },
+                      onSubmitted: (query) {
+                        photoState.query = query;
+                        bloc.findPhotos(query);
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: StreamBuilder<Photos>(
+                      stream: bloc.photosList(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data.results.isEmpty) {
+                            return Center(
+                              child: Text(
+                                "No pictures found. Please change the keyword",
+                                style: CommonTextStyles.loginTextStyle(context),
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          } else {
+                            return ListView.builder(
+                              itemCount: snapshot.data.results.length,
+                              itemBuilder: (_, index) {
+                                return listItem(snapshot.data.results[index],
+                                    index, photoState);
+                              },
+                            );
+                          }
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                              child: Text(
+                            "Search for a picture",
+                            style: CommonTextStyles.loginTextStyle(context),
+                          ));
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget listItem(Result result, int index) {
+  Widget listItem(Result result, int index, PhotoSelector photoState) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          downloadLink = result.links.downloadLocation;
-          profileLink =
+          photoState.downloadLink = result.links.downloadLocation;
+          photoState.profileLink =
               "https://unsplash.com/@${result.user.username}?utm_source=$APP_NAME&utm_medium=referral";
-          imageUrl = result.urls.regular;
-          selectedIndex = index;
-          profileImageUrl = result.user.profileImage.small;
-          fullName = buildFirstName(result.user);
+          photoState.imageUrl = result.urls.regular;
+          photoState.assignSelectedIndex(index);
+          photoState.profileImageUrl = result.user.profileImage.small;
+          photoState.fullName = buildFirstName(result.user);
         });
       },
       child: SizedBox(
@@ -144,7 +167,9 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5.0),
             side: BorderSide(
-              color: index == selectedIndex ? Colors.white : Colors.transparent,
+              color: index == photoState.selectedIndex
+                  ? Colors.white
+                  : Colors.transparent,
               width: 2,
             ),
           ),
@@ -185,7 +210,7 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
                         SizedBox(width: 10.0),
                         Expanded(
                           child: Text(
-                            "${result.user.firstName} ${result.user.lastName} on Unsplash",
+                            "${buildFirstName(result.user)} on Unsplash",
                             style: CommonTextStyles.scaffoldTextStyle(context)
                                 .copyWith(color: CommonColors.accentColor),
                           ),
@@ -200,9 +225,9 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
     );
   }
 
-  void triggerDownloadEventForUnsplash() async {
+  void triggerDownloadEventForUnsplash(PhotoSelector photoState) async {
     try {
-      await http.get("$downloadLink?client_id=$UNSPLASH_KEY");
+      await http.get("${photoState.downloadLink}?client_id=$UNSPLASH_KEY");
     } catch (ex) {
       // Do nothing
     }
@@ -214,5 +239,20 @@ class _ImageSelectorRouteState extends State<ImageSelectorRoute> {
     } else {
       return user.firstName;
     }
+  }
+}
+
+class PhotoSelector extends ChangeNotifier {
+  int selectedIndex;
+  String imageUrl;
+  String profileImageUrl;
+  String fullName;
+  String downloadLink;
+  String profileLink;
+  String query;
+
+  assignSelectedIndex(int index) {
+    selectedIndex = index;
+    notifyListeners();
   }
 }
